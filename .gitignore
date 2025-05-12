@@ -1,0 +1,69 @@
+# 前端忽略 (Screen)
+# Logs
+logs
+Screen/logs
+Screen/*.log
+Screen/npm-debug.log*
+Screen/yarn-debug.log*
+Screen/yarn-error.log*
+Screen/pnpm-debug.log*
+Screen/lerna-debug.log*
+
+# 依赖和构建
+Screen/node_modules
+Screen/dist
+Screen/dist-ssr
+Screen/*.local
+Screen/.env
+Screen/.vite/
+
+# 后端忽略 (Screen-back)
+Screen-back/HELP.md
+Screen-back/target/
+!Screen-back/.mvn/wrapper/maven-wrapper.jar
+!Screen-back/**/src/main/**/target/
+!Screen-back/**/src/test/**/target/
+
+# STS
+Screen-back/.apt_generated
+Screen-back/.classpath
+Screen-back/.factorypath
+Screen-back/.project
+Screen-back/.settings
+Screen-back/.springBeans
+Screen-back/.sts4-cache
+
+# IntelliJ IDEA
+.idea/
+Screen-back/.idea
+Screen-back/*.iws
+Screen-back/*.iml
+Screen-back/*.ipr
+
+# NetBeans
+Screen-back/nbproject/private/
+Screen-back/nbbuild/
+Screen-back/dist/
+Screen-back/nbdist/
+Screen-back/.nb-gradle/
+Screen-back/build/
+!Screen-back/**/src/main/**/build/
+!Screen-back/**/src/test/**/build/
+
+# 编辑器目录和文件
+.vscode/*
+!.vscode/extensions.json
+Screen-back/.vscode/
+.DS_Store
+Screen/.DS_Store
+Screen-back/.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.swp
+
+# 通用忽略
+*.log
+.DS_Store 
