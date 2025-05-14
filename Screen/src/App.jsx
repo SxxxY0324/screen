@@ -1,17 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import './App.css'
-import api from './api'
 import Header from './components/Header'
-import EmptyCard from './components/EmptyCard'
-import StatusCard from './components/StatusCard'
-
-// 导入背景图片
-import cutTimeImg from './assets/images/裁剪时间.jpg'
-import cutSpeedImg from './assets/images/裁剪速度.jpg'
-import totalEnergyImg from './assets/images/总能耗.jpg'
-import totalPerimeterImg from './assets/images/总周长.jpg'
-import cutSetsImg from './assets/images/裁剪套数.jpg'
-import 移动率MUImg from './assets/images/移动率MU.jpg'
+import MonitorPage from './pages/MonitorPage'
+import ManagementPage from './pages/ManagementPage'
+import AnalysisPage from './pages/AnalysisPage'
 
 function App() {
   // 添加状态管理活动标签
@@ -20,6 +12,20 @@ function App() {
   // 处理标签点击
   const handleTabClick = (tabName) => {
     setActiveTab(tabName);
+  };
+  
+  // 根据当前活动标签返回对应的页面组件
+  const renderActivePage = () => {
+    switch(activeTab) {
+      case '实时监控':
+        return <MonitorPage />;
+      case '维保管理':
+        return <ManagementPage />;
+      case '达标分析':
+        return <AnalysisPage />;
+      default:
+        return <MonitorPage />;
+    }
   };
   
   return (
@@ -38,10 +44,10 @@ function App() {
                 实时监控
               </div>
               <div 
-                className={`nav-button ${activeTab === '集中管理' ? 'active' : ''}`}
-                onClick={() => handleTabClick('集中管理')}
+                className={`nav-button ${activeTab === '维保管理' ? 'active' : ''}`}
+                onClick={() => handleTabClick('维保管理')}
               >
-                集中管理
+                维保管理
               </div>
               <div 
                 className={`nav-button ${activeTab === '达标分析' ? 'active' : ''}`}
@@ -70,29 +76,8 @@ function App() {
           </div>
         </div>
         
-        <div className="dashboard-grid">
-          <div className="card-efficiency">
-            <EmptyCard backgroundImage={移动率MUImg} />
-          </div>
-          <div className="card-cuttime">
-            <EmptyCard backgroundImage={cutTimeImg} />
-          </div>
-          <div className="card-energy">
-            <EmptyCard backgroundImage={totalEnergyImg} />
-          </div>
-          <div className="card-cutspeed">
-            <EmptyCard backgroundImage={cutSpeedImg} />
-          </div>
-          <div className="card-perimeter">
-            <EmptyCard backgroundImage={totalPerimeterImg} />
-          </div>
-          <div className="card-cutsets">
-            <EmptyCard backgroundImage={cutSetsImg} />
-          </div>
-          <div className="card-status">
-            <StatusCard />
-          </div>
-        </div>
+        {/* 渲染当前活动页面 */}
+        {renderActivePage()}
       </div>
     </div>
   )

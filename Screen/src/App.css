@@ -188,19 +188,54 @@
 .card-cutsets {
   width: 100%;
   height: auto;
-  min-height: 200px;
+  min-height: 150px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: #000000;
+  border: 1px solid #000000;
+  border-radius: 4px;
+  overflow: hidden;
+  padding: 5px;
 }
 
 /* 中间卡片特殊处理 */
 .card-status {
   grid-area: status;
   height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: relative;
+  background-color: #000000;
+  border: 1px solid #000000;
+  border-radius: 4px;
+  overflow: hidden;
+  padding: 5px;
+}
+
+/* 各裁床运行状态图片微调 */
+.card-status .cutting-status-image {
+  position: absolute;
+  width: 98.2%;
+  height: auto;
+  max-height: 45%;
+  object-fit: contain;
+  max-width: 101%;
+  top: 3px;
+  left: 1%;
+  z-index: 1;
+}
+
+/* 裁床运行情况图片微调 */
+.card-status .status-image {
+  position: absolute;
+  width: 100%;
+  height: auto;
+  max-height: 50%;
+  object-fit: contain;
+  display: block;
+  max-width: 98%;
+  bottom: 5px;
+  left: 1%;
+  z-index: 1;
 }
 
 /* 卡片样式 */
@@ -319,4 +354,115 @@ button:disabled {
   font-size: 18px;
   letter-spacing: 1px;
   text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+/* 维保管理页面样式 */
+/* 顶部指标行样式 */
+.metrics-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 15px; /* 增加与下方内容的间距 */
+  gap: 10px;
+}
+
+.metric-card {
+  flex: 1;
+  min-height: 100px;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #000000;
+  border: 1px solid #000000;
+  border-radius: 4px;
+  overflow: hidden;
+  padding: 5px;
+}
+
+/* 容器内图片样式 */
+.metric-card .card-image,
+.card-blade .card-image,
+.card-fault .card-image,
+.card-efficiency .card-image,
+.card-cuttime .card-image,
+.card-energy .card-image,
+.card-cutspeed .card-image,
+.card-perimeter .card-image,
+.card-cutsets .card-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* 右侧图片微调 */
+.card-fault .card-image {
+  max-width: 100.5%; 
+}
+
+/* 维保管理页面网格布局 */
+.management-grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 1fr 1fr; /* 1:1等比例 */
+  grid-template-rows: auto;
+  grid-template-areas: "blade fault";
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.card-blade, 
+.card-fault { 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: auto;
+  min-height: 300px;
+  background-color: #000000;
+  border: 1px solid #000000;
+  border-radius: 4px;
+  overflow: hidden;
+  padding: 5px;
+}
+
+.card-blade { grid-area: blade; }
+.card-fault { grid-area: fault; }
+
+/* 响应式调整 */
+@media (max-width: 1200px) {
+  .management-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas: 
+      "blade"
+      "fault";
+    height: auto;
+    gap: 10px;
+  }
+  
+  .card-blade,
+  .card-fault {
+    max-height: none; /* 移动设备上取消最大高度限制 */
+    margin-bottom: 10px;
+  }
+  
+  .metrics-row {
+    flex-wrap: wrap;
+  }
+  
+  .metric-card {
+    flex: 1 1 45%;
+    margin-bottom: 10px;
+    min-height: 100px;
+  }
+}
+
+@media (max-width: 768px) {
+  .metrics-row {
+    flex-direction: column;
+  }
+  
+  .metric-card {
+    width: 100%;
+  }
 }
