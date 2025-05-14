@@ -1,0 +1,34 @@
+.status-card {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #000000;
+  border: 1px solid #071624;
+  box-sizing: border-box;
+  overflow: hidden;
+  justify-content: flex-end;
+}
+
+.status-header {
+  display: none;
+}
+
+.status-content {
+  flex: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  background-color: #000000;
+  padding-bottom: 8px;
+  margin-top: auto;
+  height: calc(33vh - 49px); /* 从50px增加到65px，减小高度 */
+}
+
+.status-content .status-image {
+  width: 100%;
+  height: 100%; /* 使图片填充整个内容区域 */
+  object-fit: contain; /* 保持图片比例 */
+  vertical-align: bottom;
+} 

@@ -1,0 +1,41 @@
+.dashboard-header {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #000000; /* 纯黑背景 */
+  border-bottom: 1px solid #333333; /* 黑色边框 */
+  position: relative;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+.dashboard-header::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,102,204,1) 50%, rgba(0,0,0,0) 100%);
+  box-shadow: 0 0 15px 2px rgba(0,102,204,0.8);
+}
+
+.title-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 0;
+  padding: 0;
+  max-height: 60px; /* 控制图片高度，根据实际需要调整 */
+  object-fit: cover;
+}
+
+.header-right-text {
+  position: absolute;
+  right: 20px;
+  color: #ff6b00; /* 橙色文字，与截图相匹配 */
+  font-size: 16px;
+  font-weight: bold;
+} 
