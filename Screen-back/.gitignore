@@ -31,3 +31,22 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### 敏感配置文件 ###
+.env
+.env.*
+*.env
+*-dev.properties
+*-prod.properties
+application-dev.properties
+application-prod.properties
+application-local.properties
+*-local.properties
+
+### 证书和密钥 ###
+*.jks
+*.p12
+*.pem
+*.key
+*.crt
+*.cer

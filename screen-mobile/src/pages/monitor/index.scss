@@ -1,0 +1,159 @@
+.monitor-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f5f7fa;
+  position: relative;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  position: relative;
+  z-index: 10;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+}
+
+.env-tag {
+  font-size: 12px;
+  color: #fff;
+  background-color: #722ed1;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f5f7fa;
+}
+
+.error-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f5f7fa;
+  padding: 0 20px;
+}
+
+.error-text {
+  color: #f5222d;
+  text-align: center;
+}
+
+.monitor-list {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+}
+
+.monitor-item {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.monitor-item.warning {
+  border-left: 4px solid #faad14;
+}
+
+.monitor-item.offline {
+  border-left: 4px solid #f5222d;
+}
+
+.item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.item-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+.item-status {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.item-status.normal {
+  background-color: #f6ffed;
+  color: #52c41a;
+}
+
+.item-status.warning {
+  background-color: #fffbe6;
+  color: #faad14;
+}
+
+.item-status.offline {
+  background-color: #fff1f0;
+  color: #f5222d;
+}
+
+.item-content {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.item-data {
+  display: flex;
+  align-items: center;
+}
+
+.data-label {
+  font-size: 14px;
+  color: #888;
+  margin-right: 5px;
+}
+
+.data-value {
+  font-size: 14px;
+  color: #333;
+}
+
+.item-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 10px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.last-update {
+  font-size: 12px;
+  color: #999;
+}
+
+.h5-notice {
+  position: fixed;
+  bottom: 65px;
+  left: 0;
+  right: 0;
+  padding: 8px;
+  background-color: rgba(0, 0, 0, 0.6);
+  text-align: center;
+}
+
+.h5-notice text {
+  font-size: 12px;
+  color: #fff;
+}

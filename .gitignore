@@ -66,4 +66,68 @@ Screen-back/.DS_Store
 
 # 通用忽略
 *.log
-.DS_Store 
+.DS_Store
+
+# 敏感信息排除
+# 环境变量和配置文件
+.env
+.env.*
+*.env
+config.json
+*config.local.*
+application-*.properties
+application-*.yml
+
+# 密钥和证书
+*.pem
+*.key
+*.cer
+*.crt
+*.p12
+*.pfx
+*.jks
+id_rsa
+id_dsa
+*.gpg
+*.keystore
+
+# 个人配置文件
+.gradle/
+.vscode/settings.json
+.idea/workspace.xml
+*.sublime-workspace
+
+# 数据库和缓存
+*.db
+*.sqlite
+*.sqlite3
+redis-data/
+mongodb-data/
+*.rdb
+dump.rdb
+.cache/
+
+# 临时文件和日志
+tmp/
+temp/
+*.tmp
+*.bak
+*.swp
+*.dump
+*.log.*
+debug.log
+npm-debug.log
+
+# 个人信息和凭证
+*credential*
+*password*
+*secret*
+*token*
+*auth*
+*apikey*
+auth.json
+credentials.json
+
+# 其他敏感信息
+.npmrc
+.yarnrc 

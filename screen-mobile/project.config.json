@@ -1,0 +1,25 @@
+{
+	"miniprogramRoot": "dist/",
+	"projectname": "screen-mobile",
+	"description": "这是一个手机Web端以及微信小程序端的大屏展示项目",
+	"appid": "wx234a340a08a26521",
+	"setting": {
+		"urlCheck": true,
+		"es6": false,
+    "enhance": false,
+    "compileHotReLoad": false,
+		"postcss": false,
+		"preloadBackgroundData": false,
+		"minified": false,
+		"newFeature": true,
+		"autoAudits": false,
+		"coverView": true,
+		"showShadowRootInWxmlPanel": false,
+		"scopeDataCheck": false,
+		"useCompilerModule": false
+	},
+	"compileType": "miniprogram",
+	"simulatorType": "wechat",
+	"simulatorPluginLibVersion": {},
+	"condition": {}
+}

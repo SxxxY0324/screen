@@ -1,0 +1,13 @@
+{
+  "miniprogramRoot": "./",
+  "projectname": "screen-mobile",
+  "description": "这是一个手机Web端以及微信小程序端的大屏展示项目",
+  "appid": "touristappid",
+  "setting": {
+    "urlCheck": true,
+    "es6": false,
+    "postcss": false,
+    "minified": false
+  },
+  "compileType": "miniprogram"
+}
