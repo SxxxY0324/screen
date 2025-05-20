@@ -1061,7 +1061,7 @@ function MonitorPage() {
             alignItems: 'center', 
             justifyContent: 'flex-start'
           }}>
-            <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#FFFFFF', marginRight: '8px' }}>裁剪</div>
+            <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#FFFFFF', marginRight: '8px', paddingTop: '5px' }}>裁剪</div>
             <div style={{ width: '26px', height: '26px' }}>
               <StatusIcon status="cutting" color="#4CAF50" />
             </div>
@@ -1077,7 +1077,7 @@ function MonitorPage() {
             alignItems: 'center', 
             justifyContent: 'flex-start'
           }}>
-            <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#FFFFFF', marginRight: '8px' }}>待机</div>
+            <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#FFFFFF', marginRight: '8px', paddingTop: '5px' }}>待机</div>
             <div style={{ width: '26px', height: '26px' }}>
               <StatusIcon status="standby" color="#FFEB3B" />
             </div>
@@ -1093,7 +1093,7 @@ function MonitorPage() {
             alignItems: 'center', 
             justifyContent: 'flex-start'
           }}>
-            <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#FFFFFF', marginRight: '8px' }}>非计划停机</div>
+            <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#FFFFFF', marginRight: '8px', paddingTop: '5px' }}>非计划停机</div>
             <div style={{ width: '26px', height: '26px' }}>
               <StatusIcon status="unplanned" color="#F44336" />
             </div>
@@ -1109,7 +1109,7 @@ function MonitorPage() {
             alignItems: 'center', 
             justifyContent: 'flex-start'
           }}>
-            <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#FFFFFF', marginRight: '8px' }}>计划停机</div>
+            <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#FFFFFF', marginRight: '8px', paddingTop: '5px' }}>计划停机</div>
             <div style={{ width: '26px', height: '26px' }}>
               <StatusIcon status="planned" color="#9E9E9E" />
             </div>
