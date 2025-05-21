@@ -322,7 +322,7 @@ function MonitorPage() {
                 fontWeight: 'bolder'
               }
             }]
-          });
+          }, false); // 使用false参数避免重置动画
         }
       });
       
@@ -337,13 +337,565 @@ function MonitorPage() {
               fontWeight: 'bold'
             }
           }]
-        });
+        }, false); // 使用false参数避免重置动画
       });
+      
+      // 组件挂载后延迟显示完整数据以实现初始动画效果
+      setTimeout(() => {
+        chart.setOption({
+          ...getMUChartOption(false),
+          animation: true,
+          animationDuration: 1200,
+          animationEasing: 'elasticOut'
+        });
+      }, 500); // 给足够时间让初始状态渲染完成
+    }
+    
+    // 同样为能耗图表添加初始化动画
+    if (energyChartRef.current && energyChartRef.current.getEchartsInstance) {
+      const energyChart = energyChartRef.current.getEchartsInstance();
+      
+      // 组件挂载后延迟显示完整数据以实现初始动画效果
+      setTimeout(() => {
+        energyChart.setOption({
+          ...getEnergyChartOption(false),
+          animation: true,
+          animationDuration: 1200,
+          animationEasing: 'elasticOut'
+        });
+      }, 600); // 比MU图表稍晚触发，形成错开的动画效果
+    }
+    
+    // 为总周长图表添加初始化动画
+    if (perimeterChartRef.current && perimeterChartRef.current.getEchartsInstance) {
+      const perimeterChart = perimeterChartRef.current.getEchartsInstance();
+      
+      // 组件挂载后延迟显示完整数据以实现初始动画效果
+      setTimeout(() => {
+        perimeterChart.setOption({
+          ...getPerimeterChartOption(false),
+          animation: true,
+          animationDuration: 1500,
+          animationEasing: 'elasticOut'
+        });
+      }, 700); // 比能耗图表稍晚触发，形成依次展开的动画序列
+    }
+    
+    // 为裁剪时间图表添加初始化动画
+    if (cutTimeChartRef.current && cutTimeChartRef.current.getEchartsInstance) {
+      const cutTimeChart = cutTimeChartRef.current.getEchartsInstance();
+      
+      // 组件挂载后延迟显示完整数据以实现初始动画效果
+      setTimeout(() => {
+        cutTimeChart.setOption({
+          ...getCutTimeChartOption(false),
+          animation: true,
+          animationDuration: 1500,
+          animationEasing: 'elasticOut'
+        });
+      }, 800); // 排在动画序列的最后
+    }
+    
+    // 为裁剪速度图表添加初始化动画
+    if (cutSpeedChartRef.current && cutSpeedChartRef.current.getEchartsInstance) {
+      const cutSpeedChart = cutSpeedChartRef.current.getEchartsInstance();
+      
+      // 组件挂载后延迟显示完整数据以实现初始动画效果
+      setTimeout(() => {
+        cutSpeedChart.setOption({
+          ...getCutSpeedChartOption(false),
+          animation: true,
+          animationDuration: 1600,
+          animationEasing: 'elasticOut'
+        });
+      }, 850); // 排在动画序列的最后，略晚于裁剪时间
     }
   }, []);
 
+  // 添加页面切换后的图表重置逻辑 - 只针对移动率MU图表
+  useEffect(() => {
+    // 定义一个函数用于重置图表大小
+    const resizeMUChart = (delay = 0) => {
+      if (muChartRef.current && muChartRef.current.getEchartsInstance) {
+        const chart = muChartRef.current.getEchartsInstance();
+        // 使用较短的延迟时间，加快恢复速度
+        setTimeout(() => {
+          chart.resize();
+        }, delay);
+      }
+    };
+    
+    // 为能耗图表重置大小
+    const resizeEnergyChart = (delay = 0) => {
+      if (energyChartRef.current && energyChartRef.current.getEchartsInstance) {
+        const chart = energyChartRef.current.getEchartsInstance();
+        setTimeout(() => {
+          chart.resize();
+        }, delay);
+      }
+    };
+    
+    // 为总周长图表重置大小
+    const resizePerimeterChart = (delay = 0) => {
+      if (perimeterChartRef.current && perimeterChartRef.current.getEchartsInstance) {
+        const chart = perimeterChartRef.current.getEchartsInstance();
+        setTimeout(() => {
+          chart.resize();
+        }, delay);
+      }
+    };
+    
+    // 为裁剪时间图表重置大小
+    const resizeCutTimeChart = (delay = 0) => {
+      if (cutTimeChartRef.current && cutTimeChartRef.current.getEchartsInstance) {
+        const chart = cutTimeChartRef.current.getEchartsInstance();
+        setTimeout(() => {
+          chart.resize();
+        }, delay);
+      }
+    };
+    
+    // 为裁剪速度图表重置大小
+    const resizeCutSpeedChart = (delay = 0) => {
+      if (cutSpeedChartRef.current && cutSpeedChartRef.current.getEchartsInstance) {
+        const chart = cutSpeedChartRef.current.getEchartsInstance();
+        setTimeout(() => {
+          chart.resize();
+        }, delay);
+      }
+    };
+    
+    // 创建一个强力的动画重置函数 - 先重置到初始状态再动画到最终状态
+    const resetAndAnimateChart = () => {
+      if (muChartRef.current && muChartRef.current.getEchartsInstance) {
+        const chart = muChartRef.current.getEchartsInstance();
+        
+        // 步骤1：先设置为初始状态（无动画）
+        chart.setOption({
+          ...getMUChartOption(true), // 传入true表示初始状态
+          animation: false
+        });
+        
+        // 步骤2：稍后设置最终数据（有动画）
+        setTimeout(() => {
+          chart.setOption({
+            ...getMUChartOption(false),
+            animation: true,
+            animationDuration: 1000,
+            animationEasing: 'elasticOut'
+          });
+        }, 100);
+      }
+      
+      // 重置并动画能耗图表
+      if (energyChartRef.current && energyChartRef.current.getEchartsInstance) {
+        const chart = energyChartRef.current.getEchartsInstance();
+        
+        // 步骤1：先设置为初始状态（无动画）
+        chart.setOption({
+          ...getEnergyChartOption(true),
+          animation: false
+        });
+        
+        // 步骤2：稍后设置最终数据（有动画）
+        setTimeout(() => {
+          chart.setOption({
+            ...getEnergyChartOption(false),
+            animation: true,
+            animationDuration: 1000,
+            animationEasing: 'elasticOut'
+          });
+        }, 150); // 比MU稍晚一点，形成错开效果
+      }
+      
+      // 重置并动画总周长图表
+      if (perimeterChartRef.current && perimeterChartRef.current.getEchartsInstance) {
+        const chart = perimeterChartRef.current.getEchartsInstance();
+        
+        // 步骤1：先设置为初始状态（无动画）
+        chart.setOption({
+          ...getPerimeterChartOption(true),
+          animation: false
+        });
+        
+        // 步骤2：稍后设置最终数据（有动画）
+        setTimeout(() => {
+          chart.setOption({
+            ...getPerimeterChartOption(false),
+            animation: true,
+            animationDuration: 1200,
+            animationEasing: 'elasticOut'
+          });
+        }, 200); // 比能耗再晚一点，形成三段式错开效果
+      }
+      
+      // 重置并动画裁剪时间图表
+      if (cutTimeChartRef.current && cutTimeChartRef.current.getEchartsInstance) {
+        const chart = cutTimeChartRef.current.getEchartsInstance();
+        
+        // 步骤1：先设置为初始状态（无动画）
+        chart.setOption({
+          ...getCutTimeChartOption(true),
+          animation: false
+        });
+        
+        // 步骤2：稍后设置最终数据（有动画）
+        setTimeout(() => {
+          chart.setOption({
+            ...getCutTimeChartOption(false),
+            animation: true,
+            animationDuration: 1200,
+            animationEasing: 'elasticOut'
+          });
+        }, 250); // 最后一个动画，形成完整的动画序列
+      }
+      
+      // 重置并动画裁剪速度图表
+      if (cutSpeedChartRef.current && cutSpeedChartRef.current.getEchartsInstance) {
+        const chart = cutSpeedChartRef.current.getEchartsInstance();
+        
+        // 步骤1：先设置为初始状态（无动画）
+        chart.setOption({
+          ...getCutSpeedChartOption(true),
+          animation: false
+        });
+        
+        // 步骤2：稍后设置最终数据（有动画）
+        setTimeout(() => {
+          chart.setOption({
+            ...getCutSpeedChartOption(false),
+            animation: true,
+            animationDuration: 1500,
+            animationEasing: 'elasticOut'
+          });
+        }, 300); // 最后一个动画，指针动画
+      }
+    };
+    
+    // 预加载图表
+    const preloadChart = () => {
+      if (muChartRef.current && muChartRef.current.getEchartsInstance) {
+        const chart = muChartRef.current.getEchartsInstance();
+        // 预先渲染图表时禁用动画
+        chart.setOption({...getMUChartOption(true), animation: false});
+        // 立即调整大小
+        resizeMUChart(0);
+      }
+      
+      // 预加载能耗图表
+      if (energyChartRef.current && energyChartRef.current.getEchartsInstance) {
+        const chart = energyChartRef.current.getEchartsInstance();
+        chart.setOption({...getEnergyChartOption(true), animation: false});
+        resizeEnergyChart(0);
+      }
+      
+      // 预加载总周长图表
+      if (perimeterChartRef.current && perimeterChartRef.current.getEchartsInstance) {
+        const chart = perimeterChartRef.current.getEchartsInstance();
+        chart.setOption({...getPerimeterChartOption(true), animation: false});
+        resizePerimeterChart(0);
+      }
+      
+      // 预加载裁剪时间图表
+      if (cutTimeChartRef.current && cutTimeChartRef.current.getEchartsInstance) {
+        const chart = cutTimeChartRef.current.getEchartsInstance();
+        chart.setOption({...getCutTimeChartOption(true), animation: false});
+        resizeCutTimeChart(0);
+      }
+      
+      // 预加载裁剪速度图表
+      if (cutSpeedChartRef.current && cutSpeedChartRef.current.getEchartsInstance) {
+        const chart = cutSpeedChartRef.current.getEchartsInstance();
+        chart.setOption({...getCutSpeedChartOption(true), animation: false});
+        resizeCutSpeedChart(0);
+      }
+    };
+    
+    // 组件挂载时立即预加载
+    preloadChart();
+    
+    // 添加事件监听器 - 监听页面可见性变化
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        // 页面可见性变化时立即执行
+        resizeMUChart(0);
+        resizeEnergyChart(0);
+        resizePerimeterChart(0);
+        resizeCutTimeChart(0);
+        resizeCutSpeedChart(0);
+        // 触发动画重置
+        resetAndAnimateChart();
+      }
+    };
+    
+    // 监听Tab页切换事件
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    // 监听窗口大小变化事件 - 立即执行
+    const handleResize = () => {
+      resizeMUChart(0);
+      resizeEnergyChart(0);
+      resizePerimeterChart(0);
+      resizeCutTimeChart(0);
+      resizeCutSpeedChart(0);
+      // 窗口大小变化时也触发动画
+      resetAndAnimateChart();
+    };
+    window.addEventListener('resize', handleResize);
+
+    // 创建一个标记，记录组件是否已完成初始渲染
+    let isInitialRenderComplete = false;
+    
+    // 使用requestAnimationFrame确保在动画帧之后再检查
+    const checkInitialRender = () => {
+      if (!isInitialRenderComplete && muChartRef.current) {
+        isInitialRenderComplete = true;
+        // 初始渲染后立即执行resize
+        resizeMUChart(0);
+        resizeEnergyChart(0);
+        resizePerimeterChart(0);
+        resizeCutTimeChart(0);
+        resizeCutSpeedChart(0);
+        // 适当延迟后触发动画
+        setTimeout(resetAndAnimateChart, 0);
+      }
+    };
+    
+    // 在下一帧检查初始渲染
+    requestAnimationFrame(() => {
+      requestAnimationFrame(checkInitialRender);
+    });
+    
+    // 使用IntersectionObserver监测组件是否可见
+    let isVisible = false;
+    const visibilityObserver = new IntersectionObserver((entries) => {
+      const entry = entries[0];
+      // 当组件变为可见时（包括初次渲染和页面切换回来）
+      if (entry.isIntersecting && !isVisible) {
+        isVisible = true;
+        // 立即执行resize以恢复大小
+        resizeMUChart(0);
+        resizeEnergyChart(0);
+        resizePerimeterChart(0);
+        resizeCutTimeChart(0);
+        resizeCutSpeedChart(0);
+        // 触发动画效果
+        resetAndAnimateChart();
+      } else if (!entry.isIntersecting && isVisible) {
+        isVisible = false;
+      }
+    }, { threshold: 0.1 }); // 只要有10%可见就触发
+    
+    // 监测图表容器
+    if (muChartRef.current && muChartRef.current.container) {
+      visibilityObserver.observe(muChartRef.current.container);
+    }
+    if (energyChartRef.current && energyChartRef.current.container) {
+      visibilityObserver.observe(energyChartRef.current.container);
+    }
+    if (perimeterChartRef.current && perimeterChartRef.current.container) {
+      visibilityObserver.observe(perimeterChartRef.current.container);
+    }
+    if (cutTimeChartRef.current && cutTimeChartRef.current.container) {
+      visibilityObserver.observe(cutTimeChartRef.current.container);
+    }
+    if (cutSpeedChartRef.current && cutSpeedChartRef.current.container) {
+      visibilityObserver.observe(cutSpeedChartRef.current.container);
+    }
+    
+    // 监听路由/标签切换的事件
+    const handleClick = () => {
+      // 检查当前组件是否在文档中可见
+      if ((muChartRef.current && 
+          document.contains(muChartRef.current.container) && 
+          window.getComputedStyle(muChartRef.current.container).display !== 'none') ||
+          (energyChartRef.current && 
+          document.contains(energyChartRef.current.container) && 
+          window.getComputedStyle(energyChartRef.current.container).display !== 'none') ||
+          (perimeterChartRef.current && 
+          document.contains(perimeterChartRef.current.container) && 
+          window.getComputedStyle(perimeterChartRef.current.container).display !== 'none') ||
+          (cutTimeChartRef.current && 
+          document.contains(cutTimeChartRef.current.container) && 
+          window.getComputedStyle(cutTimeChartRef.current.container).display !== 'none') ||
+          (cutSpeedChartRef.current && 
+          document.contains(cutSpeedChartRef.current.container) && 
+          window.getComputedStyle(cutSpeedChartRef.current.container).display !== 'none')) {
+        // 用户点击可能是切换到该页面，立即调整大小
+        resizeMUChart(0);
+        resizeEnergyChart(0);
+        resizePerimeterChart(0);
+        resizeCutTimeChart(0);
+        resizeCutSpeedChart(0);
+        // 添加延迟以确保布局完成后再触发动画
+        setTimeout(resetAndAnimateChart, 0);
+      }
+    };
+    
+    // 监听点击事件，可能是导航按钮点击
+    document.addEventListener('click', handleClick);
+
+    // 添加DOM mutation监听，捕获组件在被显示/隐藏时的状态变化
+    const observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (mutation.type === 'attributes' || mutation.type === 'childList') {
+          const targetStyle = window.getComputedStyle(mutation.target);
+          if (targetStyle.display !== 'none' && targetStyle.visibility !== 'hidden') {
+            resizeMUChart(0);
+            resizeEnergyChart(0);
+            resizePerimeterChart(0);
+            resizeCutTimeChart(0);
+            resizeCutSpeedChart(0);
+            // DOM变化时触发动画
+            setTimeout(resetAndAnimateChart, 0);
+          }
+        }
+      }
+    });
+    
+    // 监听父容器的变化
+    if (muChartRef.current) {
+      const parentNode = muChartRef.current.container;
+      if (parentNode && parentNode.parentNode) {
+        observer.observe(parentNode.parentNode, {
+          attributes: true,
+          attributeFilter: ['style', 'class'], // 只监听可能影响可见性的属性
+          childList: false,
+          subtree: false
+        });
+      }
+    }
+    if (energyChartRef.current) {
+      const parentNode = energyChartRef.current.container;
+      if (parentNode && parentNode.parentNode) {
+        observer.observe(parentNode.parentNode, {
+          attributes: true,
+          attributeFilter: ['style', 'class'],
+          childList: false,
+          subtree: false
+        });
+      }
+    }
+    if (perimeterChartRef.current) {
+      const parentNode = perimeterChartRef.current.container;
+      if (parentNode && parentNode.parentNode) {
+        observer.observe(parentNode.parentNode, {
+          attributes: true,
+          attributeFilter: ['style', 'class'],
+          childList: false,
+          subtree: false
+        });
+      }
+    }
+    if (cutTimeChartRef.current) {
+      const parentNode = cutTimeChartRef.current.container;
+      if (parentNode && parentNode.parentNode) {
+        observer.observe(parentNode.parentNode, {
+          attributes: true,
+          attributeFilter: ['style', 'class'],
+          childList: false,
+          subtree: false
+        });
+      }
+    }
+    if (cutSpeedChartRef.current) {
+      const parentNode = cutSpeedChartRef.current.container;
+      if (parentNode && parentNode.parentNode) {
+        observer.observe(parentNode.parentNode, {
+          attributes: true,
+          attributeFilter: ['style', 'class'],
+          childList: false,
+          subtree: false
+        });
+      }
+    }
+    
+    // 清理函数
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('resize', handleResize);
+      document.removeEventListener('click', handleClick);
+      visibilityObserver.disconnect();
+      observer.disconnect();
+    };
+  }, []);
+
+  // 移动率MU环形图配置
+  const getMUChartOption = (isInitialState = false) => {
+    // 如果是初始状态，返回空/初始数据
+    // 这将创建从0到实际值的动画效果
+    const initialValue = isInitialState ? 0 : 69.03;
+    const remainingValue = isInitialState ? 100 : 30.97;
+    
+    return {
+      backgroundColor: 'transparent',
+      tooltip: {
+        trigger: 'item',
+        formatter: '{b}: {c}%'
+      },
+      series: [
+        {
+          type: 'pie',
+          radius: ['50%', '70%'],
+          avoidLabelOverlap: false,
+          silent: false,
+          animationType: 'expansion',
+          animationDelay: function (idx) {
+            return idx * 100;
+          },
+          animationEasing: 'elasticOut',
+          animationDuration: 1200,
+          itemStyle: {
+            borderRadius: 10,
+            borderColor: '#fff',
+            borderWidth: 1
+          },
+          // 添加中心标签
+          label: {
+            show: true,
+            position: 'center',
+            formatter: isInitialState ? '' : '69.03%',
+            fontSize: 30,
+            fontWeight: 'bold',
+            color: '#ffffff'
+          },
+          labelLine: {
+            show: false
+          },
+          data: [
+            { 
+              value: initialValue, 
+              name: '已使用', 
+              itemStyle: { 
+                color: {
+                  type: 'linear',
+                  x: 0,
+                  y: 0,
+                  x2: 0,
+                  y2: 1,
+                  colorStops: [
+                    { offset: 0, color: '#ffeb3b' },  // 黄色
+                    { offset: 1, color: '#ff9800' }   // 橙色
+                  ]
+                }
+              }
+            },
+            { 
+              value: remainingValue, 
+              name: '剩余', 
+              itemStyle: { color: '#e0e0e0' }  // 灰白色
+            }
+          ]
+        }
+      ]
+    };
+  };
+
   // 裁剪时间仪表盘配置
-  const getCutTimeChartOption = () => {
+  const getCutTimeChartOption = (isInitialState = false) => {
+    // 初始状态时使用0值，否则使用最终值
+    const displayValue = isInitialState ? 0 : 26404;
+    
     return {
       backgroundColor: 'transparent',
       series: [
@@ -422,15 +974,19 @@ function MonitorPage() {
             fontSize: 55,  // 增大字体
             fontWeight: 'bolder',
             formatter: function(value) {
-              return new Intl.NumberFormat().format(value);  // 使用千位分隔符格式化数字
+              return isInitialState ? '' : new Intl.NumberFormat().format(value);  // 初始状态不显示数字
             },
             color: '#ffffff'
           },
           data: [
             {
-              value: 26404
+              value: displayValue
             }
-          ]
+          ],
+          // 添加动画相关配置
+          animationDuration: 1500,
+          animationEasing: 'elasticOut',
+          animationDelay: 100
         },
         {
           type: 'gauge',
@@ -483,16 +1039,23 @@ function MonitorPage() {
           },
           data: [
             {
-              value: 26404
+              value: displayValue
             }
-          ]
+          ],
+          // 添加动画相关配置
+          animationDuration: 1500,
+          animationEasing: 'elasticOut',
+          animationDelay: 150
         }
       ]
     };
   };
 
   // 新增 - 裁剪速度仪表盘配置
-  const getCutSpeedChartOption = () => {
+  const getCutSpeedChartOption = (isInitialState = false) => {
+    // 初始状态使用0值，否则使用最终值
+    const displayValue = isInitialState ? 0 : 8.14;
+    
     // 定义橙色渐变
     const orangeGradient = {
       type: 'linear',
@@ -575,81 +1138,25 @@ function MonitorPage() {
             offsetCenter: [0, '40%'],  // 向下移动避免被指针覆盖
             valueAnimation: true, 
             formatter: function(value) {
-              return value.toFixed(2);  // 保留两位小数
+              return isInitialState ? '' : value.toFixed(2);  // 初始状态不显示数字
             }
           },
           data: [
             {
-              value: 8.14  // 设置为图中的值
+              value: displayValue  // 使用动态值
             }
-          ]
-        }
-      ]
-    };
-  };
-
-  // 移动率MU环形图配置
-  const getMUChartOption = () => {
-    return {
-      backgroundColor: 'transparent',
-      tooltip: {
-        trigger: 'item',
-        formatter: '{b}: {c}%'
-      },
-      series: [
-        {
-          type: 'pie',
-          radius: ['50%', '70%'],
-          avoidLabelOverlap: false,
-          silent: false,
-          itemStyle: {
-            borderRadius: 10,
-            borderColor: '#fff',
-            borderWidth: 1
-          },
-          // 添加中心标签
-          label: {
-            show: true,
-            position: 'center',
-            formatter: '69.03%',
-            fontSize: 30,
-            fontWeight: 'bold',
-            color: '#ffffff'
-          },
-          labelLine: {
-            show: false
-          },
-          data: [
-            { 
-              value: 69.03, 
-              name: '已使用', 
-              itemStyle: { 
-                color: {
-                  type: 'linear',
-                  x: 0,
-                  y: 0,
-                  x2: 0,
-                  y2: 1,
-                  colorStops: [
-                    { offset: 0, color: '#ffeb3b' },  // 黄色
-                    { offset: 1, color: '#ff9800' }   // 橙色
-                  ]
-                }
-              }
-            },
-            { 
-              value: 30.97, 
-              name: '剩余', 
-              itemStyle: { color: '#e0e0e0' }  // 灰白色
-            }
-          ]
+          ],
+          // 添加动画配置
+          animationDuration: 1600,
+          animationEasing: 'elasticOut',
+          animationDelay: 150
         }
       ]
     };
   };
 
   // 总能耗横向柱状图配置
-  const getEnergyChartOption = () => {
+  const getEnergyChartOption = (isInitialState = false) => {
     // 定义数据
     const energyData = [
       {
@@ -673,6 +1180,12 @@ function MonitorPage() {
         value: 882.1
       }
     ];
+
+    // 初始状态时值为0
+    const displayData = energyData.map(item => ({
+      ...item,
+      value: isInitialState ? 0 : item.value
+    }));
 
     // 统一的橙色渐变
     const orangeGradient = {
@@ -729,14 +1242,14 @@ function MonitorPage() {
           barWidth: 16,  // 减小柱宽度
           barGap: '10%',  // 减小间距
           barCategoryGap: '20%',  // 调整类目间距
-          data: energyData.map(item => ({
+          data: displayData.map((item, index) => ({
             value: item.value,
             itemStyle: {
               color: orangeGradient,
               borderRadius: 10
             },
             label: {
-              show: true,
+              show: !isInitialState, // 初始状态不显示标签
               position: 'right',
               formatter: '{c}',
               color: '#ffffff',
@@ -746,6 +1259,13 @@ function MonitorPage() {
           })),
           showBackground: false,
           silent: false,
+          // 添加动画相关配置
+          animationDelay: function(idx) {
+            // 柱状图从左到右依次出现
+            return idx * 120;
+          },
+          animationDuration: 1200,
+          animationEasing: 'elasticOut',
           emphasis: {
             focus: 'series',
             itemStyle: {
@@ -759,11 +1279,13 @@ function MonitorPage() {
   };
 
   // 总周长仪表盘配置
-  const getPerimeterChartOption = () => {
+  const getPerimeterChartOption = (isInitialState = false) => {
     // 定义总值，当前值以及进度百分比
     const totalValue = 12000;
     const currentValue = 9496;
-    const percentage = (currentValue / totalValue) * 100;
+    // 初始状态时显示0或很小的值，创造动画效果
+    const displayValue = isInitialState ? 0 : currentValue;
+    const percentage = (displayValue / totalValue) * 100;
     
     return {
       backgroundColor: 'transparent',
@@ -771,7 +1293,7 @@ function MonitorPage() {
         // 灰橙色背景层 - 完整圆形
         {
           type: 'pie',
-          animation: false, // 关闭加载动画
+          animation: !isInitialState, // 只在非初始状态时启用动画
           radius: ['0', '60%'],
           center: ['50%', '50%'],
           startAngle: 0,
@@ -881,15 +1403,20 @@ function MonitorPage() {
             color: '#ff9800',
             offsetCenter: [0, 0],
             formatter: function(value) {
-              return new Intl.NumberFormat().format(currentValue);
+              return isInitialState ? '' : new Intl.NumberFormat().format(currentValue);
             },
             backgroundColor: 'transparent'
           },
           data: [
             {
-              value: percentage
+              value: percentage,
+              name: 'perimeter'
             }
           ],
+          // 添加动画相关配置
+          animationDuration: 1500,
+          animationEasing: 'elasticOut',
+          animationDelay: 200,
           z: 3 // 位于上层
         },
         // 外部装饰层 - 完整圆环
@@ -950,9 +1477,11 @@ function MonitorPage() {
           <div className="chart-overlay">
             <ReactECharts 
               ref={muChartRef}
-              option={getMUChartOption()} 
+              option={getMUChartOption(true)} 
               style={{ height: '100%', width: '100%' }}
               className="mu-chart"
+              notMerge={true}
+              lazyUpdate={false}
             />
           </div>
         </div>
@@ -961,13 +1490,15 @@ function MonitorPage() {
           <div className="chart-overlay">
             <ReactECharts 
               ref={cutTimeChartRef}
-              option={getCutTimeChartOption()} 
+              option={getCutTimeChartOption(true)} 
               style={{ 
                 height: '100%',  // 控制图表高度
                 width: '100%',   // 控制图表宽度
                 margin: 'auto'  // 自动居中
               }}
               className="cuttime-chart"
+              notMerge={true}
+              lazyUpdate={false}
             />
           </div>
         </div>
@@ -976,9 +1507,11 @@ function MonitorPage() {
           <div className="chart-overlay">
             <ReactECharts 
               ref={energyChartRef}
-              option={getEnergyChartOption()} 
+              option={getEnergyChartOption(true)} 
               style={{ height: '100%', width: '100%' }}
               className="energy-chart"
+              notMerge={true}
+              lazyUpdate={false}
             />
           </div>
         </div>
@@ -987,13 +1520,15 @@ function MonitorPage() {
           <div className="chart-overlay">
             <ReactECharts 
               ref={cutSpeedChartRef}
-              option={getCutSpeedChartOption()} 
+              option={getCutSpeedChartOption(true)} 
               style={{ 
                 height: '95%', 
                 width: '95%',
                 margin: 'auto'
               }}
               className="cutspeed-chart"
+              notMerge={true}
+              lazyUpdate={false}
             />
           </div>
         </div>
@@ -1002,9 +1537,11 @@ function MonitorPage() {
           <div className="chart-overlay">
             <ReactECharts 
               ref={perimeterChartRef}
-              option={getPerimeterChartOption()} 
+              option={getPerimeterChartOption(true)} 
               style={{ height: '100%', width: '100%' }}
               className="perimeter-chart"
+              notMerge={true}
+              lazyUpdate={false}
             />
           </div>
         </div>
