@@ -15,7 +15,9 @@
     "echarts-for-react": "^3.0.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-router-dom": "^6.30.0"
+    "react-router-dom": "^6.30.0",
+    "recharts": "^2.15.3",
+    "victory": "^37.3.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
