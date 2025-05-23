@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, LabelList } from 'recharts';
+import { ensureValidNumber } from '../../utils/chartUtils';
 
 // 颜色常量定义
 const COLORS = {
@@ -15,15 +16,27 @@ const COLORS = {
   SHADOW: 'rgba(255, 152, 0, 0.5)'
 };
 
-const EnergyChart = () => {
+const EnergyChart = ({ value = 298.6 }) => {
+  // 确保value是有效数字
+  const totalEnergy = ensureValidNumber(value, 298.6, 1);
+  
+  // 根据总能耗值生成分布数据 (模拟不同设备的能耗分布)
+  const calculateDeviceEnergy = (total) => {
+    const baseValue = total / 5;
+    return [
+      { name: 'CN01001', value: baseValue * 1.05 },
+      { name: 'CN01002', value: baseValue * 0.95 },
+      { name: 'CN01003', value: baseValue * 1.13 },
+      { name: 'CN01004', value: baseValue * 0.77 },
+      { name: 'CN01005', value: baseValue * 1.1 }
+    ].map(item => ({
+      ...item,
+      value: parseFloat(item.value.toFixed(1))
+    }));
+  };
+  
   // 定义数据
-  const energyData = [
-    { name: 'CN01001', value: 847.6 },
-    { name: 'CN01002', value: 765.2 },
-    { name: 'CN01003', value: 912.3 },
-    { name: 'CN01004', value: 625.8 },
-    { name: 'CN01005', value: 882.1 }
-  ];
+  const energyData = calculateDeviceEnergy(totalEnergy);
 
   return (
     <ResponsiveContainer width="100%" height="100%">
@@ -57,8 +70,9 @@ const EnergyChart = () => {
           fill="url(#energyGradient)" 
           barSize={16}
           radius={10}
-          animationDuration={1200}
-          animationBegin={300}
+          animationDuration={1000}
+          animationBegin={0}
+          isAnimationActive={true}
         >
           <LabelList 
             dataKey="value" 
@@ -73,4 +87,5 @@ const EnergyChart = () => {
   );
 };
 
-export default EnergyChart; 
+// 使用React.memo优化性能，避免不必要的重渲染
+export default memo(EnergyChart); 

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+import { ensureValidNumber, ensureValidPercentage } from '../../utils/chartUtils';
 
 // 颜色常量定义
 const COLORS = {
@@ -16,15 +17,16 @@ const COLORS = {
 };
 
 // 移动率MU组件 - 使用Recharts实现
-const EfficiencyChart = () => {
+const EfficiencyChart = ({ value = 69.03 }) => {
   const [hovered, setHovered] = useState(false);
-  const muValue = 69.03;
-  const remainingValue = 30.97;
+  // 确保值是有效的百分比
+  const muValue = ensureValidPercentage(value, 69.03).toFixed(2);
+  const remainingValue = (100 - parseFloat(muValue)).toFixed(2);
   
   // 饼图数据
   const data = [
-    { name: "已使用", value: muValue },
-    { name: "剩余", value: remainingValue }
+    { name: "已使用", value: parseFloat(muValue) },
+    { name: "剩余", value: parseFloat(remainingValue) }
   ];
   
   // 颜色数组
@@ -66,8 +68,9 @@ const EfficiencyChart = () => {
             dataKey="value"
             startAngle={90}
             endAngle={-270}
-            animationDuration={800}
+            animationDuration={1000}
             animationEasing="ease-out"
+            isAnimationActive={true}
           >
             {data.map((entry, index) => (
               <Cell 
@@ -93,4 +96,5 @@ const EfficiencyChart = () => {
   );
 };
 
-export default EfficiencyChart; 
+// 使用React.memo优化性能，避免不必要的重渲染
+export default memo(EfficiencyChart); 

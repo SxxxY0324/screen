@@ -18,19 +18,6 @@ const COLORS = {
 // 角度转换常量
 const RADIAN = Math.PI / 180;
 
-// 简单防抖函数
-const debounce = (func, wait) => {
-  let timeout;
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-    };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
-};
-
 // 创建仪表盘背景数据
 const createGaugeData = (min, max, segments) => {
   const data = [];
@@ -233,47 +220,64 @@ const renderNeedle = (value, min, max, cx, cy, radius, color) => {
 const CutSpeedChartBase = () => {
   const [displayValue, setDisplayValue] = useState(0);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
+  const [isReady, setIsReady] = useState(false); // 新增：用于控制初始渲染
   const prevSizeRef = useRef({ width: 0, height: 0 });
   const containerRef = useRef(null);
   const animationRef = useRef(null);
+  const observerRef = useRef(null); // 新增：ResizeObserver引用
   const finalValue = 8.14;
   const animationDuration = 2000; // 匹配动画持续时间
   
-  // 防抖更新尺寸的处理函数
-  const updateSize = useCallback(
-    debounce(() => {
-      if (containerRef.current) {
-        const { width, height } = containerRef.current.getBoundingClientRect();
+  // 更新尺寸的处理函数
+  const updateSize = useCallback(() => {
+    if (containerRef.current) {
+      const { width, height } = containerRef.current.getBoundingClientRect();
+      
+      // 确保尺寸有效且大于最小限制
+      if (width > 50 && height > 50) {
+        setContainerSize({ width, height });
+        prevSizeRef.current = { width, height };
         
-        // 确保尺寸有效且大于最小限制
-        if (width > 50 && height > 50) {
-          setContainerSize({ width, height });
-          prevSizeRef.current = { width, height };
-        } else if (prevSizeRef.current.width > 0 && prevSizeRef.current.height > 0) {
-          // 使用上一个有效的尺寸
-          setContainerSize(prevSizeRef.current);
+        // 只有在第一次获取到有效尺寸时设置isReady为true
+        if (!isReady) {
+          setIsReady(true);
         }
       }
-    }, 100),
-    []
-  );
+    }
+  }, [isReady]);
   
-  // 检测容器尺寸
+  // 使用ResizeObserver监听尺寸变化
   useEffect(() => {
     // 初始化调用一次
     updateSize();
     
-    // 添加resize事件监听
-    window.addEventListener('resize', updateSize);
+    // 创建ResizeObserver
+    if (typeof ResizeObserver !== 'undefined') {
+      observerRef.current = new ResizeObserver(updateSize);
+      
+      if (containerRef.current) {
+        observerRef.current.observe(containerRef.current);
+      }
+    } else {
+      // 降级方案：使用resize事件
+      window.addEventListener('resize', updateSize);
+    }
     
-    // 清理
+    // 清理函数
     return () => {
-      window.removeEventListener('resize', updateSize);
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      } else {
+        window.removeEventListener('resize', updateSize);
+      }
     };
   }, [updateSize]);
   
-  // 平滑数值动画
+  // 平滑数值动画 - 只在组件准备好后开始
   useEffect(() => {
+    // 只有在组件准备好后才开始动画
+    if (!isReady) return;
+    
     let startTime = null;
     let startValue = 0;
     
@@ -306,7 +310,7 @@ const CutSpeedChartBase = () => {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, []); // 只在组件挂载时运行一次
+  }, [isReady]); // 依赖isReady，确保在组件准备好后才开始动画
   
   // 创建仪表盘背景数据
   const gaugeData = createGaugeData(0, 10, 10);
@@ -316,7 +320,25 @@ const CutSpeedChartBase = () => {
     ? containerSize 
     : prevSizeRef.current.width > 0 
       ? prevSizeRef.current 
-      : { width: 300, height: 200 }; // 默认尺寸
+      : { width: 0, height: 0 }; // 初始尺寸设为0，避免渲染小图表
+  
+  // 如果组件尚未准备好，显示一个占位符
+  if (!isReady || width === 0) {
+    return (
+      <div ref={containerRef} style={{ 
+        position: 'relative', 
+        width: '100%', 
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingBottom: '10%',
+        minWidth: '100px',
+        minHeight: '100px',
+        visibility: 'hidden' // 隐藏占位符，但保留空间用于测量
+      }}/>
+    );
+  }
   
   return (
     <div ref={containerRef} style={{ 
@@ -358,20 +380,18 @@ const CutSpeedChartBase = () => {
           />
           
           {/* 绘制刻度线 */}
-          {width > 0 && renderTicks(width, height)}
+          {renderTicks(width, height)}
           
           {/* 绘制指针 */}
-          {width > 0 && 
-            renderNeedle(
-              displayValue, 
-              0, 
-              10, 
-              width / 2, 
-              height * 0.65,
-              Math.min(width, height) * 0.45,
-              "#ff6600" // 鲜亮的橙色
-            )
-          }
+          {renderNeedle(
+            displayValue, 
+            0, 
+            10, 
+            width / 2, 
+            height * 0.65,
+            Math.min(width, height) * 0.45,
+            "#ff6600" // 鲜亮的橙色
+          )}
         </PieChart>
       </ResponsiveContainer>
       

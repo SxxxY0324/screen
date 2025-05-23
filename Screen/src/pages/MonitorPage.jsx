@@ -1,15 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import '../App.css';
 import { EfficiencyChart, EnergyChart, PerimeterChart, CutTimeChart, CutSpeedChart } from '../components/charts';
-import StatusIcon, { COLORS } from '../components/StatusIcon';
-import StatusTable from '../components/StatusTable';
+import { StatusIcon, StatusTable, ErrorBoundary, COLORS } from '../components';
+import ChartWrapper from '../components/charts/ChartWrapper';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { 
-  tableData, 
-  tableHeaders, 
-  deviceStatusData, 
-  statusLegendItems,
-  cutSetsValue
-} from '../data/monitorData';
+  selectMonitorData, 
+  selectTableData, 
+  selectTableHeaders, 
+  selectDeviceStatusData, 
+  selectStatusLegendItems,
+  selectCutSetsValue,
+  fetchMonitorData
+} from '../store/slices/monitorSlice';
+import { selectDataRefreshInterval } from '../store/slices/appSlice';
 
 // 导入背景图片
 import cutTimeImg from '../assets/images/裁剪时间.jpg';
@@ -128,10 +132,69 @@ const STYLES = {
     left: '7%', 
     width: '86%', 
     height: '25%'
+  },
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 100
+  },
+  loadingText: {
+    color: COLORS.WHITE,
+    fontSize: '24px',
+    fontWeight: 'bold'
+  },
+  errorOverlay: {
+    position: 'absolute',
+    top: '10px',
+    left: '10px',
+    padding: '10px',
+    backgroundColor: COLORS.RED,
+    color: COLORS.WHITE,
+    borderRadius: '5px',
+    zIndex: 100
   }
 };
 
+// 创建一个图表错误回退组件
+const ChartErrorFallback = ({ title }) => (
+  <div style={{ 
+    width: '100%', 
+    height: '100%', 
+    display: 'flex', 
+    alignItems: 'center', 
+    justifyContent: 'center',
+    flexDirection: 'column',
+    color: COLORS.WHITE,
+    backgroundColor: 'rgba(0,0,0,0.5)'
+  }}>
+    <div>图表加载失败</div>
+    <div>{title}</div>
+  </div>
+);
+
 function MonitorPage() {
+  const dispatch = useAppDispatch();
+  
+  // 从Redux获取数据
+  const monitorData = useAppSelector(selectMonitorData);
+  const tableData = useAppSelector(selectTableData);
+  const tableHeaders = useAppSelector(selectTableHeaders);
+  const deviceStatusData = useAppSelector(selectDeviceStatusData);
+  const statusLegendItems = useAppSelector(selectStatusLegendItems);
+  const cutSetsValue = useAppSelector(selectCutSetsValue);
+  const refreshInterval = useAppSelector(selectDataRefreshInterval);
+  
+  // 错误信息处理 - 确保错误是字符串
+  const errorMessage = monitorData.error ? 
+    (typeof monitorData.error === 'string' ? monitorData.error : '数据加载失败') : null;
+  
   // 设备状态颜色映射函数
   const getStatusColor = (status) => {
     switch(status) {
@@ -141,15 +204,50 @@ function MonitorPage() {
       default: return COLORS.GRAY;
     }
   };
+  
+  // 首次加载和定时刷新数据
+  useEffect(() => {
+    // 加载初始数据
+    try {
+      dispatch(fetchMonitorData());
+    } catch (error) {
+      console.error('Failed to fetch monitor data:', error);
+    }
+    
+    // 设置定时刷新
+    const interval = setInterval(() => {
+      try {
+        dispatch(fetchMonitorData());
+      } catch (error) {
+        console.error('Failed to fetch monitor data in interval:', error);
+      }
+    }, refreshInterval);
+    
+    // 清理函数
+    return () => clearInterval(interval);
+  }, [dispatch, refreshInterval]);
 
   return (
     <>
       <div className="dashboard-grid">
+        {/* 移除全局加载动画，只保留错误提示 */}
+        {errorMessage && (
+          <div style={STYLES.errorOverlay}>
+            {errorMessage}
+          </div>
+        )}
+        
         {/* 移动率MU */}
         <div className="card-efficiency">
           <img src={移动率MUImg} className="card-image" alt="移动率MU" />
           <div className="chart-overlay">
-            <EfficiencyChart />
+            <ErrorBoundary fallback={<ChartErrorFallback title="移动率MU" />}>
+              <ChartWrapper 
+                Chart={EfficiencyChart} 
+                value={monitorData.efficiencyValue} 
+                defaultValue={69.03} 
+              />
+            </ErrorBoundary>
           </div>
         </div>
 
@@ -157,7 +255,13 @@ function MonitorPage() {
         <div className="card-cuttime">
           <img src={cutTimeImg} className="card-image" alt="裁剪时间" />
           <div className="chart-overlay">
-            <CutTimeChart />
+            <ErrorBoundary fallback={<ChartErrorFallback title="裁剪时间" />}>
+              <ChartWrapper 
+                Chart={CutTimeChart} 
+                value={monitorData.cutTimeValue} 
+                defaultValue={16.5} 
+              />
+            </ErrorBoundary>
           </div>
         </div>
 
@@ -165,7 +269,13 @@ function MonitorPage() {
         <div className="card-energy">
           <img src={totalEnergyImg} className="card-image" alt="总能耗" />
           <div className="chart-overlay">
-            <EnergyChart />
+            <ErrorBoundary fallback={<ChartErrorFallback title="总能耗" />}>
+              <ChartWrapper 
+                Chart={EnergyChart} 
+                value={monitorData.energyValue} 
+                defaultValue={298.6} 
+              />
+            </ErrorBoundary>
           </div>
         </div>
 
@@ -173,7 +283,13 @@ function MonitorPage() {
         <div className="card-cutspeed">
           <img src={cutSpeedImg} className="card-image" alt="裁剪速度" />
           <div className="chart-overlay">
-            <CutSpeedChart />
+            <ErrorBoundary fallback={<ChartErrorFallback title="裁剪速度" />}>
+              <ChartWrapper 
+                Chart={CutSpeedChart} 
+                value={monitorData.cutSpeedValue} 
+                defaultValue={6.5} 
+              />
+            </ErrorBoundary>
           </div>
         </div>
 
@@ -181,7 +297,13 @@ function MonitorPage() {
         <div className="card-perimeter">
           <img src={totalPerimeterImg} className="card-image" alt="总周长" />
           <div className="chart-overlay">
-            <PerimeterChart />
+            <ErrorBoundary fallback={<ChartErrorFallback title="总周长" />}>
+              <ChartWrapper 
+                Chart={PerimeterChart} 
+                value={monitorData.perimeterValue} 
+                defaultValue={1238.5} 
+              />
+            </ErrorBoundary>
           </div>
         </div>
 
