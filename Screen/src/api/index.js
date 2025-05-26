@@ -26,7 +26,15 @@ api.interceptors.request.use(
 // 响应拦截器
 api.interceptors.response.use(
   response => {
-    return response.data;
+    // 确保始终返回有效的数据结构
+    const data = response.data;
+    
+    // 检查是否有数据
+    if (data === null || data === undefined) {
+      return {}; // 返回空对象避免错误
+    }
+    
+    return data; // 直接返回数据部分
   },
   error => {
     // 只输出简化的错误信息，减少重复日志

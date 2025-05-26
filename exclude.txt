@@ -1,8 +1,0 @@
-screen-mobile\node_modules\
-screen-mobile\dist\
-screen-mobile\.git\
-screen-mobile\.swc\
-*.log
-screen-mobile\**/config.secret.js
-screen-mobile\**/secrets.js
-screen-mobile\**/*.env 

@@ -7,6 +7,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 public class CorsConfig {
@@ -19,19 +20,28 @@ public class CorsConfig {
         // 允许凭证
         config.setAllowCredentials(true);
         
-        // 允许的来源列表
-        // 开发环境
-        config.addAllowedOrigin("http://localhost:5173"); // PC端开发环境
-        config.addAllowedOrigin("http://localhost:3000"); // 可能的另一个开发环境
-        config.addAllowedOrigin("http://localhost:10086"); // 手机Web端开发环境
-        config.addAllowedOrigin("http://172.16.69.121:5173"); // 通过局域网IP访问PC端开发环境
-        config.addAllowedOrigin("http://172.16.69.121:3000"); // 通过局域网IP访问可能的另一个开发环境
-        config.addAllowedOrigin("http://172.16.69.121:10086"); // 通过局域网IP访问手机Web端开发环境
+        // 使用通配符模式允许局域网内所有设备访问
+        // Spring Boot 3.x完全支持setAllowedOriginPatterns
+        List<String> allowedOriginPatterns = Arrays.asList(
+            // 放宽访问限制，允许所有源
+            "*",
+            // 本地开发环境
+            "http://localhost:*",
+            // 局域网IP - 覆盖常见的内网IP段
+            "http://172.16.*.*:*",
+            "http://192.168.*.*:*",
+            "http://10.*.*.*:*",
+            // 具体的生产环境域名
+            "https://yourdomain.com",
+            "https://m.yourdomain.com",
+            "https://servicewechat.com"  // 微信小程序
+        );
         
-        // 生产环境
-        config.addAllowedOrigin("https://yourdomain.com"); // PC端生产环境，请替换为实际域名
-        config.addAllowedOrigin("https://m.yourdomain.com"); // 手机Web端生产环境，请替换为实际域名
-        config.addAllowedOrigin("https://servicewechat.com"); // 微信小程序，请确认此域名
+        // 设置允许的源
+        config.setAllowedOriginPatterns(allowedOriginPatterns);
+        
+        // 明确的将localhost:5173添加为允许源
+        config.addAllowedOrigin("http://localhost:5173");
         
         // 允许所有请求头
         config.addAllowedHeader("*");

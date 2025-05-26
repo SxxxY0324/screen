@@ -6,7 +6,6 @@ import ManagementPage from './pages/ManagementPage'
 import AnalysisPage from './pages/AnalysisPage'
 import { useAppDispatch, useAppSelector } from './store/hooks'
 import { selectActiveTab, setActiveTab, updateFilter } from './store/slices/appSlice'
-import Debug from './components/Debug'
 
 function App() {
   const dispatch = useAppDispatch();
@@ -104,9 +103,6 @@ function App() {
         {/* 渲染当前活动页面 */}
         {renderActivePage()}
       </div>
-      
-      {/* 添加调试组件 */}
-      <Debug />
     </div>
   )
 }

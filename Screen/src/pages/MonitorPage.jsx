@@ -181,9 +181,8 @@ const ChartErrorFallback = ({ title }) => (
 
 function MonitorPage() {
   const dispatch = useAppDispatch();
-  // 使用useRef跟踪定时器ID和加载状态
+  // 使用useRef跟踪定时器ID
   const timerRef = useRef(null);
-  const dataLoadedRef = useRef(false);
   
   // 从Redux获取数据
   const monitorData = useAppSelector(selectMonitorData);
@@ -193,6 +192,7 @@ function MonitorPage() {
   const statusLegendItems = useAppSelector(selectStatusLegendItems);
   const cutSetsValue = useAppSelector(selectCutSetsValue);
   const refreshInterval = useAppSelector(selectDataRefreshInterval);
+  const isLoading = useAppSelector(state => state.monitor.loading); // 获取加载状态
   
   // 错误信息处理 - 确保错误是字符串
   const errorMessage = monitorData.error ? 
@@ -213,10 +213,6 @@ function MonitorPage() {
     // 加载数据的函数
     const loadData = () => {
       try {
-        // 只在首次加载时输出日志，减少日志输出
-        if (!dataLoadedRef.current) {
-          dataLoadedRef.current = true;
-        }
         dispatch(fetchMonitorData());
       } catch (error) {
         console.error('数据加载失败:', error);
@@ -378,22 +374,40 @@ function MonitorPage() {
           
           {/* 设备状态指示器区域 */}
           <div className="chart-overlay" style={STYLES.devicesContainer}>
-            {deviceStatusData.map((device, index) => (
-              <div key={index} style={STYLES.deviceItem}>
-                {/* 左侧设备编号 */}
-                <div style={STYLES.deviceId}>
-                  {device.id}
-                </div>
-                
-                {/* 右侧状态图标 */}
-                <div style={STYLES.deviceIcon}>
-                  <StatusIcon 
-                    status={device.status} 
-                    color={getStatusColor(device.status)} 
-                  />
-                </div>
+            {isLoading || !deviceStatusData || deviceStatusData.length === 0 ? (
+              // 显示加载状态
+              <div style={{
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gridColumn: '1 / span 3',
+                color: COLORS.WHITE,
+                fontSize: '24px',
+                fontWeight: 'bold'
+              }}>
+                加载中...
               </div>
-            ))}
+            ) : (
+              // 显示设备状态
+              deviceStatusData.map((device, index) => (
+                <div key={index} style={STYLES.deviceItem}>
+                  {/* 左侧设备编号 */}
+                  <div style={STYLES.deviceId}>
+                    {device.id}
+                  </div>
+                  
+                  {/* 右侧状态图标 */}
+                  <div style={STYLES.deviceIcon}>
+                    <StatusIcon 
+                      status={device.status} 
+                      color={getStatusColor(device.status)} 
+                    />
+                  </div>
+                </div>
+              ))
+            )}
           </div>
           
           {/* 下部分：裁床运行情况 */}
