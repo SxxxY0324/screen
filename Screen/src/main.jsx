@@ -7,11 +7,12 @@ import store from './store'
 import ErrorBoundary from './components/ErrorBoundary'
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+  // 暂时注释掉StrictMode以减少开发环境中的重复调用和日志
+  // <StrictMode>
     <ErrorBoundary showDetails={process.env.NODE_ENV !== 'production'}>
       <Provider store={store}>
         <App />
       </Provider>
     </ErrorBoundary>
-  </StrictMode>,
+  // </StrictMode>,
 )

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 
 // 颜色常量定义
@@ -17,10 +17,41 @@ const COLORS = {
   BACKGROUND_END: 'rgba(100, 70, 30, 0.9)'
 };
 
-const PerimeterChart = () => {
-  // 定义数据
-  const totalValue = 12000;
-  const currentValue = 9496;
+// 加载状态组件
+const Loading = () => (
+  <div
+    style={{
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      textAlign: 'center',
+      fontSize: '18px',
+      color: COLORS.LIGHT_GRAY,
+      fontFamily: 'Arial'
+    }}
+  >
+    加载中...
+  </div>
+);
+
+/**
+ * 周长图表组件
+ * 
+ * @param {Object} props 组件属性
+ * @param {number} props.value 当前周长值，用于显示
+ * @param {number} props.defaultValue 默认周长值，当value为null时使用
+ * @param {boolean} props.isInitialized 数据是否已初始化
+ */
+const PerimeterChartBase = ({ value, defaultValue = 1238.5, isInitialized = false }) => {
+  // 使用提供的值或默认值
+  const displayValue = Number.isFinite(value) ? value : defaultValue;
+  
+  // 处理0值的情况
+  const currentValue = displayValue;
+  
+  // 设置目标值和进度计算
+  const totalValue = Math.max(currentValue * 1.2, 12000); // 目标值略高于当前值，至少12000
   const remainingValue = totalValue - currentValue;
   
   // 饼图数据
@@ -34,6 +65,39 @@ const PerimeterChart = () => {
 
   // 装饰圆环数据
   const decorationData = [{ name: "装饰", value: 1 }];
+
+  // 如果数据尚未初始化，显示加载状态
+  if (!isInitialized) {
+    return (
+      <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            {/* 渐变定义 */}
+            <defs>
+              <radialGradient id="backgroundGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                <stop offset="0%" stopColor={COLORS.BACKGROUND_START} />
+                <stop offset="100%" stopColor={COLORS.BACKGROUND_END} />
+              </radialGradient>
+            </defs>
+
+            {/* 背景层 - 圆形填充 */}
+            <Pie
+              data={backgroundData}
+              dataKey="value"
+              cx="50%"
+              cy="50%"
+              outerRadius="60%"
+              innerRadius="0%"
+              fill="url(#backgroundGradient)"
+              stroke="none"
+              isAnimationActive={false}
+            />
+          </PieChart>
+        </ResponsiveContainer>
+        <Loading />
+      </div>
+    );
+  }
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
@@ -128,5 +192,8 @@ const PerimeterChart = () => {
     </div>
   );
 };
+
+// 使用React.memo包装组件以减少不必要的重渲染
+const PerimeterChart = memo(PerimeterChartBase);
 
 export default PerimeterChart; 

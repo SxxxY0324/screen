@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import '../App.css';
 import { EfficiencyChart, EnergyChart, PerimeterChart, CutTimeChart, CutSpeedChart } from '../components/charts';
 import { StatusIcon, StatusTable, ErrorBoundary, COLORS } from '../components';
@@ -181,6 +181,9 @@ const ChartErrorFallback = ({ title }) => (
 
 function MonitorPage() {
   const dispatch = useAppDispatch();
+  // 使用useRef跟踪定时器ID和加载状态
+  const timerRef = useRef(null);
+  const dataLoadedRef = useRef(false);
   
   // 从Redux获取数据
   const monitorData = useAppSelector(selectMonitorData);
@@ -205,26 +208,39 @@ function MonitorPage() {
     }
   };
   
-  // 首次加载和定时刷新数据
+  // 首次加载和定时刷新数据 - 优化版本
   useEffect(() => {
-    // 加载初始数据
-    try {
-      dispatch(fetchMonitorData());
-    } catch (error) {
-      console.error('Failed to fetch monitor data:', error);
-    }
-    
-    // 设置定时刷新
-    const interval = setInterval(() => {
+    // 加载数据的函数
+    const loadData = () => {
       try {
+        // 只在首次加载时输出日志，减少日志输出
+        if (!dataLoadedRef.current) {
+          dataLoadedRef.current = true;
+        }
         dispatch(fetchMonitorData());
       } catch (error) {
-        console.error('Failed to fetch monitor data in interval:', error);
+        console.error('数据加载失败:', error);
       }
-    }, refreshInterval);
+    };
+    
+    // 清理之前的定时器，确保不会创建多个
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+    
+    // 立即加载一次
+    loadData();
+    
+    // 设置定时刷新，并保存定时器ID
+    timerRef.current = setInterval(loadData, refreshInterval);
     
     // 清理函数
-    return () => clearInterval(interval);
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
   }, [dispatch, refreshInterval]);
 
   return (

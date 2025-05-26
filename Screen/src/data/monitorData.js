@@ -49,4 +49,4 @@ export const statusLegendItems = [
 ];
 
 // 裁剪套数显示值（方便将来从API获取）
-export const cutSetsValue = '213,715'; 
+export const cutSetsValue = '213,716'; 
