@@ -16,8 +16,8 @@ const COLORS = {
   SHADOW: 'rgba(255, 152, 0, 0.5)'
 };
 
-// 最大刻度值
-const MAX_VALUE = 50000;
+// 最大刻度值 - 调整为更合适的小时单位
+const MAX_VALUE = 1000; // 最大显示1000小时
 
 // 增强版刻度线渲染器
 const renderTicks = (containerWidth, containerHeight) => {
@@ -105,7 +105,7 @@ const renderTicks = (containerWidth, containerHeight) => {
   );
 };
 
-const CutTimeChartBase = () => {
+const CutTimeChartBase = ({ value = 0 }) => {
   const [displayValue, setDisplayValue] = useState(0);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const [isReady, setIsReady] = useState(false); // 新增：用于控制初始渲染
@@ -113,9 +113,14 @@ const CutTimeChartBase = () => {
   const containerRef = useRef(null);
   const animationRef = useRef(null);
   const observerRef = useRef(null); // 新增：ResizeObserver引用
-  const finalValue = 26404;
+  const finalValueRef = useRef(value); // 使用传入的值
   const animationDuration = 2500; // 动画持续时间
   
+  // 当传入的value改变时更新finalValueRef
+  useEffect(() => {
+    finalValueRef.current = value;
+  }, [value]);
+
   // 更新尺寸的处理函数
   const updateSize = useCallback(() => {
     if (containerRef.current) {
@@ -161,13 +166,13 @@ const CutTimeChartBase = () => {
     };
   }, [updateSize]);
   
-  // 平滑数值动画 - 只在组件准备好后开始
+  // 平滑数值动画 - 只在组件准备好后开始或者当value变化时
   useEffect(() => {
     // 只有在组件准备好后才开始动画
     if (!isReady) return;
     
     let startTime = null;
-    let startValue = 0;
+    let startValue = displayValue; // 从当前显示值开始
     
     const animateValue = (timestamp) => {
       if (!startTime) startTime = timestamp;
@@ -180,7 +185,7 @@ const CutTimeChartBase = () => {
       const easeOutProgress = 1 - Math.pow(1 - progress, 3); // 缓出效果
       
       // 计算当前显示值
-      const currentValue = Math.round(startValue + (finalValue - startValue) * easeOutProgress);
+      const currentValue = Math.round(startValue + (finalValueRef.current - startValue) * easeOutProgress);
       setDisplayValue(currentValue);
       
       // 继续动画或结束
@@ -198,7 +203,7 @@ const CutTimeChartBase = () => {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [isReady]); // 依赖isReady，确保在组件准备好后才开始动画
+  }, [isReady, value]); // 添加value作为依赖
   
   // 创建数据
   const progressPercent = displayValue / MAX_VALUE;
@@ -213,8 +218,8 @@ const CutTimeChartBase = () => {
   const outerRingCurrentAngle = startAngle - progressPercent * totalAngle;
   
   // 为细线进度条创建数据 - 使用finalValue而不是当前值
-  const finalProgressPercent = finalValue / MAX_VALUE;
-  const thinRingValue = [{ name: '细线进度', value: finalValue }];
+  const finalProgressPercent = finalValueRef.current / MAX_VALUE;
+  const thinRingValue = [{ name: '细线进度', value: finalValueRef.current }];
   const maxValue = [{ name: '最大值', value: MAX_VALUE }];
 
   // 获取有效的容器尺寸
@@ -345,7 +350,7 @@ const CutTimeChartBase = () => {
           left: '50%',
           transform: 'translate(-50%, -50%)',
           textAlign: 'center',
-          fontSize: '55px',
+          fontSize: '80px', // 稍微减小字体以适应更多文本
           fontWeight: 'bolder',
           color: COLORS.WHITE,
           fontFamily: 'Arial',

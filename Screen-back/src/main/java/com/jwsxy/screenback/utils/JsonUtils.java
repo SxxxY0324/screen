@@ -29,7 +29,7 @@ public class JsonUtils {
         try {
             return objectMapper.readTree(json);
         } catch (JsonProcessingException e) {
-            logger.error("JSON解析错误: {}, JSON: {}...", e.getMessage(), 
+            logger.error("JSON解析错误: {}, JSON内容: {}...", e.getMessage(), 
                     json.substring(0, Math.min(100, json.length())));
             return null;
         }

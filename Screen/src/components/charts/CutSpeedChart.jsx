@@ -173,7 +173,7 @@ const renderNeedle = (value, min, max, cx, cy, radius, color) => {
   const angle = 180 - ratio * 180; // 从180度（左侧）到0度（右侧）
   
   // 调整指针长度和宽度
-  const length = radius * 0.85; 
+  const length = radius * 0.65; 
   const sin = Math.sin(-RADIAN * angle);
   const cos = Math.cos(-RADIAN * angle);
   
@@ -217,7 +217,7 @@ const renderNeedle = (value, min, max, cx, cy, radius, color) => {
   );
 };
 
-const CutSpeedChartBase = () => {
+const CutSpeedChartBase = ({ value = 0 }) => {
   const [displayValue, setDisplayValue] = useState(0);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const [isReady, setIsReady] = useState(false); // 新增：用于控制初始渲染
@@ -225,7 +225,9 @@ const CutSpeedChartBase = () => {
   const containerRef = useRef(null);
   const animationRef = useRef(null);
   const observerRef = useRef(null); // 新增：ResizeObserver引用
-  const finalValue = 8.14;
+  
+  // 使用从props传入的value值，而不是硬编码值
+  const finalValue = Number(value) || 0;
   const animationDuration = 2000; // 匹配动画持续时间
   
   // 更新尺寸的处理函数
@@ -310,7 +312,7 @@ const CutSpeedChartBase = () => {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [isReady]); // 依赖isReady，确保在组件准备好后才开始动画
+  }, [isReady, finalValue, animationDuration]); // 添加finalValue作为依赖，确保value变化时动画重启
   
   // 创建仪表盘背景数据
   const gaugeData = createGaugeData(0, 10, 10);

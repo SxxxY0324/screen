@@ -16,7 +16,7 @@ const DEBUG_LOG = false;
 export const ensureValidNumber = (value, defaultValue = 0, decimals = 2, isInitialized = true) => {
   // 完全禁用日志以避免重复输出
   // 如果需要调试，再改为true
-  const ENABLE_LOGS = true;
+  const ENABLE_LOGS = false;
   
   // 情况1: 数据未初始化且值为null，显示加载状态
   if (value === null && !isInitialized) {
@@ -25,6 +25,10 @@ export const ensureValidNumber = (value, defaultValue = 0, decimals = 2, isIniti
   
   // 情况2: 直接是数字类型
   if (typeof value === 'number' && !isNaN(value)) {
+    // 对于小数，保留指定的小数位数
+    if (ENABLE_LOGS) {
+      console.log(`处理数字: ${value} -> ${Number(value.toFixed(decimals))}`);
+    }
     return Number(value.toFixed(decimals));
   }
   
@@ -32,11 +36,17 @@ export const ensureValidNumber = (value, defaultValue = 0, decimals = 2, isIniti
   if (typeof value === 'string') {
     const num = parseFloat(value);
     if (!isNaN(num)) {
+      if (ENABLE_LOGS) {
+        console.log(`处理字符串: ${value} -> ${Number(num.toFixed(decimals))}`);
+      }
       return Number(num.toFixed(decimals));
     }
   }
   
   // 情况4: 所有其他情况
+  if (ENABLE_LOGS) {
+    console.log(`使用默认值: ${value} -> ${defaultValue}`);
+  }
   return defaultValue;
 };
 

@@ -1,6 +1,6 @@
 import React from 'react';
 
-// 颜色常量定义
+// 颜色常量
 const COLORS = {
   GREEN: '#4CAF50',
   YELLOW: '#FFEB3B',
@@ -14,9 +14,9 @@ const COLORS = {
   SHADOW: 'rgba(255, 152, 0, 0.5)'
 };
 
-// 状态图标组件 - 用SVG代替图片
+// 使用SVG绘制状态图标
 const StatusIcon = ({ status, color }) => {
-  // 基础SVG路径 - 共享部分
+  // 基础SVG路径
   const basePaths = [
     <path key="base-1" stroke="none" d="M0 0h24v24H0z" fill="none" />,
     <path key="base-2" d="M10 20.777a8.942 8.942 0 0 1 -2.48 -.969" />,
@@ -26,7 +26,7 @@ const StatusIcon = ({ status, color }) => {
     <path key="base-6" d="M6.907 4.579a8.954 8.954 0 0 1 3.093 -1.356" />
   ];
 
-  // 状态特定路径
+  // 不同状态的图标路径
   const statusPaths = {
     cutting: <path key="status" d="M12 9l-2 3h4l-2 3" />,
     standby: <path key="status" d="M9 12l2 2l4 -4" />,
@@ -40,7 +40,6 @@ const StatusIcon = ({ status, color }) => {
     ]
   };
 
-  // 默认使用待机状态
   const statusPath = statusPaths[status] || statusPaths.standby;
   const statusColor = color || {
     cutting: COLORS.GREEN,
@@ -49,12 +48,57 @@ const StatusIcon = ({ status, color }) => {
     planned: COLORS.GRAY
   }[status] || COLORS.YELLOW;
 
+  // SVG内联样式，添加过渡效果
+  const svgStyle = {
+    transition: 'stroke 0.3s ease, transform 0.3s ease',
+    transform: 'scale(1)',
+    // 添加微小的缩放动画，使状态变化更加明显
+    animation: 'statusPulse 0.3s ease'
+  };
+
+  // 为状态图标路径添加过渡效果的样式
+  const pathStyle = {
+    transition: 'all 0.3s ease'
+  };
+
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" 
-         fill="none" stroke={statusColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      {basePaths}
-      {statusPath}
-    </svg>
+    <>
+      {/* 添加一个全局的CSS @keyframes 动画 */}
+      <style>
+        {`
+          @keyframes statusPulse {
+            0% { transform: scale(0.95); opacity: 0.7; }
+            50% { transform: scale(1.05); opacity: 0.9; }
+            100% { transform: scale(1); opacity: 1; }
+          }
+        `}
+      </style>
+      <svg 
+        xmlns="http://www.w3.org/2000/svg" 
+        width="32" 
+        height="32" 
+        viewBox="0 0 24 24" 
+        fill="none" 
+        stroke={statusColor} 
+        strokeWidth="2" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+        style={svgStyle}
+      >
+        {/* 为所有路径添加过渡效果 */}
+        {basePaths.map((path, index) => 
+          React.cloneElement(path, { style: pathStyle, key: `base-path-${index}` })
+        )}
+        
+        {/* 为状态路径添加过渡效果 */}
+        {Array.isArray(statusPath) 
+          ? statusPath.map((path, index) => 
+              React.cloneElement(path, { style: pathStyle, key: `status-path-${index}` })
+            )
+          : React.cloneElement(statusPath, { style: pathStyle })
+        }
+      </svg>
+    </>
   );
 };
 

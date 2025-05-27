@@ -1,45 +1,76 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 
-const StatusTable = ({ tableData, headers, visibleRows = 4, cellHeight = 38, scrollSpeed = 0.5 }) => {
+const StatusTable = ({ 
+  tableData, 
+  headers, 
+  visibleRows = 4, 
+  cellHeight = 38, 
+  scrollSpeed = 0.5,
+  onLoadMore = null,
+  canLoadMore = false,
+  isLoadingMore = false
+}) => {
   const [scrollPosition, setScrollPosition] = useState(0);
   const animationRef = useRef(null);
   const containerRef = useRef(null);
   const isPaused = useRef(false);
   const lastTimeRef = useRef(0);
+  const loadMoreTriggered = useRef(false);
+  const totalScrolledDistance = useRef(0);
   
-  // 防止空数据引起问题
-  if (!tableData || tableData.length === 0) {
-    return <div>无数据</div>;
-  }
-  
-  // 创建完整的数据数组（原始数据 + 复制数据用于无缝衔接）
-  const fullData = [...tableData, ...tableData];
-  
-  // 启动滚动动画 - 优化帧率控制
-  const startScrolling = () => {
+  const startScrolling = useCallback(() => {
     const animate = (timestamp) => {
+      if (!animationRef.current) return;
+
       if (isPaused.current) {
         animationRef.current = requestAnimationFrame(animate);
         return;
       }
       
-      // 优化动画帧率控制
       if (!lastTimeRef.current) lastTimeRef.current = timestamp;
       const deltaTime = timestamp - lastTimeRef.current;
       
-      // 限制最大帧率，避免过度渲染，提高性能
-      if (deltaTime >= 16) { // 约60fps
+      // 约60fps帧率控制
+      if (deltaTime >= 16) {
         lastTimeRef.current = timestamp;
         
-        // 基于帧率调整滚动速度
-        const pixelsToScroll = (scrollSpeed * deltaTime) / 16.67; // 标准化到60fps
+        const pixelsToScroll = (scrollSpeed * deltaTime) / 16.67;
         
         setScrollPosition(prevPos => {
-          // 当滚动超过原始数据长度时，重置回开始位置
-          let newPosition = prevPos + pixelsToScroll;
-          if (newPosition >= tableData.length * cellHeight) {
-            newPosition = 0;
+          if (!tableData || tableData.length === 0) {
+            return 0;
           }
+          
+          let newPosition = prevPos + pixelsToScroll;
+          totalScrolledDistance.current += pixelsToScroll;
+          
+          const maxScrollPosition = tableData.length * cellHeight;
+          const loadMoreThreshold = maxScrollPosition * 0.5;
+          
+          // 触发加载更多数据
+          if (canLoadMore && !isLoadingMore && onLoadMore && !loadMoreTriggered.current && 
+              totalScrolledDistance.current > loadMoreThreshold) {
+            loadMoreTriggered.current = true;
+            
+            setTimeout(() => {
+              onLoadMore();
+            }, 0);
+            
+            setTimeout(() => {
+              loadMoreTriggered.current = false;
+            }, 5000);
+          }
+          
+          // 处理滚动到数据末尾的情况
+          if (newPosition >= maxScrollPosition) {
+            if (canLoadMore) {
+              newPosition = maxScrollPosition - 10;
+            } else {
+              newPosition = 0;
+              totalScrolledDistance.current = 0;
+            }
+          }
+          
           return newPosition;
         });
       }
@@ -48,42 +79,93 @@ const StatusTable = ({ tableData, headers, visibleRows = 4, cellHeight = 38, scr
     };
     
     animationRef.current = requestAnimationFrame(animate);
-  };
+  }, [tableData, cellHeight, scrollSpeed, onLoadMore, canLoadMore, isLoadingMore]);
   
-  // 停止滚动
-  const stopScrolling = () => {
+  const stopScrolling = useCallback(() => {
     if (animationRef.current) {
       cancelAnimationFrame(animationRef.current);
       animationRef.current = null;
       lastTimeRef.current = 0;
     }
-  };
+  }, []);
   
-  // 鼠标事件处理
-  const handleMouseEnter = () => {
+  const handleMouseEnter = useCallback(() => {
     isPaused.current = true;
-  };
+  }, []);
   
-  const handleMouseLeave = () => {
+  const handleMouseLeave = useCallback(() => {
     isPaused.current = false;
-  };
+  }, []);
+  
+  // 数据变化时重置加载触发器
+  useEffect(() => {
+    if (loadMoreTriggered.current) {
+      setTimeout(() => {
+        loadMoreTriggered.current = false;
+      }, 1000);
+    }
+  }, [tableData]);
   
   // 组件挂载和卸载时控制动画
   useEffect(() => {
-    startScrolling();
+    if (tableData && tableData.length > 0) {
+      startScrolling();
+    }
     return () => {
       stopScrolling();
     };
-  }, [tableData.length, scrollSpeed]);
+  }, [tableData, scrollSpeed, startScrolling, stopScrolling]);
   
-  // 计算当前应该显示哪些行 - 优化为memoized计算
+  // 数据不足时主动触发加载更多
+  useEffect(() => {
+    if (tableData && tableData.length < 10 && canLoadMore && !isLoadingMore && onLoadMore && !loadMoreTriggered.current) {
+      loadMoreTriggered.current = true;
+      
+      setTimeout(() => {
+        onLoadMore();
+      }, 0);
+      
+      setTimeout(() => {
+        loadMoreTriggered.current = false;
+      }, 5000);
+    }
+  }, [tableData, canLoadMore, isLoadingMore, onLoadMore]);
+  
+  // 空数据状态处理
+  if (!tableData || tableData.length === 0) {
+    return (
+      <div style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#ffffff',
+        fontSize: '24px',
+        fontWeight: 'bold'
+      }}>
+        数据加载中...
+      </div>
+    );
+  }
+  
+  // 智能填充数据数组
+  const fullDataLength = tableData.length * (tableData.length < 20 ? 2 : 1.2);
+  const fullData = [];
+  
+  for (let i = 0; i < fullDataLength; i++) {
+    fullData.push(tableData[i % tableData.length]);
+  }
+  
+  // 计算可见行
   const getVisibleRowsData = () => {
     const startIndex = Math.floor(scrollPosition / cellHeight);
     const rowsToRender = [];
     
-    // 计算可见行和缓冲行
-    for (let i = startIndex; i < startIndex + visibleRows + 2; i++) { // 减少缓冲行数量
-      rowsToRender.push(fullData[i % fullData.length]);
+    for (let i = startIndex; i < startIndex + visibleRows + 2; i++) {
+      if (i < fullData.length) {
+        rowsToRender.push(fullData[i]);
+      }
     }
     
     return rowsToRender;
@@ -93,10 +175,10 @@ const StatusTable = ({ tableData, headers, visibleRows = 4, cellHeight = 38, scr
   
   const contentStyle = {
     transform: `translateY(-${scrollPosition % cellHeight}px)`,
-    willChange: 'transform' // 优化性能
+    willChange: 'transform'
   };
   
-  // 提取样式为常量，减少内联样式
+  // 样式定义
   const styles = {
     container: {
       height: '100%', 
@@ -139,6 +221,17 @@ const StatusTable = ({ tableData, headers, visibleRows = 4, cellHeight = 38, scr
       color: '#ffffff', 
       fontSize: 16,
       padding: '0 10px'
+    },
+    loadingMoreIndicator: {
+      textAlign: 'center',
+      color: '#ff9800',
+      padding: '5px 0',
+      fontSize: 14
+    },
+    tableCommon: {
+      tableLayout: 'fixed', 
+      width: '100%', 
+      borderCollapse: 'collapse'
     }
   };
   
@@ -169,7 +262,6 @@ const StatusTable = ({ tableData, headers, visibleRows = 4, cellHeight = 38, scr
             </tr>
           </thead>
         </table>
-        {/* 橙色分界线 */}
         <div style={styles.divider}></div>
       </div>
       
@@ -205,6 +297,13 @@ const StatusTable = ({ tableData, headers, visibleRows = 4, cellHeight = 38, scr
           </table>
         </div>
       </div>
+      
+      {/* 加载更多指示器 */}
+      {isLoadingMore && (
+        <div style={styles.loadingMoreIndicator}>
+          正在加载更多数据...
+        </div>
+      )}
     </div>
   );
 };

@@ -20,14 +20,11 @@ public class ScreenBackApplication {
     private JdbcTemplate jdbcTemplate;
 
     public static void main(String[] args) {
-        // 设置系统属性允许TLS 1.0和1.1（不推荐长期使用，仅作为临时解决方案）
+        // 设置TLS协议和安全配置
         System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2,TLSv1.3");
-        
-        // 启用弱加密套件
         Security.setProperty("jdk.tls.disabledAlgorithms", "");
         
-        // 设置SQL Server JDBC驱动相关属性
-        // System.setProperty("javax.net.debug", "ssl");  // 启用SSL调试
+        // SQL Server JDBC驱动配置
         System.setProperty("com.microsoft.sqlserver.jdbc.disableTLS", "false");
         System.setProperty("com.microsoft.sqlserver.jdbc.enableTLS", "true");
         
@@ -42,7 +39,6 @@ public class ScreenBackApplication {
             logger.info("数据库连接成功! 数据库版本: {}", dbVersion);
         } catch (Exception e) {
             logger.error("数据库连接测试失败", e);
-            // 打印详细的异常信息有助于诊断问题
             e.printStackTrace();
         }
     }

@@ -21,6 +21,9 @@ public class MachineStatusDTO {
         private String deviceId;      // 设备ID/序列号
         private Integer onlineStatus; // 在线状态码 (0-3)
         private String statusName;    // 状态名称
+        private double speed;         // 运行速度
+        private double runningHours;  // 运行时长
+        private String workshop;      // 车间名称
         
         public MachineStatus() {}
         
@@ -28,6 +31,9 @@ public class MachineStatusDTO {
             this.deviceId = deviceId;
             this.onlineStatus = onlineStatus;
             this.statusName = getMachineStatusName(onlineStatus);
+            this.speed = 0.0;
+            this.runningHours = 0.0;
+            this.workshop = "未知车间";
         }
         
         /**
@@ -67,6 +73,30 @@ public class MachineStatusDTO {
             return statusName;
         }
         
+        public double getSpeed() {
+            return speed;
+        }
+        
+        public void setSpeed(double speed) {
+            this.speed = speed;
+        }
+        
+        public double getRunningHours() {
+            return runningHours;
+        }
+        
+        public void setRunningHours(double runningHours) {
+            this.runningHours = runningHours;
+        }
+        
+        public String getWorkshop() {
+            return workshop;
+        }
+        
+        public void setWorkshop(String workshop) {
+            this.workshop = workshop;
+        }
+        
         /**
          * 转换为Map
          */
@@ -75,6 +105,9 @@ public class MachineStatusDTO {
             map.put("deviceId", deviceId);
             map.put("onlineStatus", onlineStatus);
             map.put("statusName", statusName);
+            map.put("speed", speed);
+            map.put("runningHours", Double.parseDouble(String.format("%.1f", runningHours)));
+            map.put("workshop", workshop);
             return map;
         }
     }

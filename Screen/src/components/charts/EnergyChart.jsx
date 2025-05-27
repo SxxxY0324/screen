@@ -33,8 +33,9 @@ const EnergyChart = () => {
   const animationRef = useRef(null);
   const isPaused = useRef(false);
   const lastTimeRef = useRef(0);
-  // 添加一个标记，跟踪是否处于位置重置状态
-  const isResetting = useRef(false);
+  // 添加容器引用，用于获取可视区域高度
+  const containerRef = useRef(null);
+  const scrollAreaRef = useRef(null);
   
   // 安全检查设备数据
   const isDataValid = useMemo(() => {
@@ -81,14 +82,22 @@ const EnergyChart = () => {
           setScrollPosition(prevPos => {
             // 计算新位置
             const newPos = prevPos + pixelsToScroll;
+            
+            // 计算单组数据高度
             const dataHeight = deviceEnergyData.length * ROW_HEIGHT;
             
-            // 当滚动位置接近第二组数据的开始位置时，重置回第一组的相同位置
-            // 这样视觉上看不出任何变化，但可以防止位置值无限增大
-            if (newPos >= dataHeight) {
-              // 精确计算新的位置，确保没有视觉上的跳变
-              const exactOffset = newPos % dataHeight;
-              return exactOffset;
+            // 获取容器高度，如果无法获取则使用默认值
+            const containerHeight = scrollAreaRef.current?.clientHeight || VISIBLE_ROWS * ROW_HEIGHT;
+            
+            // 精确计算重置点：只有在第一组数据完全滚出视窗时才重置
+            // 确保最后一行数据也完全消失才重置，防止提前重置导致的闪现
+            // 计算的精确位置是：数据高度 + 额外缓冲距离
+            const resetPoint = dataHeight + ROW_HEIGHT*2; // 添加双行高度作为缓冲，确保完全滚出
+            
+            if (newPos >= resetPoint) {
+              // 重置到初始位置0，而不是使用取余操作
+              // 由于此时视窗中显示的全是第二组数据，重置对用户不可见
+              return 0;
             }
             
             return newPos;
@@ -165,6 +174,7 @@ const EnergyChart = () => {
   
   return (
     <div 
+      ref={containerRef}
       className="energy-scroll-container"
       style={{
         width: '100%',
@@ -181,11 +191,14 @@ const EnergyChart = () => {
       onMouseLeave={handleMouseLeave}
     >
       {/* 滚动内容区域 */}
-      <div style={{
-        height: 'calc(100% - 60px)', // 减少滚动区域高度，避免超出背景
-        overflow: 'hidden',
-        position: 'relative',
-      }}>
+      <div 
+        ref={scrollAreaRef}
+        style={{
+          height: 'calc(100% - 60px)', // 减少滚动区域高度，避免超出背景
+          overflow: 'hidden',
+          position: 'relative',
+        }}
+      >
         {/* 内容容器 */}
         <div style={contentStyle}>
           {/* 使用三组数据确保无限滚动效果 */}

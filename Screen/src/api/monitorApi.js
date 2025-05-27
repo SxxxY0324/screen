@@ -22,46 +22,13 @@ export const getPerimeterData = async () => {
 };
 
 /**
- * 获取设备运行状态数据
- * @returns {Promise} 包含设备运行状态数据的Promise
- */
-export const getDeviceStatus = async () => {
-  try {
-    // 获取设备状态数据
-    const response = await api.get('/monitor/machine-status');
-    
-    // 标准化响应处理
-    let machines = [];
-    
-    // 处理不同的响应格式
-    if (response && response.machines && Array.isArray(response.machines)) {
-      machines = response.machines;
-    } else if (response && response.data && response.data.machines && Array.isArray(response.data.machines)) {
-      machines = response.data.machines;
-    } else if (Array.isArray(response)) {
-      machines = response;
-    } else if (response && Array.isArray(response.data)) {
-      machines = response.data;
-    }
-    
-    // 转换为前端需要的格式
-    const deviceStatusData = machines.map(device => ({
-      id: device.deviceId || device.machineSN || device.id || '未知设备',
-      status: mapDeviceStatus(
-        device.onlineStatus !== undefined ? device.onlineStatus : device.status, 
-        device.statusName
-      )
-    }));
-    
-    return deviceStatusData;
-  } catch (error) {
-    throw error;
-  }
-};
-
-/**
  * 将后端API的设备状态映射到前端使用的状态
- * @param {string|number} status - 后端API返回的设备状态码或状态名称
+ * 0 = cutting（裁剪中）
+ * 1 = standby（待机中）
+ * 2 = unplanned（非计划停机）
+ * 3 = planned（计划停机）
+ * 
+ * @param {string|number} status - 后端API返回的设备状态码
  * @param {string} statusName - 状态名称(可选)，用于辅助状态判断
  * @returns {string} 映射后的设备状态
  */
@@ -102,41 +69,27 @@ export const getEnergyConsumption = async () => {
     let devices = [];
     let totalEnergy = 0;
     
-    // 处理不同的响应结构
+    // 简化响应处理逻辑
     if (response) {
-      // 直接检查response是否为数组
       if (Array.isArray(response)) {
         devices = response;
-        totalEnergy = devices.reduce((sum, device) => sum + (device.energy || 0), 0);
-      }
-      // 检查response是否为对象且包含devices属性
-      else if (typeof response === 'object') {
+      } else if (typeof response === 'object') {
         if (Array.isArray(response.devices)) {
           devices = response.devices;
-          totalEnergy = response.totalEnergy || devices.reduce((sum, device) => sum + (device.energy || 0), 0);
-        } 
-        // 检查是否存在data属性
-        else if (response.data) {
+          totalEnergy = response.totalEnergy || 0;
+        } else if (response.data) {
           if (Array.isArray(response.data.devices)) {
             devices = response.data.devices;
             totalEnergy = response.data.totalEnergy || 0;
           } else if (Array.isArray(response.data)) {
             devices = response.data;
-            totalEnergy = devices.reduce((sum, device) => sum + (device.energy || 0), 0);
-          } else if (typeof response.data === 'object') {
-            // 遍历所有属性，查找可能的设备数组
-            Object.keys(response.data).forEach(key => {
-              if (Array.isArray(response.data[key])) {
-                if (response.data[key].length > 0 && 
-                   (response.data[key][0].deviceId !== undefined || 
-                    response.data[key][0].energy !== undefined)) {
-                  devices = response.data[key];
-                }
-              }
-            });
-            totalEnergy = response.data.totalEnergy || 0;
           }
         }
+      }
+      
+      // 只有在没有获取到总能耗时，才通过设备能耗计算
+      if (totalEnergy === 0 && devices.length > 0) {
+        totalEnergy = devices.reduce((sum, device) => sum + (device.energy || 0), 0);
       }
     }
     
@@ -165,27 +118,22 @@ export const getMonitorData = async () => {
       perimeterValue: 0,
       energyValue: 0,
       deviceEnergyData: [],
-      deviceStatusData: [],
+      deviceStatusData: [], // 裁床状态数据将由fetchDeviceStatusData单独获取
       cutTimeValue: 0,
       cutSpeedValue: 0,
       cutSetsValue: '0',
-      tableData: []
+      tableData: [],
+      totalItems: 0,
+      totalPages: 0,
+      currentPage: 0,
+      hasMoreData: false
     };
     
     // 创建所有API请求的Promise
     const apiRequests = [];
     
-    // 获取设备运行状态数据
-    apiRequests.push(
-      getDeviceStatus()
-        .then(deviceStatusData => {
-          result.deviceStatusData = deviceStatusData || [];
-        })
-        .catch(error => {
-          console.error('获取设备运行状态数据失败:', error);
-          result.deviceStatusData = [];
-        })
-    );
+    // 注意：不再获取设备运行状态数据，这由fetchDeviceStatusData单独处理
+    // 避免两次请求同一数据导致状态显示不一致
     
     // 获取能耗数据
     apiRequests.push(
@@ -243,6 +191,22 @@ export const getMonitorData = async () => {
         .catch(error => console.error('获取周长数据失败:', error))
     );
     
+    // 获取裁床运行数据表格 - 使用支持分页的API
+    apiRequests.push(
+      getMachineRunningDataWithPagination(1, 20)
+        .then(tableDataResponse => {
+          if (tableDataResponse && Array.isArray(tableDataResponse.tableData)) {
+            result.tableData = tableDataResponse.tableData;
+            // 添加分页信息到结果
+            result.totalItems = tableDataResponse.totalItems || 0;
+            result.totalPages = tableDataResponse.totalPages || 1;
+            result.currentPage = tableDataResponse.currentPage || 1;
+            result.hasMoreData = tableDataResponse.hasMoreData || (tableDataResponse.currentPage < tableDataResponse.totalPages);
+          }
+        })
+        .catch(error => console.error('获取裁床运行数据表格失败:', error))
+    );
+    
     // 获取其他数据的API请求
     apiRequests.push(
       api.get('/monitor/cut-time')
@@ -286,18 +250,6 @@ export const getMonitorData = async () => {
         .catch(error => console.error('获取裁剪套数数据失败:', error))
     );
     
-    apiRequests.push(
-      api.get('/monitor/table-data')
-        .then(tableDataResponse => {
-          if (tableDataResponse && Array.isArray(tableDataResponse)) {
-            result.tableData = tableDataResponse;
-          } else if (tableDataResponse && tableDataResponse.data && Array.isArray(tableDataResponse.data)) {
-            result.tableData = tableDataResponse.data;
-          }
-        })
-        .catch(error => console.error('获取表格数据失败:', error))
-    );
-    
     // 等待所有API请求完成
     await Promise.allSettled(apiRequests);
     
@@ -316,5 +268,100 @@ export const getMonitorData = async () => {
   } catch (error) {
     console.error('获取监控数据失败:', error);
     throw error;
+  }
+};
+
+/**
+ * 获取裁床运行数据表格（支持分页）
+ * @param {number} page 页码，默认为1
+ * @param {number} size 每页记录数，默认为20
+ * @returns {Promise} 包含裁床运行数据表格的Promise
+ */
+export const getMachineRunningDataWithPagination = async (page = 1, size = 20) => {
+  try {
+    const response = await api.get(`/monitor/machine-running-data/page?page=${page}&size=${size}`);
+    
+    // 提取分页信息 - 处理后端返回的嵌套格式
+    let paginationInfo = {};
+    if (response.pagination) {
+      // 如果分页信息在嵌套的pagination对象中，则提取出来
+      paginationInfo = {
+        totalItems: response.pagination.totalItems || 0,
+        totalPages: response.pagination.totalPages || 1,
+        currentPage: response.pagination.currentPage || page,
+        pageSize: response.pagination.pageSize || size
+      };
+    } else {
+      // 尝试从顶层获取分页信息
+      paginationInfo = {
+        totalItems: response.totalItems || 0,
+        totalPages: response.totalPages || 1,
+        currentPage: response.currentPage || page,
+        pageSize: response.pageSize || size
+      };
+    }
+    
+    // 返回数据，确保tableData字段存在，将分页信息添加到顶层
+    return {
+      tableData: response && response.tableData ? response.tableData : [],
+      totalItems: paginationInfo.totalItems,
+      totalPages: paginationInfo.totalPages,
+      currentPage: paginationInfo.currentPage,
+      pageSize: paginationInfo.pageSize,
+      hasMoreData: (paginationInfo.currentPage < paginationInfo.totalPages),
+      error: response && response.error ? response.error : null
+    };
+  } catch (error) {
+    console.error('获取裁床运行数据表格分页数据失败:', error);
+    return { 
+      tableData: [], 
+      totalItems: 0,
+      totalPages: 0,
+      currentPage: page,
+      error: '获取数据失败' 
+    };
+  }
+};
+
+/**
+ * 获取裁床状态数据的专用API
+ * 唯一获取裁床状态数据的函数，用于避免状态码映射不一致问题
+ * 使用统一的mapDeviceStatus函数映射状态码
+ * 
+ * @returns {Promise} 包含裁床状态数据的Promise
+ */
+export const getDeviceStatusData = async () => {
+  try {
+    // 性能记录开始
+    const startTime = performance.now();
+    
+    const response = await api.get('/monitor/machine-status');
+    const result = [];
+    
+    // 处理响应数据
+    if (response && response.machines && Array.isArray(response.machines)) {
+      // 将后端数据转换为前端需要的格式
+      result.push(...response.machines.map(machine => {
+        // 获取状态码和映射后的状态
+        const statusCode = machine.onlineStatus;
+        const mappedStatus = mapDeviceStatus(statusCode, null);
+        
+        return {
+          id: machine.deviceId,
+          status: mappedStatus,
+          runningHours: machine.runningHours,
+          speed: machine.speed,
+          workshop: machine.workshop
+        };
+      }));
+    }
+    
+    // 性能记录结束
+    const endTime = performance.now();
+    
+    return result;
+  } catch (error) {
+    console.error('获取裁床状态数据失败:', error);
+    return [];
   }
 };

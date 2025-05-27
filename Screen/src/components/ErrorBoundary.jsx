@@ -11,12 +11,11 @@ class ErrorBoundary extends Component {
   }
 
   static getDerivedStateFromError(error) {
-    // 更新状态，使下一次渲染显示错误UI
+    // 发生错误时更新状态
     return { hasError: true };
   }
 
   componentDidCatch(error, errorInfo) {
-    // 记录错误信息
     this.setState({
       error: error,
       errorInfo: errorInfo
