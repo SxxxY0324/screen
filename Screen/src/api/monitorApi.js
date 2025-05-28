@@ -365,3 +365,171 @@ export const getDeviceStatusData = async () => {
     return [];
   }
 };
+
+// 更优雅的错误处理函数
+const handleApiError = (error, defaultValue, errorMsg = '请求失败') => {
+  // 如果处于开发环境，记录更详细的错误信息
+  if (process.env.NODE_ENV === 'development') {
+    console.error(errorMsg, error);
+  }
+  return defaultValue;
+};
+
+/**
+ * 获取当前能耗数据
+ * @returns {Promise<Object>} 能耗数据
+ */
+export const getPowerData = async () => {
+  try {
+    const response = await api.get('/monitor/power');
+    return response.data || [];
+  } catch (error) {
+    return handleApiError(error, [], '获取能耗数据失败');
+  }
+};
+
+/**
+ * 获取移动率数据
+ * @returns {Promise<Object>} 移动率数据
+ */
+export const getMobilityData = async () => {
+  try {
+    const response = await api.get('/monitor/mobility');
+    return response.data || {};
+  } catch (error) {
+    return handleApiError(error, { value: 0, color: '#00FF00' }, '获取移动率数据失败');
+  }
+};
+
+/**
+ * 获取裁床运行数据表格
+ * @returns {Promise<Object>} 表格数据
+ */
+export const getCuttingTableData = async () => {
+  try {
+    const response = await api.get('/monitor/cutting-table');
+    return response.data || { headers: [], rows: [] };
+  } catch (error) {
+    return handleApiError(error, { headers: [], rows: [] }, '获取裁床运行数据表格失败');
+  }
+};
+
+/**
+ * 获取裁剪时间数据
+ * @returns {Promise<Object>} 裁剪时间数据
+ */
+export const getCuttingTimeData = async () => {
+  try {
+    const response = await api.get('/monitor/cutting-time');
+    return response.data || { value: 0 };
+  } catch (error) {
+    return handleApiError(error, { value: 0 }, '获取切割时间数据失败');
+  }
+};
+
+/**
+ * 获取裁剪速度数据
+ * @returns {Promise<Object>} 裁剪速度数据
+ */
+export const getCuttingSpeedData = async () => {
+  try {
+    const response = await api.get('/monitor/cutting-speed');
+    return response.data || { value: 0 };
+  } catch (error) {
+    return handleApiError(error, { value: 0 }, '获取切割速度数据失败');
+  }
+};
+
+/**
+ * 获取裁剪套数数据
+ * @returns {Promise<Object>} 裁剪套数数据
+ */
+export const getCuttingPiecesData = async () => {
+  try {
+    const response = await api.get('/monitor/cutting-pieces');
+    return response.data || { value: 0 };
+  } catch (error) {
+    return handleApiError(error, { value: 0 }, '获取裁剪套数数据失败');
+  }
+};
+
+/**
+ * 获取所有监控数据
+ * @returns {Promise<Object>} 所有监控数据
+ */
+export const getAllMonitorData = async () => {
+  try {
+    // 并行请求数据，提高性能
+    const [power, mobility, perimeter, cuttingTable, cuttingTime, cuttingSpeed, cuttingPieces] = await Promise.all([
+      getPowerData(),
+      getMobilityData(),
+      getPerimeterData(),
+      getCuttingTableData(),
+      getCuttingTimeData(),
+      getCuttingSpeedData(),
+      getCuttingPiecesData()
+    ]);
+    
+    return {
+      powerData: power,
+      mobilityData: mobility,
+      perimeterData: perimeter,
+      cuttingTableData: cuttingTable,
+      cuttingTimeData: cuttingTime,
+      cuttingSpeedData: cuttingSpeed,
+      cuttingPiecesData: cuttingPieces
+    };
+  } catch (error) {
+    return handleApiError(error, {
+      powerData: [],
+      mobilityData: { value: 0, color: '#00FF00' },
+      perimeterData: { value: 0, color: '#00FF00' },
+      cuttingTableData: { headers: [], rows: [] },
+      cuttingTimeData: { value: 0 },
+      cuttingSpeedData: { value: 0 },
+      cuttingPiecesData: { value: 0 }
+    }, '获取监控数据失败');
+  }
+};
+
+/**
+ * 获取裁床运行数据表格（分页）
+ * @param {number} page 页码
+ * @param {number} pageSize 每页记录数
+ * @returns {Promise<Object>} 分页表格数据
+ */
+export const getCuttingTableDataPaginated = async (page = 1, pageSize = 10) => {
+  try {
+    const response = await api.get('/monitor/cutting-table-paginated', {
+      params: { page, pageSize }
+    });
+    return response.data || { 
+      headers: [],
+      rows: [], 
+      totalPages: 0,
+      currentPage: page,
+      totalRecords: 0
+    };
+  } catch (error) {
+    return handleApiError(error, { 
+      headers: [],
+      rows: [], 
+      totalPages: 0,
+      currentPage: page,
+      totalRecords: 0
+    }, '获取裁床运行数据表格分页数据失败');
+  }
+};
+
+/**
+ * 获取裁床状态数据
+ * @returns {Promise<Array>} 裁床状态数据
+ */
+export const getMachineStatusData = async () => {
+  try {
+    const response = await api.get('/monitor/machine-status');
+    return response.data || [];
+  } catch (error) {
+    return handleApiError(error, [], '获取裁床状态数据失败');
+  }
+};

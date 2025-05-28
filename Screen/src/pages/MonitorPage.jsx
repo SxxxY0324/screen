@@ -5,23 +5,23 @@ import { StatusIcon, StatusTable, ErrorBoundary, COLORS } from '../components';
 import ChartWrapper from '../components/charts/ChartWrapper';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { 
-  selectMonitorData, 
-  selectTableData, 
-  selectTableHeaders, 
-  selectDeviceStatusData, 
+  fetchMonitorData,
+  loadMoreTableData,
+  fetchDeviceStatusData,
+  selectMonitorData,
+  selectTableData,
+  selectTableHeaders,
+  selectDeviceStatusData,
   selectStatusLegendItems,
   selectCutSetsValue,
-  fetchMonitorData,
-  selectMonitorLoading,
   selectMonitorError,
   selectPagination,
   selectLoadingMore,
-  loadMoreTableData,
-  fetchDeviceStatusData,
   selectDeviceStatusLoading
 } from '../store/slices/monitorSlice';
 import { selectDataRefreshInterval } from '../store/slices/appSlice';
 import DeviceStatusTransition from '../components/common/DeviceStatusTransition';
+import CachedImage from '../components/common/CachedImage';
 
 // 导入背景图片
 import cutTimeImg from '../assets/images/裁剪时间.jpg';
@@ -195,7 +195,6 @@ function MonitorPage() {
   const deviceStatusData = useAppSelector(selectDeviceStatusData);
   const statusLegendItems = useAppSelector(selectStatusLegendItems);
   const cutSetsValue = useAppSelector(selectCutSetsValue);
-  const isLoading = useAppSelector(selectMonitorLoading);
   const errorMessage = useAppSelector(selectMonitorError);
   const pagination = useAppSelector(selectPagination);
   const isLoadingMore = useAppSelector(selectLoadingMore);
@@ -309,9 +308,14 @@ function MonitorPage() {
           </div>
         </div>
 
-        {/* 裁剪速度 */}
+        {/* 裁剪速度 - 使用CachedImage替代普通img */}
         <div className="card-cutspeed">
-          <img src={cutSpeedImg} className="card-image" alt="裁剪速度" />
+          <CachedImage 
+            src={cutSpeedImg} 
+            className="card-image" 
+            alt="裁剪速度" 
+            loading="eager" 
+          />
           <div className="chart-overlay">
             <ErrorBoundary fallback={<ChartErrorFallback title="裁剪速度" />}>
               <ChartWrapper 
@@ -323,9 +327,14 @@ function MonitorPage() {
           </div>
         </div>
 
-        {/* 总周长 */}
+        {/* 总周长 - 使用CachedImage替代普通img */}
         <div className="card-perimeter">
-          <img src={totalPerimeterImg} className="card-image" alt="总周长" />
+          <CachedImage 
+            src={totalPerimeterImg} 
+            className="card-image" 
+            alt="总周长" 
+            loading="eager" 
+          />
           <div className="chart-overlay">
             <ErrorBoundary fallback={<ChartErrorFallback title="总周长" />}>
               <ChartWrapper 
@@ -337,15 +346,21 @@ function MonitorPage() {
           </div>
         </div>
 
-        {/* 裁剪套数 */}
+        {/* 裁剪套数 - 使用CachedImage替代普通img */}
         <div className="card-cutsets">
-          <img src={cutSetsImg} className="card-image" alt="裁剪套数" />
+          <CachedImage 
+            src={cutSetsImg} 
+            className="card-image" 
+            alt="裁剪套数" 
+            loading="eager" 
+          />
           <div className="chart-overlay" style={STYLES.cutSetsOverlay}>
             <div style={STYLES.cutSetsIcon}>
-              <img 
+              <CachedImage 
                 src={cutSetsIconImg} 
                 alt="裁剪套数图标" 
                 style={STYLES.cutSetsIconImg} 
+                loading="eager" 
               />
             </div>
             

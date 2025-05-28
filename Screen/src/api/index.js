@@ -9,9 +9,6 @@ const api = axios.create({
   }
 });
 
-// 控制是否输出详细请求错误日志
-const DEBUG_API_ERRORS = false;
-
 // 请求拦截器
 api.interceptors.request.use(
   config => {
@@ -37,10 +34,8 @@ api.interceptors.response.use(
     return data; // 直接返回数据部分
   },
   error => {
-    // 只输出简化的错误信息，减少重复日志
-    if (DEBUG_API_ERRORS || error.response?.status !== 404) {
-      // 404错误太多，只在DEBUG模式下显示
-      // 对于其他类型的错误，仍然输出有用的信息
+    // 简化错误处理，404错误不输出日志
+    if (error.response?.status !== 404) {
       const endpoint = error.config?.url || '未知接口';
       const method = error.config?.method?.toUpperCase() || 'UNKNOWN';
       const status = error.response?.status || '无状态码';
@@ -52,5 +47,6 @@ api.interceptors.response.use(
 
 // 导出API服务
 export * from './monitorApi';
+export * from './maintenanceApi';
 
 export default api; 

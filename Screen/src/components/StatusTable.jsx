@@ -149,23 +149,14 @@ const StatusTable = ({
     );
   }
   
-  // 智能填充数据数组
-  const fullDataLength = tableData.length * (tableData.length < 20 ? 2 : 1.2);
-  const fullData = [];
-  
-  for (let i = 0; i < fullDataLength; i++) {
-    fullData.push(tableData[i % tableData.length]);
-  }
-  
   // 计算可见行
   const getVisibleRowsData = () => {
-    const startIndex = Math.floor(scrollPosition / cellHeight);
+    const startIndex = Math.floor(scrollPosition / cellHeight) % tableData.length;
     const rowsToRender = [];
     
-    for (let i = startIndex; i < startIndex + visibleRows + 2; i++) {
-      if (i < fullData.length) {
-        rowsToRender.push(fullData[i]);
-      }
+    for (let i = 0; i < visibleRows + 2; i++) {
+      const dataIndex = (startIndex + i) % tableData.length;
+      rowsToRender.push(tableData[dataIndex]);
     }
     
     return rowsToRender;
