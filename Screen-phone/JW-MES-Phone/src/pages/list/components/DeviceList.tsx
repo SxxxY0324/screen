@@ -98,17 +98,9 @@ export default function DeviceList({ initialDevices, onDeviceStatusChange }: Dev
     // 去除名称中的括号及括号内容
     const cleanName = device.name.replace(/\([^)]*\)/g, '').trim();
     
-    // 获取当前日期作为默认值
-    const today = new Date();
-    const weekAgo = new Date();
-    weekAgo.setDate(today.getDate() - 7);
-    
-    const startDate = weekAgo.toISOString().split('T')[0]; // 格式: YYYY-MM-DD
-    const endDate = today.toISOString().split('T')[0]; // 格式: YYYY-MM-DD
-    
-    // 跳转到设备详情页面
+    // 跳转到时间选择页面
     Taro.navigateTo({
-      url: `/pages/device-details/index?deviceId=${device.id}&deviceName=${cleanName}&deviceCode=${device.code}&startDate=${startDate}&endDate=${endDate}`
+      url: `/pages/time-selector/index?deviceId=${device.id}&deviceName=${cleanName}&deviceCode=${device.code}`
     });
   };
 
