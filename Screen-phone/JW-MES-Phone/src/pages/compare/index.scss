@@ -1,0 +1,93 @@
+.compare-page {
+  padding: 24px;
+  background-color: #f5f7fa;
+  min-height: 100vh;
+  box-sizing: border-box;
+  
+  // 设备卡片样式
+  .device-card {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 24px;
+    margin-bottom: 24px;
+    
+    .card-title {
+      font-size: 26px;
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 24px;
+    }
+    
+    .device-selector {
+      border-bottom: 1px solid #eee;
+      padding-bottom: 24px;
+      margin-bottom: 24px;
+      
+      .picker-value {
+        padding: 14px 0;
+        color: #333;
+        font-size: 22px;
+      }
+    }
+    
+    .date-row, .time-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      
+      .date-label, .time-label {
+        font-size: 22px;
+        color: #333;
+        
+        &.right {
+          text-align: right;
+        }
+      }
+      
+      .date-picker {
+        background-color: #f8f8f8;
+        padding: 12px 16px;
+        border-radius: 6px;
+        flex: 1;
+        text-align: center;
+        color: #333;
+        font-size: 22px;
+      }
+      
+      .date-separator, .time-separator {
+        margin: 0 12px;
+        color: #666;
+        font-size: 22px;
+      }
+      
+      .time-value {
+        background-color: #f8f8f8;
+        padding: 12px 16px;
+        border-radius: 6px;
+        flex: 1;
+        text-align: center;
+        color: #333;
+        font-size: 22px;
+      }
+    }
+  }
+  
+  // 对比按钮
+  .compare-btn {
+    background: linear-gradient(135deg, #4086ff, #4468ff);
+    color: white;
+    padding: 20px 0;
+    border-radius: 50px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 500;
+    margin-top: 36px;
+    box-shadow: 0 4px 12px rgba(64, 134, 255, 0.4);
+    
+    &:active {
+      opacity: 0.9;
+    }
+  }
+}

@@ -1,0 +1,97 @@
+.region-stats {
+  padding: 10px 15px;
+  background-color: #f5f7fa;
+  
+  // 总览数据
+  .total-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 10px;
+    background-color: #fff;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    
+    .stat-item {
+      .stat-label {
+        font-size: 14px;
+        color: #666;
+      }
+      
+      .stat-value {
+        font-size: 22px;
+        font-weight: bold;
+        color: #333;
+        margin-left: 5px;
+      }
+      
+      .running {
+        color: #1890FF;
+      }
+    }
+  }
+  
+  // 区域卡片列表
+  .region-list {
+    .region-card {
+      background-color: #fff;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      
+      .region-header {
+        padding: 12px 15px;
+        border-bottom: 1px solid #f0f0f0;
+        
+        .region-name {
+          font-size: 16px;
+          font-weight: bold;
+          color: #333;
+        }
+      }
+      
+      .region-body {
+        padding: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        
+        .region-stats-left {
+          flex: 1;
+          
+          .stat-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            
+            &:last-child {
+              margin-bottom: 0;
+            }
+            
+            .stat-label {
+              font-size: 14px;
+              color: #666;
+            }
+            
+            .stat-value {
+              font-size: 16px;
+              color: #333;
+              font-weight: bold;
+            }
+            
+            .running {
+              color: #1890FF;
+            }
+          }
+        }
+        
+        .region-action {
+          margin-left: 10px;
+          min-width: 90px;
+        }
+      }
+    }
+  }
+} 

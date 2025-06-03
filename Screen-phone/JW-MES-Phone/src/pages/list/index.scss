@@ -1,0 +1,515 @@
+.list-page {
+  background-color: #f5f7fa;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 50px; // 为底部TabBar预留空间
+  
+  // 小型加载文字样式
+  .small-loading-text {
+    font-size: 12px !important;
+    color: #999 !important;
+    font-weight: normal !important;
+    line-height: 1.2;
+    text-align: center;
+    display: inline-block;
+    width: 100%;
+  }
+  
+  // 固定的内容区域（包括轮播图和总数统计）
+  .fixed-content {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    
+    // Banner下方的固定统计信息区域
+    .fixed-stats {
+      display: flex;
+      justify-content: space-between;
+      padding: 18px 25px;
+      background-color: #ffffff;
+      margin: 0 15px;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+      margin-top: 0px;
+      position: relative;
+      z-index: 15;
+      
+      .stat-item {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        white-space: nowrap;
+        
+        .stat-label {
+          font-size: 20px;
+          color: #666;
+          margin-right: 5px;
+        }
+        
+        .stat-value {
+          font-size: 32px;
+          font-weight: bold;
+          color: #333;
+        }
+        
+        .running {
+          color: #1890FF;
+        }
+      }
+    }
+    
+    // 详情页标题栏
+    .detail-header {
+      display: flex;
+      align-items: center;
+      padding: 15px 20px;
+      background-color: #ffffff;
+      position: relative;
+      z-index: 15;
+      
+      .back-button {
+        display: flex;
+        align-items: center;
+        font-size: 18px;
+        color: #1890FF;
+        cursor: pointer;
+        margin-right: 15px;
+        
+        .back-icon {
+          margin-right: 5px;
+          font-size: 20px;
+        }
+      }
+      
+      .breadcrumb {
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+        
+        .breadcrumb-item {
+          color: #999;
+          
+          &.active {
+            color: #333;
+            font-weight: 500;
+          }
+          
+          &:not(.active) {
+            cursor: pointer;
+            
+            &:hover, &:active {
+              color: #1890FF;
+              text-decoration: underline;
+            }
+          }
+        }
+        
+        .breadcrumb-separator {
+          margin: 0 8px;
+          color: #ccc;
+        }
+      }
+    }
+  }
+  
+  // 列表模式 - 可滚动的区域列表部分
+  .scrollable-regions {
+    flex: 1;
+    margin-top: 590px;
+    height: calc(100vh - 590px - 50px); // 减去底部TabBar高度
+    box-sizing: border-box;
+    padding: 0 15px;
+    padding-top: 15px;
+    
+    // 区域卡片列表容器
+    .region-list-container {
+      padding: 8px 0;
+      
+      // 区域卡片 - 根据图片调整样式
+      .region-card {
+        background-color: #fff;
+        border-radius: 8px;
+        margin-bottom: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        padding: 15px;
+        
+        .region-header {
+          font-size: 26px;
+          font-weight: 600;
+          color: #333;
+          margin-bottom: 12px;
+        }
+        
+        .region-body {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
+          
+          .region-stats-left {
+            flex: 1;
+            
+            .stat-row {
+              display: flex;
+              align-items: center;
+              margin-bottom: 10px;
+              
+              &:last-child {
+                margin-bottom: 0;
+              }
+              
+              .stat-label {
+                font-size: 20px;
+                color: #333;
+                margin-right: 5px;
+              }
+              
+              .stat-value {
+                font-size: 20px;
+                color: #333;
+                font-weight: bold;
+                
+                &.running {
+                  color: #1890FF;
+                }
+              }
+            }
+          }
+          
+          .region-action {
+            width: 180px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+            .view-detail-btn {
+              display: inline-block;
+              padding: 14px 22px;
+              background-color: #1890FF;
+              color: #fff;
+              font-size: 25px;
+              border-radius: 8px;
+              text-align: center;
+              font-weight: 500;
+              white-space: nowrap;
+              box-shadow: 0 3px 6px rgba(24, 144, 255, 0.2);
+            }
+          }
+        }
+      }
+      
+      // 加载状态提示
+      .loading-tip {
+        display: flex;
+        justify-content: center;
+        padding: 15px 0;
+        width: 100%;
+        box-sizing: border-box;
+        
+        text {
+          font-size: 12px;
+          color: #999;
+        }
+      }
+      
+      // 已全部加载提示样式
+      .loading-complete {
+        display: flex;
+        justify-content: center;
+        padding: 15px 0;
+        width: 100%;
+        box-sizing: border-box;
+        text-align: center;
+        margin: 0;
+        
+        text {
+          font-size: 12px;
+          color: #999;
+        }
+      }
+    }
+  }
+  
+  // 详情模式 - 可滚动的客户详情部分
+  .scrollable-customers {
+    flex: 1;
+    margin-top: 550px; // 轮播图高度(500px) + 标题高度(50px)
+    height: calc(100vh - 550px - 50px); // 减去底部TabBar高度
+    box-sizing: border-box;
+    padding: 0 15px;
+    padding-top: 15px;
+    
+    // 客户列表容器
+    .customer-list-container {
+      padding: 8px 0;
+      
+      // 客户卡片样式
+      .customer-card {
+        background-color: #fff;
+        border-radius: 8px;
+        margin-bottom: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        padding: 15px;
+        
+        .customer-name {
+          font-size: 30px;
+          font-weight: 600;
+          color: #333;
+          margin-bottom: 12px;
+        }
+        
+        .customer-body {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
+          
+          .customer-info {
+            flex: 1;
+            
+            .info-row {
+              display: flex;
+              align-items: center;
+              margin-bottom: 10px;
+              
+              &:last-child {
+                margin-bottom: 0;
+              }
+              
+              .info-label {
+                font-size: 20px;
+                color: #666;
+                margin-right: 5px;
+              }
+              
+              .info-value {
+                font-size: 20px;
+                color: #333;
+              }
+            }
+          }
+          
+          .customer-action {
+            width: 180px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+            .view-detail-btn {
+              display: inline-block;
+              padding: 14px 22px;
+              background-color: #1890FF;
+              color: #fff;
+              font-size: 25px;
+              border-radius: 8px;
+              text-align: center;
+              font-weight: 500;
+              white-space: nowrap;
+              box-shadow: 0 3px 6px rgba(24, 144, 255, 0.2);
+            }
+          }
+        }
+      }
+    }
+    
+    // 已全部加载提示样式
+    .loading-complete {
+      display: flex;
+      justify-content: center;
+      padding: 15px 0;
+      width: 100%;
+      box-sizing: border-box;
+      text-align: center;
+      margin: 0;
+      
+      text {
+        font-size: 12px;
+        color: #999;
+      }
+    }
+  }
+  
+  // 设备列表 - 可滚动的设备列表部分
+  .scrollable-devices {
+    flex: 1;
+    margin-top: 550px; // 轮播图高度(500px) + 标题高度(50px)
+    height: calc(100vh - 550px - 50px); // 减去底部TabBar高度
+    box-sizing: border-box;
+    padding: 0 15px;
+    padding-top: 15px;
+    
+    // 设备列表容器
+    .device-list-container {
+      padding: 8px 0;
+      
+      // 设备卡片样式
+      .device-card {
+        display: flex;
+        background-color: #fff;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        overflow: hidden;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        padding: 15px;
+        justify-content: space-between;
+        cursor: pointer;
+        position: relative;
+        transition: all 0.2s ease;
+        
+        &:active {
+          background-color: #f9f9f9;
+          transform: translateY(1px);
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        // 卡片左侧内容
+        .device-card-left {
+          flex: 1;
+          padding-right: 10px;
+
+          .device-name {
+            font-size: 22px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+          }
+
+          .device-code {
+            font-size: 28px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+          }
+
+          .device-update-time {
+            font-size: 18px;
+            color: #999;
+
+            .label {
+              margin-right: 5px;
+            }
+
+            .value {
+              color: #666;
+            }
+          }
+        }
+
+        // 卡片右侧内容
+        .device-card-right {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          align-items: flex-end;
+          min-width: 120px;
+
+          .device-location {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+
+            .location-icon {
+              margin-right: 5px;
+              font-size: 18px;
+            }
+
+            .location-text {
+              font-size: 18px;
+              color: #666;
+            }
+          }
+
+          .device-series {
+            font-size: 18px;
+            color: #999;
+            margin-bottom: 10px;
+
+            .label {
+              margin-right: 5px;
+            }
+
+            .value {
+              color: #666;
+            }
+          }
+
+          .device-status {
+            display: flex;
+            align-items: center;
+            
+            .status-text {
+              font-size: 20px;
+              font-weight: 500;
+              padding: 4px 8px;
+              border-radius: 4px;
+              cursor: default;
+              
+              &.status-on {
+                color: #fff;
+                background-color: #52c41a;
+                border: 1px solid #52c41a;
+              }
+              
+              &.status-off {
+                color: #fff;
+                background-color: #bfbfbf;
+                border: 1px solid #999;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // 加载状态提示
+    .loading-tip {
+      display: flex;
+      justify-content: center;
+      padding: 15px 0;
+      width: 100%;
+      box-sizing: border-box;
+      text-align: center;
+      margin: 0;
+      
+      text {
+        font-size: 12px;
+        color: #999;
+      }
+    }
+    
+    // 已全部加载提示样式
+    .loading-complete {
+      display: flex;
+      justify-content: center;
+      padding: 15px 0;
+      width: 100%;
+      box-sizing: border-box;
+      text-align: center;
+      margin: 0;
+      
+      text {
+        font-size: 12px;
+        color: #999;
+      }
+    }
+  }
+
+  // 加载状态和已全部加载样式
+  .loading-tip, .loading-complete {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+    
+    .small-loading-text {
+      font-size: 22px;
+      color: #999;
+    }
+  }
+}

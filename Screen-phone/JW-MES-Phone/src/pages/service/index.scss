@@ -1,0 +1,37 @@
+.service-page {
+  padding: 20px;
+  
+  .at-card {
+    margin-bottom: 20px;
+  }
+  
+  .customer-service {
+    padding: 10px;
+    
+    .service-desc {
+      display: block;
+      margin-bottom: 15px;
+      text-align: center;
+      color: #666;
+    }
+  }
+  
+  .service-hotline {
+    padding: 15px 10px;
+    text-align: center;
+    
+    .hotline-number {
+      display: block;
+      font-size: 24px;
+      font-weight: bold;
+      color: #1890ff;
+      margin-bottom: 10px;
+    }
+    
+    .hotline-time {
+      display: block;
+      font-size: 14px;
+      color: #999;
+    }
+  }
+}

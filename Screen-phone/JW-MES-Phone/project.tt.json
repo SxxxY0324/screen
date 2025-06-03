@@ -1,0 +1,9 @@
+{
+  "miniprogramRoot": "./",
+  "projectname": "JW-MES-Phone",
+  "appid": "testAppId",
+  "setting": {
+    "es6": false,
+    "minified": false
+  }
+}

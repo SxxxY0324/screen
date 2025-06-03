@@ -1,0 +1,17 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const jsx_runtime_1 = require("react/jsx-runtime");
+const components_1 = require("@tarojs/components");
+const taro_ui_1 = require("taro-ui");
+require("./index.scss");
+require("taro-ui/dist/style/components/button.scss");
+const RegionStats = ({ data, totalDevices, totalRunning, onRegionClick }) => {
+    const handleViewDetail = (regionId) => {
+        if (onRegionClick) {
+            onRegionClick(regionId);
+        }
+    };
+    return ((0, jsx_runtime_1.jsxs)(components_1.View, Object.assign({ className: 'region-stats' }, { children: [(0, jsx_runtime_1.jsxs)(components_1.View, Object.assign({ className: 'total-stats' }, { children: [(0, jsx_runtime_1.jsxs)(components_1.View, Object.assign({ className: 'stat-item' }, { children: [(0, jsx_runtime_1.jsx)(components_1.Text, Object.assign({ className: 'stat-label' }, { children: "\u8BBE\u5907\u603B\u6570\uFF1A" })), (0, jsx_runtime_1.jsx)(components_1.Text, Object.assign({ className: 'stat-value' }, { children: totalDevices }))] })), (0, jsx_runtime_1.jsxs)(components_1.View, Object.assign({ className: 'stat-item' }, { children: [(0, jsx_runtime_1.jsx)(components_1.Text, Object.assign({ className: 'stat-label' }, { children: "\u5F53\u524D\u8FD0\u884C\u4E2D\uFF1A" })), (0, jsx_runtime_1.jsx)(components_1.Text, Object.assign({ className: 'stat-value running' }, { children: totalRunning }))] }))] })), (0, jsx_runtime_1.jsx)(components_1.View, Object.assign({ className: 'region-list' }, { children: data.map(region => ((0, jsx_runtime_1.jsxs)(components_1.View, Object.assign({ className: 'region-card' }, { children: [(0, jsx_runtime_1.jsx)(components_1.View, Object.assign({ className: 'region-header' }, { children: (0, jsx_runtime_1.jsx)(components_1.Text, Object.assign({ className: 'region-name' }, { children: region.name })) })), (0, jsx_runtime_1.jsxs)(components_1.View, Object.assign({ className: 'region-body' }, { children: [(0, jsx_runtime_1.jsxs)(components_1.View, Object.assign({ className: 'region-stats-left' }, { children: [(0, jsx_runtime_1.jsxs)(components_1.View, Object.assign({ className: 'stat-row' }, { children: [(0, jsx_runtime_1.jsx)(components_1.Text, Object.assign({ className: 'stat-label' }, { children: "\u8BBE\u5907\u603B\u6570\uFF1A" })), (0, jsx_runtime_1.jsx)(components_1.Text, Object.assign({ className: 'stat-value' }, { children: region.deviceCount }))] })), (0, jsx_runtime_1.jsxs)(components_1.View, Object.assign({ className: 'stat-row' }, { children: [(0, jsx_runtime_1.jsx)(components_1.Text, Object.assign({ className: 'stat-label' }, { children: "\u5F53\u524D\u8FD0\u884C\u4E2D\uFF1A" })), (0, jsx_runtime_1.jsx)(components_1.Text, Object.assign({ className: 'stat-value running' }, { children: region.runningCount }))] }))] })), (0, jsx_runtime_1.jsx)(components_1.View, Object.assign({ className: 'region-action' }, { children: (0, jsx_runtime_1.jsx)(taro_ui_1.AtButton, Object.assign({ type: 'primary', size: 'small', onClick: () => handleViewDetail(region.id) }, { children: "\u67E5\u770B\u8BE6\u60C5" })) }))] }))] }), region.id))) }))] })));
+};
+exports.default = RegionStats;
+//# sourceMappingURL=index.js.map
