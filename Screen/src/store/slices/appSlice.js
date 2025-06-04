@@ -9,9 +9,11 @@ const initialState = {
   dataRefreshInterval: 60000, // 数据刷新间隔(毫秒)
   filters: {
     country: '中国',
-    timeRange: '年间',
-    yearMode: '本年',
-    additional: '本年'
+    timeRange: '车间',
+    devices: '设备',
+    additional: '本年',
+    selectedDevices: [],  // 选中的设备ID列表
+    selectedWorkshops: [] // 新增：选中的车间列表
   }
 };
 
@@ -43,8 +45,11 @@ const appSlice = createSlice({
         state.filters[key] = value;
       }
     },
-    resetFilters(state) {
-      state.filters = initialState.filters;
+    updateSelectedDevices(state, action) {
+      state.filters.selectedDevices = action.payload;
+    },
+    updateSelectedWorkshops(state, action) {
+      state.filters.selectedWorkshops = action.payload;
     }
   }
 });
@@ -58,7 +63,8 @@ export const {
   setTheme,
   setDataRefreshInterval,
   updateFilter,
-  resetFilters
+  updateSelectedDevices,
+  updateSelectedWorkshops
 } = appSlice.actions;
 
 // 导出选择器
@@ -68,5 +74,7 @@ export const selectError = (state) => state.app.error;
 export const selectTheme = (state) => state.app.theme;
 export const selectDataRefreshInterval = (state) => state.app.dataRefreshInterval;
 export const selectFilters = (state) => state.app.filters;
+export const selectSelectedDevices = (state) => state.app.filters.selectedDevices;
+export const selectSelectedWorkshops = (state) => state.app.filters.selectedWorkshops;
 
 export default appSlice.reducer; 

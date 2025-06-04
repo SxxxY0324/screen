@@ -19,7 +19,7 @@ import {
   selectLoadingMore,
   selectDeviceStatusLoading
 } from '../store/slices/monitorSlice';
-import { selectDataRefreshInterval } from '../store/slices/appSlice';
+import { selectDataRefreshInterval, selectSelectedDevices, selectSelectedWorkshops } from '../store/slices/appSlice';
 import DeviceStatusTransition from '../components/common/DeviceStatusTransition';
 import CachedImage from '../components/common/CachedImage';
 
@@ -199,6 +199,8 @@ function MonitorPage() {
   const pagination = useAppSelector(selectPagination);
   const isLoadingMore = useAppSelector(selectLoadingMore);
   const deviceStatusLoading = useAppSelector(selectDeviceStatusLoading);
+  const selectedDevices = useAppSelector(selectSelectedDevices);
+  const selectedWorkshops = useAppSelector(selectSelectedWorkshops);
   
   // 定时器ID
   const timerRef = useRef(null);
@@ -215,6 +217,25 @@ function MonitorPage() {
       default: return COLORS.GRAY;
     }
   };
+  
+  // 过滤设备状态数据，同时应用设备和车间的筛选条件
+  const filteredDeviceStatusData = React.useMemo(() => {
+    if (!deviceStatusData) return [];
+    
+    let filteredData = [...deviceStatusData];
+    
+    // 应用设备筛选
+    if (selectedDevices && selectedDevices.length > 0) {
+      filteredData = filteredData.filter(device => selectedDevices.includes(device.id));
+    }
+    
+    // 应用车间筛选
+    if (selectedWorkshops && selectedWorkshops.length > 0) {
+      filteredData = filteredData.filter(device => device.workshop && selectedWorkshops.includes(device.workshop));
+    }
+    
+    return filteredData;
+  }, [deviceStatusData, selectedDevices, selectedWorkshops]);
   
   // 数据加载和定时刷新
   useEffect(() => {
@@ -293,7 +314,7 @@ function MonitorPage() {
             </ErrorBoundary>
           </div>
         </div>
-
+        
         {/* 总能耗 */}
         <div className="card-energy">
           <img src={totalEnergyImg} className="card-image" alt="总能耗" />
@@ -356,10 +377,10 @@ function MonitorPage() {
           />
           <div className="chart-overlay" style={STYLES.cutSetsOverlay}>
             <div style={STYLES.cutSetsIcon}>
-              <CachedImage 
-                src={cutSetsIconImg} 
-                alt="裁剪套数图标" 
-                style={STYLES.cutSetsIconImg} 
+              <CachedImage
+                src={cutSetsIconImg}
+                alt="裁剪套数图标"
+                style={STYLES.cutSetsIconImg}
                 loading="eager" 
               />
             </div>
@@ -382,7 +403,7 @@ function MonitorPage() {
           <div className="status-legend-container" style={STYLES.statusLegendContainer}>
             {statusLegendItems.map((item, index) => (
               <div 
-                key={index} 
+                key={index}
                 style={{ 
                   ...STYLES.statusLegendItem,
                   left: item.left
@@ -400,9 +421,9 @@ function MonitorPage() {
           
           <div style={STYLES.statusDivider}></div>
           
-          {/* 设备状态指示器 */}
+          {/* 设备状态指示器 - 添加过滤功能 */}
           <div className="chart-overlay" style={STYLES.devicesContainer}>
-            {deviceStatusLoading || !deviceStatusData || deviceStatusData.length === 0 ? (
+            {deviceStatusLoading || !filteredDeviceStatusData || filteredDeviceStatusData.length === 0 ? (
               <div style={{
                 width: '100%',
                 height: '100%',
@@ -414,10 +435,11 @@ function MonitorPage() {
                 fontSize: '24px',
                 fontWeight: 'bold'
               }}>
-                加载中...
+                {deviceStatusLoading ? '加载中...' : 
+                  filteredDeviceStatusData && filteredDeviceStatusData.length === 0 ? '无符合条件的设备数据' : '加载中...'}
               </div>
             ) : (
-              deviceStatusData.map((device, index) => (
+              filteredDeviceStatusData.map((device, index) => (
                 <div key={index} style={STYLES.deviceItem}>
                   <div style={STYLES.deviceId}>
                     {device.id}

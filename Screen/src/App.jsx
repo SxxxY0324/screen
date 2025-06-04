@@ -2,10 +2,21 @@ import { useEffect, useState, Suspense, lazy } from 'react'
 import './App.css'
 import Header from './components/Header'
 import { useAppDispatch, useAppSelector } from './store/hooks'
-import { selectActiveTab, setActiveTab, updateFilter } from './store/slices/appSlice'
+import { 
+  selectActiveTab, 
+  setActiveTab, 
+  updateFilter, 
+  selectSelectedDevices, 
+  updateSelectedDevices,
+  selectSelectedWorkshops,
+  updateSelectedWorkshops
+} from './store/slices/appSlice'
 import LoadingIndicator from './components/common/LoadingIndicator'
 import { warmupApp } from './utils/initializeApp'
 import imageCache from './utils/imageCache'
+import { selectDeviceStatusData, selectDeviceStatusLoading } from './store/slices/monitorSlice'
+import DeviceMultiSelect from './components/DeviceMultiSelect'
+import WorkshopMultiSelect from './components/WorkshopMultiSelect'
 
 // 懒加载页面组件
 const MonitorPage = lazy(() => import('./pages/MonitorPage'));
@@ -15,6 +26,10 @@ const AnalysisPage = lazy(() => import('./pages/AnalysisPage'));
 function App() {
   const dispatch = useAppDispatch();
   const activeTab = useAppSelector(selectActiveTab);
+  const deviceStatusData = useAppSelector(selectDeviceStatusData);
+  const deviceStatusLoading = useAppSelector(selectDeviceStatusLoading);
+  const selectedDevices = useAppSelector(selectSelectedDevices);
+  const selectedWorkshops = useAppSelector(selectSelectedWorkshops);
   
   // 应用初始化状态
   const [appInitialized, setAppInitialized] = useState(false);
@@ -86,6 +101,52 @@ function App() {
     dispatch(updateFilter({ key: filterKey, value }));
   };
   
+  // 处理设备多选
+  const handleDevicesChange = (deviceIds) => {
+    dispatch(updateSelectedDevices(deviceIds));
+    
+    // 更新显示文本
+    let displayText = '设备';
+    if (deviceIds.length === 1) {
+      displayText = deviceIds[0];
+    } else if (deviceStatusData && deviceIds.length === deviceStatusData.length) {
+      displayText = '全部设备';
+    } else if (deviceIds.length > 0) {
+      displayText = `已选${deviceIds.length}个设备`;
+    }
+    
+    dispatch(updateFilter({ key: 'devices', value: displayText }));
+  };
+  
+  // 处理车间多选
+  const handleWorkshopsChange = (workshops) => {
+    dispatch(updateSelectedWorkshops(workshops));
+    
+    // 更新显示文本
+    let displayText = '车间';
+    if (workshops.length === 1) {
+      displayText = workshops[0];
+    } else if (workshops.length > 0) {
+      // 获取车间总数，用于判断是否全选
+      const uniqueWorkshops = new Set();
+      if (deviceStatusData) {
+        deviceStatusData.forEach(device => {
+          if (device.workshop) {
+            uniqueWorkshops.add(device.workshop);
+          }
+        });
+      }
+      
+      if (uniqueWorkshops.size > 0 && workshops.length === uniqueWorkshops.size) {
+        displayText = '全部车间';
+      } else {
+        displayText = `已选${workshops.length}个车间`;
+      }
+    }
+    
+    dispatch(updateFilter({ key: 'timeRange', value: displayText }));
+  };
+  
   // 根据当前活动标签返回对应的页面组件
   const renderActivePage = () => {
     // 添加淡入淡出类
@@ -137,6 +198,9 @@ function App() {
     );
   }
   
+  // 检查是否有可用设备
+  const hasDevices = deviceStatusData && deviceStatusData.length > 0;
+  
   return (
     <div className="dashboard-container">
       <Header />
@@ -175,23 +239,30 @@ function App() {
               >
                 <option>中国</option>
               </select>
-              <select 
-                className="nav-select"
-                onChange={(e) => handleFilterChange('timeRange', e.target.value)}
-              >
-                <option>年间</option>
-              </select>
-              <select 
-                className="nav-select"
-                onChange={(e) => handleFilterChange('yearMode', e.target.value)}
-              >
-                <option>本年</option>
-              </select>
+              <WorkshopMultiSelect
+                selectedWorkshops={selectedWorkshops}
+                onChange={handleWorkshopsChange}
+              />
+              <DeviceMultiSelect 
+                selectedDevices={selectedDevices} 
+                onChange={handleDevicesChange}
+              />
               <select 
                 className="nav-select"
                 onChange={(e) => handleFilterChange('additional', e.target.value)}
               >
-                <option>本年</option>
+                <option value="本年">本年</option>
+                <option value="不选">不选</option>
+                <option value="今天">今天</option>
+                <option value="昨天">昨天</option>
+                <option value="前天">前天</option>
+                <option value="本周">本周</option>
+                <option value="上周">上周</option>
+                <option value="本月">本月</option>
+                <option value="上月">上月</option>
+                <option value="本季度">本季度</option>
+                <option value="上季度">上季度</option>
+                <option value="上年">上年</option>
               </select>
             </div>
           </div>

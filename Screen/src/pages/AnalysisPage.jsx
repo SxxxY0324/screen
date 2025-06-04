@@ -227,7 +227,7 @@ function AnalysisPage() {
         top: '8%',
         left: '3%',
         right: '2%',
-        bottom: '-2%',    // 将底部边距从8%减小到4%
+        bottom: '-2%', 
         containLabel: true
       },
       xAxis: {
