@@ -1,0 +1,662 @@
+#root {
+  width: 100%;
+  height: 100vh;  /* 使用视口高度 */
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  overflow: hidden;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+/* 保留原始的一些样式，但调整为工业风格 */
+:root {
+  --primary-bg: #000000;
+  --secondary-bg: #0a0a0a;
+  --border-color: #222222;
+  --text-color: #e6e6e6;
+  --highlight-color: #ff6b00;
+  --success-color: #52c41a;
+  --warning-color: #faad14;
+  --error-color: #f5222d;
+}
+
+/* 整体容器样式 */
+.dashboard-container {
+  width: 100%;
+  height: 100vh;  /* 使用视口高度而非最小高度 */
+  background-color: var(--primary-bg);
+  color: var(--text-color);
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Arial', sans-serif;
+  overflow: hidden;  /* 确保不出现滚动条 */
+}
+
+/* 内容区样式 */
+.dashboard-content {
+  padding: 10px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;  /* 阻止内容溢出 */
+}
+
+/* 顶部导航容器 */
+.top-nav-container {
+  width: 100%;
+  padding: 0 20px;
+  margin: 0 0 5px 0;  /* 减少底部边距 */
+  position: relative;
+  box-sizing: border-box;  /* 确保padding不增加实际宽度 */
+}
+
+/* 顶部菜单 */
+.top-nav {
+  display: flex;
+  justify-content: space-between;
+  background-color: transparent;
+  padding: 2px 0;
+  width: auto;
+  position: relative;
+  z-index: 10;
+}
+
+.nav-left {
+  display: flex;
+  gap: 8px;
+}
+
+.nav-right {
+  display: flex;
+  gap: 18px;
+  height: 40px;
+}
+
+.nav-button {
+  background-color: #333;
+  color: #fff;
+  padding: 8px 22px;
+  border: 1px solid #444;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 5px;
+  font-size: 20px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.nav-button:hover {
+  background-color: #444;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.nav-button.active {
+  background-color: #ED6A00; /* 使用图片中显示的橙色 */
+  border-color: #ED6A00;
+  box-shadow: 0 4px 8px rgba(237, 106, 0, 0.4);
+}
+
+.nav-select {
+  background-color: #333;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 5px;
+  padding: 5px 30px 5px 12px;
+  font-size: 16px;
+  font-weight: bold;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  margin-left: 8px;
+}
+
+.nav-select:hover {
+  background-color: #444;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.nav-select:focus {
+  outline: none;
+  border-color: var(--highlight-color);
+  box-shadow: 0 0 0 2px rgba(237, 106, 0, 0.2);
+}
+
+.nav-select option {
+  background-color: #222;
+  color: #fff;
+  padding: 10px;
+}
+
+/* 卡片布局 */
+.dashboard-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr 1.9fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-areas:
+    "efficiency status cuttime"
+    "energy status cutspeed"
+    "perimeter status cutsets";
+  height: calc(100vh - 150px);
+  align-items: end; /* 所有网格项目底部对齐 */
+}
+
+/* 两侧卡片样式 - 恢复原始大小 */
+.card-efficiency,
+.card-cuttime,
+.card-energy,
+.card-cutspeed,
+.card-perimeter,
+.card-cutsets {
+  width: 100%;
+  height: auto;
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #000000;
+  border: 1px solid #000000;
+  border-radius: 4px;
+  overflow: hidden;
+  padding: 5px;
+  position: relative;
+}
+
+/* 图表叠加层样式 */
+.chart-overlay {
+  position: absolute;
+  top: 45px;
+  left: 0;
+  width: 100%;
+  height: 90%;
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateZ(0);
+}
+
+/* 图表标题样式 */
+.chart-title {
+  position: absolute;
+  top: 5px;
+  left: 10px;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  z-index: 10;
+}
+
+/* ECharts容器样式 */
+.mu-chart {
+  width: 100%;
+  height: 100%;
+  min-height: 150px;
+}
+
+/* 修正ECharts在叠加模式下的样式 */
+.mu-chart canvas {
+  background-color: transparent !important;
+}
+
+/* 中间卡片特殊处理 */
+.card-status {
+  grid-area: status;
+  height: 100%;
+  position: relative;
+  background-color: #000000;
+  border: 1px solid #000000;
+  border-radius: 4px;
+  overflow: hidden;
+  padding: 5px;
+}
+
+/* 各裁床运行状态图片微调 */
+.card-status .cutting-status-image {
+  position: absolute;
+  width: 98.2%;
+  height: auto;
+  max-height: 45%;
+  object-fit: contain;
+  max-width: 101%;
+  top: 3px;
+  left: 1%;
+  z-index: 1;
+}
+
+/* 裁床运行情况图片微调 */
+.card-status .status-image {
+  position: absolute;
+  width: 100%;
+  height: auto;
+  max-height: 50%;
+  object-fit: contain;
+  display: block;
+  max-width: 98%;
+  bottom: 5px;
+  left: 1%;
+  z-index: 1;
+}
+
+/* 卡片样式 */
+.card {
+  background-color: var(--secondary-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+h1, h2, h3 {
+  color: var(--text-color);
+  margin-top: 0;
+}
+
+/* 按钮样式 */
+button {
+  background-color: #333333;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #444444;
+}
+
+button:disabled {
+  background-color: #5c5c5c;
+  cursor: not-allowed;
+}
+
+/* 响应式布局 */
+@media (max-width: 768px) {
+  .dashboard-content {
+    flex-direction: column;
+  }
+}
+
+/* 卡片网格布局 */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  width: 100%;
+  padding: 15px;
+}
+
+/* 响应式调整 */
+@media (max-width: 1400px) {
+  .card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card-efficiency { grid-area: efficiency; }
+.card-cuttime { grid-area: cuttime; }
+.card-energy { grid-area: energy; }
+.card-cutspeed { grid-area: cutspeed; }
+.card-perimeter { grid-area: perimeter; }
+.card-cutsets { grid-area: cutsets; }
+
+/* AI按钮样式 */
+.ai-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #ED6A00 0%, #FF9F45 100%);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(237, 106, 0, 0.5);
+  margin-right: 15px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.ai-button:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: all 0.6s ease;
+}
+
+.ai-button:hover:before {
+  left: 100%;
+}
+
+.ai-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(237, 106, 0, 0.7);
+}
+
+.ai-icon {
+  font-weight: bold;
+  font-size: 18px;
+  letter-spacing: 1px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+/* 维保管理页面样式 */
+/* 顶部指标行样式 */
+.metrics-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 15px; /* 增加与下方内容的间距 */
+  gap: 10px;
+}
+
+.metric-card {
+  flex: 1;
+  min-height: 100px;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #000000;
+  border: 1px solid #000000;
+  border-radius: 4px;
+  overflow: hidden;
+  padding: 5px;
+}
+
+/* 容器内图片样式 */
+.metric-card .card-image,
+.card-blade .card-image,
+.card-fault .card-image,
+.card-efficiency .card-image,
+.card-cuttime .card-image,
+.card-energy .card-image,
+.card-cutspeed .card-image,
+.card-perimeter .card-image,
+.card-cutsets .card-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* 右侧图片微调 */
+.card-fault .card-image {
+  max-width: 100.5%; 
+}
+
+/* 维保管理页面网格布局 */
+.management-grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 1fr 1fr; /* 1:1等比例 */
+  grid-template-rows: auto;
+  grid-template-areas: "blade fault";
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.card-blade, 
+.card-fault { 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: auto;
+  min-height: 300px;
+  background-color: #000000;
+  border: 1px solid #000000;
+  border-radius: 4px;
+  overflow: hidden;
+  padding: 5px;
+}
+
+.card-blade { grid-area: blade; }
+.card-fault { grid-area: fault; }
+
+/* 响应式调整 */
+@media (max-width: 1200px) {
+  .management-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas: 
+      "blade"
+      "fault";
+    height: auto;
+    gap: 10px;
+  }
+  
+  .card-blade,
+  .card-fault {
+    max-height: none; /* 移动设备上取消最大高度限制 */
+    margin-bottom: 10px;
+  }
+  
+  .metrics-row {
+    flex-wrap: wrap;
+  }
+  
+  .metric-card {
+    flex: 1 1 45%;
+    margin-bottom: 10px;
+    min-height: 100px;
+  }
+}
+
+@media (max-width: 768px) {
+  .metrics-row {
+    flex-direction: column;
+  }
+  
+  .metric-card {
+    width: 100%;
+  }
+}
+
+/* 故障台数卡片特殊样式 */
+.fault-count-card {
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.fault-count-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* 页面切换动画相关样式 */
+.page-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.page-enter {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.page-exit {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+/* 导航按钮过渡状态 */
+.nav-button.next-active {
+  background-color: rgba(237, 106, 0, 0.5); /* 半透明的橙色 */
+}
+
+/* 预加载容器 */
+.preloader-container {
+  width: 100vw;
+  height: 100vh;
+  background-color: #000000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+/* 图片加载优化 */
+.card-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  will-change: opacity;
+  transition: opacity 0.3s ease;
+}
+
+/* 滚动表格优化 */
+.table-body-container {
+  will-change: transform;
+}
+
+/* 消除body和html的默认边距，防止出现滚动条 */
+body, html {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* 业绩分析页面样式 */
+.analysis-page {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 110px);
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+/* 调整网格布局，使其更好地匹配背景图 */
+.analysis-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-gap: 0.5%;
+  height: 84%;
+  width: 98%;         /* 增加宽度利用更多空间 */
+  position: absolute;
+  top: 8%;
+  left: 1%;           /* 减少左侧空白 */
+  z-index: 2;
+  margin: 0;
+  padding: 0;
+}
+
+.analysis-grid .dashboard-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 5px;
+  background-color: rgba(0, 0, 0, 0);
+}
+
+/* 恢复图表内容通用样式 */
+.analysis-grid .chart-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 左上：移动率MU图表定位 - 根据截图调整 */
+.analysis-grid .dashboard-card:nth-child(1) .chart-content {
+  padding-top: 0;     /* 去掉顶部填充 */
+  padding-bottom: 5%; /* 增加底部填充 */
+  width: 102%;        /* 稍微超出容器宽度 */
+  height: 95%;        /* 增加高度 */
+  transform: scale(1.0);  /* 取消放大，使用实际大小 */
+  margin-top: 4%;     /* 向下调整一点 */
+}
+
+/* 右上：周长(M)图表定位 */
+.analysis-grid .dashboard-card:nth-child(2) .chart-content {
+  padding-top: 0;     /* 去掉顶部填充 */
+  padding-bottom: 5%; /* 增加底部填充 */
+  width: 102%;        /* 稍微超出容器宽度 */
+  height: 95%;        /* 增加高度 */
+  margin-top: 4%;     /* 向下调整一点 */
+}
+
+/* 左下：裁剪时间(H)图表定位 */
+.analysis-grid .dashboard-card:nth-child(3) .chart-content {
+  padding-top: 9%;    /* 上方留出空间给标题 */
+  width: 100%;
+  height: 86%;
+}
+
+/* 右下：裁剪速度(m/s)图表定位 */
+.analysis-grid .dashboard-card:nth-child(4) .chart-content {
+  padding-top: 9%;    /* 上方留出空间给标题 */
+  width: 100%;
+  height: 86%;
+}
