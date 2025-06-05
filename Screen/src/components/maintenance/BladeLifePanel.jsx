@@ -1,31 +1,46 @@
 import React, { useRef, useEffect, useState } from 'react';
-import bladeLifeImg from '../../assets/images/刀片和磨刀棒寿命.jpg';
 
 /**
  * 刀片和磨刀棒寿命面板组件
  */
 const BladeLifePanel = ({ tableData, headers }) => {
   return (
-    <div className="card-blade" style={{ position: 'relative', overflow: 'hidden' }}>
-      {/* 背景图片 */}
-      <img 
-        src={bladeLifeImg} 
-        className="card-image" 
-        alt="刀片和磨刀棒寿命" 
-        style={{ display: 'block', width: '100%', height: 'auto' }} 
-      />
+    <div style={{ 
+      width: '100%', 
+      height: '100%', 
+      position: 'relative', 
+      display: 'flex', 
+      flexDirection: 'column', 
+      borderRadius: '6px', 
+      overflow: 'hidden',
+      backgroundColor: 'rgba(20, 20, 25, 0.7)',
+      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.5)'
+    }}>
+      {/* 标题区 */}
+      <div style={{ 
+        backgroundColor: '#1a1a1a', 
+        padding: '16px 20px', 
+        textAlign: 'left',
+        borderBottom: '1px solid #333',
+        display: 'flex',
+        alignItems: 'center'
+      }}>
+        <div style={{ 
+          width: '5px', 
+          height: '22px', 
+          backgroundColor: '#f9e090', 
+          marginRight: '15px',
+          borderRadius: '2px'
+        }}></div>
+        <div style={{ 
+          color: '#fff', 
+          fontSize: '22px', 
+          fontWeight: 'bold'
+        }}>刀片和磨刀棒寿命</div>
+      </div>
       
-      {/* 表格叠加层 - 使用绝对定位悬浮在图片上方 */}
-      <div 
-        className="chart-overlay"
-        style={{ 
-          position: 'absolute', 
-          top: '80px', 
-          left: '7%', 
-          width: '86%', 
-          height: 'calc(100% - 110px)'
-        }}
-      >
+      {/* 表格区域 */}
+      <div style={{ flex: 1, padding: '10px 10px 15px 10px', overflow: 'hidden' }}>
         <LifeTable 
           tableData={tableData} 
           headers={headers} 

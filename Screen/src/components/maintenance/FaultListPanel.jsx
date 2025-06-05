@@ -1,25 +1,46 @@
 import React, { useRef, useEffect, useState } from 'react';
-import faultListImg from '../../assets/images/当前设备故障清单.jpg';
 
 /**
  * 当前设备故障清单面板组件
  */
 const FaultListPanel = ({ tableData, headers }) => {
   return (
-    <div className="card-fault" style={{ position: 'relative', overflow: 'hidden' }}>
-      <img src={faultListImg} className="card-image" alt="当前设备故障清单" />
+    <div style={{ 
+      width: '100%', 
+      height: '100%', 
+      position: 'relative', 
+      display: 'flex', 
+      flexDirection: 'column', 
+      borderRadius: '6px', 
+      overflow: 'hidden',
+      backgroundColor: 'rgba(20, 20, 25, 0.7)',
+      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.5)'
+    }}>
+      {/* 标题区 */}
+      <div style={{ 
+        backgroundColor: '#1a1a1a', 
+        padding: '16px 20px', 
+        textAlign: 'left',
+        borderBottom: '1px solid #333',
+        display: 'flex',
+        alignItems: 'center'
+      }}>
+        <div style={{ 
+          width: '5px', 
+          height: '22px', 
+          backgroundColor: '#95c5f5', 
+          marginRight: '15px',
+          borderRadius: '2px'
+        }}></div>
+        <div style={{ 
+          color: '#fff', 
+          fontSize: '22px', 
+          fontWeight: 'bold'
+        }}>当前设备故障清单</div>
+      </div>
       
-      {/* 表格叠加层 - 使用绝对定位悬浮在图片上方 */}
-      <div 
-        className="chart-overlay"
-        style={{ 
-          position: 'absolute', 
-          top: '80px', 
-          left: '7%', 
-          width: '86%', 
-          height: 'calc(100% - 110px)'
-        }}
-      >
+      {/* 表格区域 */}
+      <div style={{ flex: 1, padding: '10px 10px 15px 10px', overflow: 'hidden' }}>
         <FaultTable
           tableData={tableData}
           headers={headers}

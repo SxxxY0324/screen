@@ -406,13 +406,14 @@ button:disabled {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  margin-bottom: 15px; /* 增加与下方内容的间距 */
+  margin-bottom: 15px;
+  margin-top: 5px;
   gap: 10px;
 }
 
 .metric-card {
   flex: 1;
-  min-height: 100px;
+  min-height: 110px;
   height: auto;
   display: flex;
   align-items: center;
@@ -448,26 +449,25 @@ button:disabled {
 /* 维保管理页面网格布局 */
 .management-grid {
   display: grid;
-  gap: 20px;
   grid-template-columns: 1fr 1fr; /* 1:1等比例 */
-  grid-template-rows: auto;
-  grid-template-areas: "blade fault";
-  height: auto;
-  margin-bottom: 10px;
+  grid-template-rows: 1fr;
+  grid-gap: 0.5%;
+  height: 75%;         /* 从84%减小到75%，缩小整体高度 */
+  width: 98%;         
+  position: absolute;
+  top: 15%;            /* 从10%增加到15%，增加与顶部模块的距离 */
+  left: 1%;           
+  z-index: 2;
+  margin: 0;
+  padding: 0;
 }
 
 .card-blade, 
 .card-fault { 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: auto;
-  min-height: 300px;
-  background-color: #000000;
-  border: 1px solid #000000;
-  border-radius: 4px;
+  position: relative;
   overflow: hidden;
-  padding: 5px;
+  border-radius: 5px;
+  background-color: rgba(0, 0, 0, 0);
 }
 
 .card-blade { grid-area: blade; }
@@ -597,13 +597,13 @@ body, html {
 .analysis-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: 1fr 0.85fr;  /* 调整行高比例，减少底部行的高度 */
   grid-gap: 0.5%;
-  height: 84%;
-  width: 98%;         /* 增加宽度利用更多空间 */
+  height: 92%;         /* 增加整体高度利用率 */
+  width: 98%;         
   position: absolute;
-  top: 8%;
-  left: 1%;           /* 减少左侧空白 */
+  top: 2%;            
+  left: 1%;           
   z-index: 2;
   margin: 0;
   padding: 0;
@@ -628,35 +628,40 @@ body, html {
   justify-content: center;
 }
 
-/* 左上：移动率MU图表定位 - 根据截图调整 */
+/* 左上：移动率MU图表定位 */
 .analysis-grid .dashboard-card:nth-child(1) .chart-content {
-  padding-top: 0;     /* 去掉顶部填充 */
-  padding-bottom: 5%; /* 增加底部填充 */
-  width: 102%;        /* 稍微超出容器宽度 */
-  height: 95%;        /* 增加高度 */
-  transform: scale(1.0);  /* 取消放大，使用实际大小 */
-  margin-top: 4%;     /* 向下调整一点 */
+  padding-top: 0;     
+  padding-bottom: 3%; /* 减少底部填充 */
+  width: 100%;        /* 调整为标准宽度 */
+  height: 95%;        
+  transform: scale(0.95);  /* 缩小图表以确保完全显示 */
+  margin-top: 4%;     
 }
 
 /* 右上：周长(M)图表定位 */
 .analysis-grid .dashboard-card:nth-child(2) .chart-content {
-  padding-top: 0;     /* 去掉顶部填充 */
-  padding-bottom: 5%; /* 增加底部填充 */
-  width: 102%;        /* 稍微超出容器宽度 */
-  height: 95%;        /* 增加高度 */
-  margin-top: 4%;     /* 向下调整一点 */
+  padding-top: 0;     
+  padding-bottom: 3%; /* 减少底部填充 */
+  width: 100%;        /* 调整为标准宽度 */
+  height: 95%;        
+  transform: scale(0.95);  /* 缩小图表以确保完全显示 */
+  margin-top: 4%;     
 }
 
 /* 左下：裁剪时间(H)图表定位 */
 .analysis-grid .dashboard-card:nth-child(3) .chart-content {
-  padding-top: 9%;    /* 上方留出空间给标题 */
+  padding-top: 9%;    
+  padding-bottom: 0;  /* 完全消除底部填充 */
   width: 100%;
-  height: 86%;
+  height: 91%;        /* 增加高度 */
+  transform: scale(0.95);  /* 缩小图表以确保完全显示 */
 }
 
 /* 右下：裁剪速度(m/s)图表定位 */
 .analysis-grid .dashboard-card:nth-child(4) .chart-content {
-  padding-top: 9%;    /* 上方留出空间给标题 */
+  padding-top: 9%;    
+  padding-bottom: 0;  /* 完全消除底部填充 */
   width: 100%;
-  height: 86%;
+  height: 91%;        /* 增加高度 */
+  transform: scale(0.95);  /* 缩小图表以确保完全显示 */
 }

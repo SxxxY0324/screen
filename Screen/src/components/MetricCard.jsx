@@ -62,8 +62,10 @@ const MetricCard = ({ title, value, unit = '', bgImage, className = '' }) => {
 
   return (
     <div className={`metric-card ${className}`} style={{ position: 'relative' }}>
-      {/* 保持背景图完整显示 */}
-      {bgImage && <img src={bgImage} className="card-image" alt={title} />}
+      {/* 背景图片包装容器，添加下移效果 */}
+      <div style={{ position: 'relative', width: '100%', overflow: 'hidden', marginTop: '8px' }}>
+        {bgImage && <img src={bgImage} className="card-image" alt={title} />}
+      </div>
       
       {/* 文字内容叠加层 */}
       <div style={contentStyle}>

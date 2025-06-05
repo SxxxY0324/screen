@@ -93,30 +93,49 @@ function ManagementPage() {
   const faultHeaders = ['序号', '车间', '设备编号', '故障代码', '开始时间'];
 
   return (
-    <>
-      {/* 顶部指标行 - 使用MetricsPanel组件 */}
-      <MetricsPanel
-        faultCount={faultCount}
-        faultTimes={faultTimes}
-        faultDuration={faultDuration}
-        avgFaultTime={avgFaultTime}
-      />
+    <div className="management-page" style={{ 
+      position: 'relative',
+      width: '100%',
+      height: 'calc(100vh - 110px)',
+      overflow: 'hidden',
+      backgroundColor: '#111',
+      boxShadow: 'inset 0 0 100px rgba(0, 0, 0, 0.5)'
+    }}>
+      <div style={{ 
+        position: 'relative',
+        zIndex: 2,
+        width: '100%',
+        height: '100%',
+        padding: '2px 20px 30px 20px',
+        marginTop: '-12px'
+      }}>
+        {/* 顶部指标行 - 使用MetricsPanel组件 */}
+        <MetricsPanel
+          faultCount={faultCount}
+          faultTimes={faultTimes}
+          faultDuration={faultDuration}
+          avgFaultTime={avgFaultTime}
+        />
 
-      {/* 主要内容区 */}
-      <div className="management-grid">
-        {/* 刀片和磨刀棒寿命 - 使用BladeLifePanel组件 */}
-        <BladeLifePanel 
-          tableData={bladeLifeData} 
-          headers={bladeHeaders} 
-        />
-        
-        {/* 当前设备故障清单 - 使用FaultListPanel组件 */}
-        <FaultListPanel
-          tableData={faultListData}
-          headers={faultHeaders}
-        />
+        {/* 主要内容区 */}
+        <div className="management-grid" style={{ 
+          gap: '16px',
+          height: '100%'
+        }}>
+          {/* 刀片和磨刀棒寿命 - 使用BladeLifePanel组件 */}
+          <BladeLifePanel 
+            tableData={bladeLifeData} 
+            headers={bladeHeaders} 
+          />
+          
+          {/* 当前设备故障清单 - 使用FaultListPanel组件 */}
+          <FaultListPanel
+            tableData={faultListData}
+            headers={faultHeaders}
+          />
+        </div>
       </div>
-    </>
+    </div>
   );
 }
 
