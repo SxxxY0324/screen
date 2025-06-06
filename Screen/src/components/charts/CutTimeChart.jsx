@@ -26,7 +26,7 @@ const renderTicks = (containerWidth, containerHeight) => {
   // 根据容器尺寸计算中心点和半径
   const cx = containerWidth * 0.5;
   const cy = containerHeight * 0.65; // 与Pie组件的cy对应
-  const outerRadius = Math.min(containerWidth, containerHeight) * 0.42; // 稍小于Pie的outerRadius
+  const outerRadius = Math.min(containerWidth, containerHeight) * 0.45; // 增加半径从0.42到0.48，使刻度线与放大后的圆环匹配
   const innerRadius = outerRadius * 0.85; // 用于放置标签的内径
   
   // 刻度线角度配置 - 扩大范围以更好地覆盖圆弧
@@ -60,7 +60,7 @@ const renderTicks = (containerWidth, containerHeight) => {
     const sin = Math.sin(rad);
     
     // 刻度线从圆环外部开始
-    const tickOuterRadius = outerRadius * 1.03;
+    const tickOuterRadius = outerRadius * 1.06; // 增加倍数从1.03到1.06，使刻度线更接近容器边缘
     const tickInnerRadius = tickOuterRadius + tickLength;
     
     const x1 = cx + tickOuterRadius * cos;
@@ -109,6 +109,7 @@ const CutTimeChartBase = ({ value = 0 }) => {
   const [displayValue, setDisplayValue] = useState(0);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const [isReady, setIsReady] = useState(false); // 新增：用于控制初始渲染
+  const [hovered, setHovered] = useState(false); // 新增：悬停状态
   const prevSizeRef = useRef({ width: 0, height: 0 });
   const containerRef = useRef(null);
   const animationRef = useRef(null);
@@ -256,6 +257,8 @@ const CutTimeChartBase = ({ value = 0 }) => {
         minWidth: '100px',
         minHeight: '100px'
       }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
@@ -281,8 +284,8 @@ const CutTimeChartBase = ({ value = 0 }) => {
             cy="65%"
             startAngle={startAngle}
             endAngle={endAngle}
-            innerRadius="70%"
-            outerRadius="85%"
+            innerRadius="80%"
+            outerRadius="95%"
             fill="rgba(50, 50, 50, 0.3)"
             stroke="none"
             isAnimationActive={false}
@@ -296,8 +299,8 @@ const CutTimeChartBase = ({ value = 0 }) => {
             cy="65%"
             startAngle={startAngle}
             endAngle={endAngle}
-            innerRadius="87%"
-            outerRadius="90%"
+            innerRadius="96%"
+            outerRadius="98%"
             fill="rgba(50, 50, 50, 0.3)"
             stroke="none"
             isAnimationActive={false}
@@ -310,8 +313,8 @@ const CutTimeChartBase = ({ value = 0 }) => {
             cy="65%"
             startAngle={startAngle}
             endAngle={endAngle}
-            innerRadius="87%"
-            outerRadius="90%"
+            innerRadius="96%"
+            outerRadius="98%"
             fill="url(#cutTimeGradient2)"
             stroke="none"
             dataKey="value"
@@ -326,8 +329,8 @@ const CutTimeChartBase = ({ value = 0 }) => {
               cy="65%"
               startAngle={outerRingStartAngle}
               endAngle={outerRingCurrentAngle}
-              innerRadius="70%"
-              outerRadius="85%"
+              innerRadius="80%"
+              outerRadius="95%"
               cornerRadius={10}
               fill="url(#cutTimeGradient)" 
               stroke="none"
@@ -342,7 +345,7 @@ const CutTimeChartBase = ({ value = 0 }) => {
         </PieChart>
       </ResponsiveContainer>
       
-      {/* 中心显示数值 */}
+      {/* 中心显示数值 - 改为动态计算字体大小 */}
       <div
         style={{
           position: 'absolute',
@@ -350,12 +353,13 @@ const CutTimeChartBase = ({ value = 0 }) => {
           left: '50%',
           transform: 'translate(-50%, -50%)',
           textAlign: 'center',
-          fontSize: '80px', // 稍微减小字体以适应更多文本
-          fontWeight: 'bolder',
+          fontSize: `${Math.min(Math.max(Math.min(width, height) * 0.32, 30), 95)}px`, // 进一步增加字体大小系数从0.28到0.32
+          fontWeight: hovered ? 'bolder' : 'bold',
           color: COLORS.WHITE,
           fontFamily: 'Arial',
           textShadow: '0 0 10px rgba(255,152,0,0.5)',
-          userSelect: 'none'
+          userSelect: 'none',
+          transition: 'all 0.3s ease'
         }}
       >
         {displayValue.toLocaleString()}

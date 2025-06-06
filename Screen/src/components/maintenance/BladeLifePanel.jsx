@@ -44,7 +44,7 @@ const BladeLifePanel = ({ tableData, headers }) => {
         <LifeTable 
           tableData={tableData} 
           headers={headers} 
-          scrollSpeed={0.25}
+          scrollSpeed={0.5}
           visibleRows={6}
         />
       </div>

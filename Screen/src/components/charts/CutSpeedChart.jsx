@@ -42,7 +42,7 @@ const renderTicks = (containerWidth, containerHeight) => {
   
   const cx = containerWidth * 0.5;
   const cy = containerHeight * 0.65;
-  const outerRadius = Math.min(containerWidth, containerHeight) * 0.45;
+  const outerRadius = Math.min(containerWidth, containerHeight) * 0.5;
   
   // 刻度线配置
   const startAngle = 180;
@@ -54,6 +54,11 @@ const renderTicks = (containerWidth, containerHeight) => {
   const subTickCount = 8; // 每个主刻度之间的小刻度数量
   
   const ticks = [];
+  
+  // 动态计算字体大小
+  const baseFontSize = Math.min(containerWidth, containerHeight) * 0.06;
+  const mainFontSize = Math.min(Math.max(baseFontSize, 14), 30); // 主刻度字体大小
+  const normalFontSize = Math.min(Math.max(baseFontSize * 0.7, 10), 22); // 普通刻度字体大小
   
   // 生成刻度线和标签
   for (let i = 0; i <= tickCount; i++) {
@@ -96,14 +101,14 @@ const renderTicks = (containerWidth, containerHeight) => {
       xOffset = -12; // 从正7改为负7，使"10"向左移动而不是向右
     }
     
-    // 显示刻度值
+    // 显示刻度值 - 使用动态计算的字体大小
     ticks.push(
       <text
         key={`tick-text-${i}`}
         x={cx + textRadius * cos + xOffset}
         y={cy + textRadius * sin}
         fill={i <= tickCount/2 ? "#f0e68c" : "#ff8c00"} // 更鲜艳的颜色
-        fontSize={i === 0 || i === tickCount ? "30" : "22"}
+        fontSize={i === 0 || i === tickCount ? mainFontSize : normalFontSize} // 动态字体大小
         fontWeight="bold"
         textAnchor={textAnchor}
         dominantBaseline="middle"
@@ -221,6 +226,7 @@ const CutSpeedChartBase = ({ value = 0 }) => {
   const [displayValue, setDisplayValue] = useState(0);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const [isReady, setIsReady] = useState(false); // 新增：用于控制初始渲染
+  const [hovered, setHovered] = useState(false); // 新增：添加悬停状态
   const prevSizeRef = useRef({ width: 0, height: 0 });
   const containerRef = useRef(null);
   const animationRef = useRef(null);
@@ -353,7 +359,10 @@ const CutSpeedChartBase = ({ value = 0 }) => {
       paddingBottom: '10%', // 添加底部内边距
       minWidth: '100px',
       minHeight: '100px'
-    }}>
+    }}
+    onMouseEnter={() => setHovered(true)}
+    onMouseLeave={() => setHovered(false)}
+    >
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           {/* 定义渐变 */}
@@ -391,13 +400,13 @@ const CutSpeedChartBase = ({ value = 0 }) => {
             10, 
             width / 2, 
             height * 0.65,
-            Math.min(width, height) * 0.45,
+            Math.min(width, height) * 0.5,
             "#ff6600" // 鲜亮的橙色
           )}
         </PieChart>
       </ResponsiveContainer>
       
-      {/* 显示数值 */}
+      {/* 显示数值 - 改为动态计算字体大小 */}
       <div
         style={{
           position: 'absolute',
@@ -405,13 +414,14 @@ const CutSpeedChartBase = ({ value = 0 }) => {
           left: '50%',
           transform: 'translate(-50%, 0)',
           textAlign: 'center',
-          fontSize: '60px',
-          fontWeight: '900',
+          fontSize: `${Math.min(Math.max(Math.min(width, height) * 0.22, 24), 60)}px`, // 调整字体大小系数，从0.16增加到0.22
+          fontWeight: hovered ? 'bolder' : 'bold',
           color: COLORS.WHITE,
           fontFamily: 'Arial',
           textShadow: '0 0 10px rgba(255,152,0,0.3)',
           userSelect: 'none',
-          letterSpacing: '2px'
+          letterSpacing: '2px',
+          transition: 'all 0.3s ease'
         }}
       >
         {displayValue.toFixed(2)}

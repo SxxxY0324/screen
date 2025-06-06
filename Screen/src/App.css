@@ -174,17 +174,19 @@
 .dashboard-grid {
   display: grid;
   gap: 10px;
-  grid-template-columns: 1fr 1.9fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-rows: repeat(3, minmax(160px, 1fr));
   grid-template-areas:
     "efficiency status cuttime"
     "energy status cutspeed"
     "perimeter status cutsets";
-  height: calc(100vh - 150px);
-  align-items: end; /* 所有网格项目底部对齐 */
+  height: calc(100vh - 120px);
+  margin: 0 10px;
+  padding: 0;
+  overflow: hidden;
 }
 
-/* 两侧卡片样式 - 恢复原始大小 */
+/* 两侧卡片样式 - 确保充足的显示空间 */
 .card-efficiency,
 .card-cuttime,
 .card-energy,
@@ -192,17 +194,14 @@
 .card-perimeter,
 .card-cutsets {
   width: 100%;
-  height: auto;
-  min-height: 150px;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: #000000;
-  border: 1px solid #000000;
+  background-color: transparent;
+  border: none;
   border-radius: 4px;
   overflow: hidden;
-  padding: 5px;
+  padding: 0;
   position: relative;
 }
 
@@ -248,11 +247,8 @@
   grid-area: status;
   height: 100%;
   position: relative;
-  background-color: #000000;
-  border: 1px solid #000000;
-  border-radius: 4px;
   overflow: hidden;
-  padding: 5px;
+  border-radius: 6px;
 }
 
 /* 各裁床运行状态图片微调 */
@@ -354,6 +350,7 @@ button:disabled {
 .card-cutspeed { grid-area: cutspeed; }
 .card-perimeter { grid-area: perimeter; }
 .card-cutsets { grid-area: cutsets; }
+.card-status { grid-area: status; }
 
 /* AI按钮样式 */
 .ai-button {

@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useState, useRef, useEffect, useCallback } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 
 // 颜色常量定义
@@ -54,6 +54,68 @@ const PerimeterChartBase = ({ value, defaultValue = 1238.5, isInitialized = fals
   const totalValue = Math.max(currentValue * 1.2, 12000); // 目标值略高于当前值，至少12000
   const remainingValue = totalValue - currentValue;
   
+  // 添加悬停状态
+  const [hovered, setHovered] = useState(false);
+  
+  // 添加尺寸监听
+  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
+  const [isReady, setIsReady] = useState(false);
+  const prevSizeRef = useRef({ width: 0, height: 0 });
+  const containerRef = useRef(null);
+  const observerRef = useRef(null);
+  
+  // 更新尺寸的处理函数
+  const updateSize = useCallback(() => {
+    if (containerRef.current) {
+      const { width, height } = containerRef.current.getBoundingClientRect();
+      
+      // 确保尺寸有效且大于最小限制
+      if (width > 50 && height > 50) {
+        setContainerSize({ width, height });
+        prevSizeRef.current = { width, height };
+        
+        // 只有在第一次获取到有效尺寸时设置isReady为true
+        if (!isReady) {
+          setIsReady(true);
+        }
+      }
+    }
+  }, [isReady]);
+  
+  // 使用ResizeObserver监听尺寸变化
+  useEffect(() => {
+    // 初始化调用一次
+    updateSize();
+    
+    // 创建ResizeObserver
+    if (typeof ResizeObserver !== 'undefined') {
+      observerRef.current = new ResizeObserver(updateSize);
+      
+      if (containerRef.current) {
+        observerRef.current.observe(containerRef.current);
+      }
+    } else {
+      // 降级方案：使用resize事件
+      window.addEventListener('resize', updateSize);
+    }
+    
+    // 清理函数
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      } else {
+        window.removeEventListener('resize', updateSize);
+      }
+    };
+  }, [updateSize]);
+  
+  // 获取有效的容器尺寸
+  const { width, height } = containerSize.width > 50 && containerSize.height > 50 
+    ? containerSize 
+    : prevSizeRef.current.width > 0 
+      ? prevSizeRef.current 
+      : { width: 0, height: 0 };
+  
   // 饼图数据
   const data = [
     { name: "已完成", value: currentValue },
@@ -69,7 +131,10 @@ const PerimeterChartBase = ({ value, defaultValue = 1238.5, isInitialized = fals
   // 如果数据尚未初始化，显示加载状态
   if (!isInitialized) {
     return (
-      <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+      <div 
+        ref={containerRef}
+        style={{ position: 'relative', width: '100%', height: '100%' }}
+      >
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             {/* 渐变定义 */}
@@ -99,8 +164,16 @@ const PerimeterChartBase = ({ value, defaultValue = 1238.5, isInitialized = fals
     );
   }
 
+  // 计算动态字体大小
+  const fontSize = Math.min(Math.max(Math.min(width, height) * 0.15, 22), 60);
+
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+    <div 
+      ref={containerRef}
+      style={{ position: 'relative', width: '100%', height: '100%' }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           {/* 渐变定义 */}
@@ -172,7 +245,7 @@ const PerimeterChartBase = ({ value, defaultValue = 1238.5, isInitialized = fals
         </PieChart>
       </ResponsiveContainer>
       
-      {/* 中心数值显示 */}
+      {/* 中心数值显示 - 使用动态字体大小 */}
       <div
         style={{
           position: 'absolute',
@@ -180,11 +253,12 @@ const PerimeterChartBase = ({ value, defaultValue = 1238.5, isInitialized = fals
           left: '50%',
           transform: 'translate(-50%, -50%)',
           textAlign: 'center',
-          fontSize: '45px',
-          fontWeight: 'bold',
+          fontSize: `${fontSize}px`,
+          fontWeight: hovered ? 'bolder' : 'bold',
           color: COLORS.ORANGE,
           fontFamily: 'Arial',
-          userSelect: 'none'
+          userSelect: 'none',
+          transition: 'all 0.3s ease'
         }}
       >
         {currentValue.toLocaleString()}

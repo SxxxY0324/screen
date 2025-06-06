@@ -16,70 +16,67 @@ const StatusTable = ({
   const isPaused = useRef(false);
   const lastTimeRef = useRef(0);
   const loadMoreTriggered = useRef(false);
-  const totalScrolledDistance = useRef(0);
   
+  // 计算滚动阈值 - 当数据超过这个数量才会滚动
+  const scrollThreshold = 10;
+  const shouldScroll = tableData && tableData.length > scrollThreshold;
+  
+  // 启动滚动动画 - 严格参照维保管理页面的实现
   const startScrolling = useCallback(() => {
+    // 如果数据不足阈值，则不执行滚动
+    if (!shouldScroll || !tableData || tableData.length === 0) {
+      return;
+    }
+    
+    let lastTime = 0;
+    
     const animate = (timestamp) => {
       if (!animationRef.current) return;
-
+      
       if (isPaused.current) {
         animationRef.current = requestAnimationFrame(animate);
         return;
       }
       
-      if (!lastTimeRef.current) lastTimeRef.current = timestamp;
-      const deltaTime = timestamp - lastTimeRef.current;
+      if (!lastTime) lastTime = timestamp;
+      const deltaTime = timestamp - lastTime;
+      lastTime = timestamp;
       
-      // 约60fps帧率控制
-      if (deltaTime >= 16) {
-        lastTimeRef.current = timestamp;
+      // 基于帧率调整滚动速度
+      const pixelsToScroll = (scrollSpeed * deltaTime) / 16.67; // 标准化到60fps
+      
+      setScrollPosition(prevPos => {
+        // 计算新位置
+        let newPosition = prevPos + pixelsToScroll;
         
-        const pixelsToScroll = (scrollSpeed * deltaTime) / 16.67;
+        // 触发加载更多数据
+        if (canLoadMore && !isLoadingMore && onLoadMore && !loadMoreTriggered.current && 
+            newPosition > (tableData.length * cellHeight * 0.6)) {
+          loadMoreTriggered.current = true;
+          
+          setTimeout(() => {
+            onLoadMore();
+          }, 0);
+          
+          setTimeout(() => {
+            loadMoreTriggered.current = false;
+          }, 3000);
+        }
         
-        setScrollPosition(prevPos => {
-          if (!tableData || tableData.length === 0) {
-            return 0;
-          }
-          
-          let newPosition = prevPos + pixelsToScroll;
-          totalScrolledDistance.current += pixelsToScroll;
-          
-          const maxScrollPosition = tableData.length * cellHeight;
-          const loadMoreThreshold = maxScrollPosition * 0.5;
-          
-          // 触发加载更多数据
-          if (canLoadMore && !isLoadingMore && onLoadMore && !loadMoreTriggered.current && 
-              totalScrolledDistance.current > loadMoreThreshold) {
-            loadMoreTriggered.current = true;
-            
-            setTimeout(() => {
-              onLoadMore();
-            }, 0);
-            
-            setTimeout(() => {
-              loadMoreTriggered.current = false;
-            }, 5000);
-          }
-          
-          // 处理滚动到数据末尾的情况
-          if (newPosition >= maxScrollPosition) {
-            if (canLoadMore) {
-              newPosition = maxScrollPosition - 10;
-            } else {
-              newPosition = 0;
-              totalScrolledDistance.current = 0;
-            }
-          }
-          
-          return newPosition;
-        });
-      }
+        // 当滚动超过原始数据长度时，直接重置回开始位置
+        // 这是维保管理页面的精确实现方式
+        if (newPosition >= tableData.length * cellHeight) {
+          newPosition = 0;
+        }
+        
+        return newPosition;
+      });
       
       animationRef.current = requestAnimationFrame(animate);
     };
     
     animationRef.current = requestAnimationFrame(animate);
-  }, [tableData, cellHeight, scrollSpeed, onLoadMore, canLoadMore, isLoadingMore]);
+  }, [tableData, cellHeight, scrollSpeed, canLoadMore, isLoadingMore, onLoadMore, shouldScroll]);
   
   const stopScrolling = useCallback(() => {
     if (animationRef.current) {
@@ -90,12 +87,18 @@ const StatusTable = ({
   }, []);
   
   const handleMouseEnter = useCallback(() => {
-    isPaused.current = true;
-  }, []);
+    // 只有在应该滚动的情况下才暂停
+    if (shouldScroll) {
+      isPaused.current = true;
+    }
+  }, [shouldScroll]);
   
   const handleMouseLeave = useCallback(() => {
-    isPaused.current = false;
-  }, []);
+    // 只有在应该滚动的情况下才恢复
+    if (shouldScroll) {
+      isPaused.current = false;
+    }
+  }, [shouldScroll]);
   
   // 数据变化时重置加载触发器
   useEffect(() => {
@@ -108,13 +111,18 @@ const StatusTable = ({
   
   // 组件挂载和卸载时控制动画
   useEffect(() => {
-    if (tableData && tableData.length > 0) {
+    // 只有在数据超过阈值时才启动滚动
+    if (shouldScroll && tableData && tableData.length > 0) {
       startScrolling();
+    } else {
+      // 数据不足时确保没有滚动
+      setScrollPosition(0);
     }
+    
     return () => {
       stopScrolling();
     };
-  }, [tableData, scrollSpeed, startScrolling, stopScrolling]);
+  }, [tableData, scrollSpeed, startScrolling, stopScrolling, shouldScroll]);
   
   // 数据不足时主动触发加载更多
   useEffect(() => {
@@ -149,26 +157,6 @@ const StatusTable = ({
     );
   }
   
-  // 计算可见行
-  const getVisibleRowsData = () => {
-    const startIndex = Math.floor(scrollPosition / cellHeight) % tableData.length;
-    const rowsToRender = [];
-    
-    for (let i = 0; i < visibleRows + 2; i++) {
-      const dataIndex = (startIndex + i) % tableData.length;
-      rowsToRender.push(tableData[dataIndex]);
-    }
-    
-    return rowsToRender;
-  };
-  
-  const currentVisibleRows = getVisibleRowsData();
-  
-  const contentStyle = {
-    transform: `translateY(-${scrollPosition % cellHeight}px)`,
-    willChange: 'transform'
-  };
-  
   // 样式定义
   const styles = {
     container: {
@@ -181,24 +169,31 @@ const StatusTable = ({
       position: 'sticky', 
       top: 0, 
       zIndex: 10, 
-      background: 'transparent'
+      background: 'transparent',
+      lineHeight: 1,
+      marginTop: 0,
+      marginBottom: 0,
+      paddingTop: 0,
+      paddingBottom: 0
     },
     headerTh: { 
-      height: cellHeight, 
+      height: 'auto',
       textAlign: 'center', 
       color: '#ffffff', 
       fontWeight: 'bold', 
       fontSize: 16, 
-      padding: '0 10px'
+      padding: '0px 10px',
+      lineHeight: '18px'
     },
     divider: { 
       height: 2, 
       backgroundColor: '#ff9800', 
       width: '100%', 
-      marginBottom: 0
+      marginTop: '2px',
+      marginBottom: '2px'
     },
     bodyContainer: {
-      height: `calc(100% - ${cellHeight + 2}px)`, 
+      height: `calc(100% - ${22 + 2 + 2}px)`,
       overflowY: 'hidden',
       position: 'relative'
     },
@@ -236,9 +231,9 @@ const StatusTable = ({
     >
       {/* 固定表头部分 */}
       <div className="table-header" style={styles.header}>
-        <table style={{ tableLayout: 'fixed', width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr>
+        <table style={{ tableLayout: 'fixed', width: '100%', borderCollapse: 'collapse', margin: 0, padding: 0 }}>
+          <thead style={{ margin: 0, padding: 0 }}>
+            <tr style={{ margin: 0, padding: 0 }}>
               {headers.map((header, index) => (
                 <th 
                   key={index} 
@@ -261,13 +256,43 @@ const StatusTable = ({
         className="table-body-container" 
         style={styles.bodyContainer}
       >
-        <div style={contentStyle}>
+        {!shouldScroll ? (
+          // 不滚动时显示静态表格
           <table style={{ tableLayout: 'fixed', width: '100%', borderCollapse: 'collapse' }}>
             <tbody>
-              {currentVisibleRows.map((rowData, index) => {
-                return (
+              {tableData.map((rowData, index) => (
+                <tr 
+                  key={index} 
+                  style={styles.tableRow}
+                >
+                  {rowData.map((cellData, cellIndex) => (
+                    <td 
+                      key={cellIndex} 
+                      style={{
+                        ...styles.tableCell,
+                        width: `${100 / headers.length}%` 
+                      }}
+                    >
+                      {cellData}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          // 滚动时采用双表格无缝循环技术 - 严格参照维保管理页面的实现
+          <div style={{ 
+            transform: `translateY(-${scrollPosition % (tableData.length * cellHeight)}px)`, 
+            willChange: 'transform'
+            // 移除transition属性，维保管理页面没有使用它
+          }}>
+            {/* 第一遍数据 */}
+            <table style={{ tableLayout: 'fixed', width: '100%', borderCollapse: 'collapse' }}>
+              <tbody>
+                {tableData.map((rowData, index) => (
                   <tr 
-                    key={index} 
+                    key={`first-${index}`} 
                     style={styles.tableRow}
                   >
                     {rowData.map((cellData, cellIndex) => (
@@ -282,11 +307,35 @@ const StatusTable = ({
                       </td>
                     ))}
                   </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                ))}
+              </tbody>
+            </table>
+            
+            {/* 第二遍数据用于无缝滚动 */}
+            <table style={{ tableLayout: 'fixed', width: '100%', borderCollapse: 'collapse' }}>
+              <tbody>
+                {tableData.map((rowData, index) => (
+                  <tr 
+                    key={`second-${index}`} 
+                    style={styles.tableRow}
+                  >
+                    {rowData.map((cellData, cellIndex) => (
+                      <td 
+                        key={cellIndex} 
+                        style={{
+                          ...styles.tableCell,
+                          width: `${100 / headers.length}%` 
+                        }}
+                      >
+                        {cellData}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
       
       {/* 加载更多指示器 */}

@@ -19,9 +19,9 @@ const COLORS = {
 };
 
 // 配置常量
-const ROW_HEIGHT = 34; // 再减少每行高度
-const SCROLL_SPEED = 1; // 滚动速度
-const VISIBLE_ROWS = 6; // 可见行数
+const ROW_HEIGHT = 30; // 调整每行高度为30px
+const SCROLL_SPEED = 0.8; // 调整滚动速度为0.8
+const VISIBLE_ROWS = 7; // 增加可见行数到7行
 
 const EnergyChart = () => {
   // 获取设备能耗数据和数据初始化状态
@@ -184,8 +184,8 @@ const EnergyChart = () => {
         backgroundColor: 'transparent',
         padding: '2px 5px 2px 0', // 减少上下内边距，左边距设为0
         marginLeft: '-20px', // 整体向左移动
-        marginTop: '120px', // 向下移动整个区域
-        marginBottom: '60px', // 减少底部空间
+        marginTop: '60px', // 调整为60px，使其与标题部分下方对齐
+        marginBottom: '0px', // 移除底部间距
       }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -194,7 +194,7 @@ const EnergyChart = () => {
       <div 
         ref={scrollAreaRef}
         style={{
-          height: 'calc(100% - 60px)', // 减少滚动区域高度，避免超出背景
+          height: 'calc(100% - 10px)', // 调整为10px的偏移，确保底部与模块底部对齐
           overflow: 'hidden',
           position: 'relative',
         }}
