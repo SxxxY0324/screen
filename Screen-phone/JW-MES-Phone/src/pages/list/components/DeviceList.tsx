@@ -27,6 +27,12 @@ export default function DeviceList({ initialDevices, onDeviceStatusChange }: Dev
   const [deviceLoading, setDeviceLoading] = useState(false);
   const [deviceRefreshing, setDeviceRefreshing] = useState(false);
   const [deviceHasMore, setDeviceHasMore] = useState(true);
+  const [isWeapp, setIsWeapp] = useState(false);
+  
+  // 检查当前环境
+  useEffect(() => {
+    setIsWeapp(Taro.getEnv() === Taro.ENV_TYPE.WEAPP);
+  }, []);
 
   // 初始化数据
   useEffect(() => {
@@ -114,6 +120,7 @@ export default function DeviceList({ initialDevices, onDeviceStatusChange }: Dev
       onRefresherRefresh={handleDeviceRefresh}
       onScrollToLower={handleDeviceScrollToLower}
       lowerThreshold={20}
+      enableBackToTop
     >
       <View className='device-list-container'>
         {deviceData.map(device => (
@@ -149,21 +156,21 @@ export default function DeviceList({ initialDevices, onDeviceStatusChange }: Dev
             </View>
           </View>
         ))}
-      </View>
         
-      {/* 加载状态提示 */}
-      {deviceLoading && (
-        <View className='loading-tip'>
-          <Text className='small-loading-text'>数据加载中...</Text>
-        </View>
-      )}
-      
-      {/* 已全部加载提示 */}
-      {!deviceHasMore && !deviceLoading && deviceData.length > 0 && (
-        <View className='loading-complete'>
-          <Text className='small-loading-text'>已全部加载</Text>
-        </View>
-      )}
+        {/* 加载状态提示 */}
+        {deviceLoading && (
+          <View className='loading-tip'>
+            <Text className='small-loading-text'>数据加载中...</Text>
+          </View>
+        )}
+        
+        {/* 已全部加载提示 - 内嵌到容器中，确保在微信端可见 */}
+        {!deviceHasMore && !deviceLoading && deviceData.length > 0 && (
+          <View className='loading-complete' style={{ paddingBottom: '80px' }}>
+            <Text className='small-loading-text'>已全部加载</Text>
+          </View>
+        )}
+      </View>
     </ScrollView>
   );
 } 

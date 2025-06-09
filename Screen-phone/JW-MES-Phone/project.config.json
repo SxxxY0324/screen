@@ -2,14 +2,20 @@
   "miniprogramRoot": "./dist",
   "projectname": "JW-MES-Phone",
   "description": "这是一个基于taro框架搭建的移动端系统",
-  "appid": "touristappid",
+  "appid": "wx234a340a08a26521",
   "setting": {
     "urlCheck": true,
     "es6": false,
     "enhance": false,
     "compileHotReLoad": false,
     "postcss": false,
-    "minified": false
+    "minified": false,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    }
   },
-  "compileType": "miniprogram"
+  "compileType": "miniprogram",
+  "libVersion": "3.8.6"
 }

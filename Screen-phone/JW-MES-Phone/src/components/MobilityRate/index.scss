@@ -27,6 +27,11 @@
       align-items: center;
       margin: 10px 0;
       
+      // Canvas样式
+      .canvas-circle {
+        display: block;
+      }
+      
       svg {
         transform: rotate(-90deg);
         overflow: visible;

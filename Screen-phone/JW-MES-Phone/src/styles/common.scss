@@ -1,0 +1,57 @@
+// 全局通用样式
+
+// 导航栏通用样式
+.detail-header {
+  display: flex;
+  align-items: center;
+  padding: 18px 20px; // 增加上下内边距
+  background-color: #ffffff;
+  position: relative;
+  z-index: 15;
+  
+  .back-button {
+    display: flex;
+    align-items: center;
+    font-size: 24px; // 增大字体
+    color: #1890FF;
+    cursor: pointer;
+    margin-right: 20px; // 增加右侧间距
+    
+    .back-icon {
+      margin-right: 8px; // 增加图标右侧间距
+      font-size: 26px; // 增大图标
+    }
+  }
+  
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    font-size: 22px; // 增大面包屑字体
+    
+    .breadcrumb-item {
+      color: #999;
+      
+      &.active {
+        color: #333;
+        font-weight: 700; // 增加活动项的字体粗细
+        font-size: 24px; // 当前项字体再增大一点
+      }
+      
+      &:not(.active) {
+        cursor: pointer;
+        font-weight: 500; // 增加非活动项的字体粗细
+        
+        &:hover, &:active {
+          color: #1890FF;
+          text-decoration: underline;
+        }
+      }
+    }
+    
+    .breadcrumb-separator {
+      margin: 0 12px; // 增加分隔符左右间距
+      color: #ccc;
+      font-size: 22px; // 增大分隔符字体
+    }
+  }
+} 

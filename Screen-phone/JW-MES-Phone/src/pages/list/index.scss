@@ -5,7 +5,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  padding-bottom: 50px; // 为底部TabBar预留空间
+  padding-bottom: 110px; // 为TabBar预留空间
   
   // 小型加载文字样式
   .small-loading-text {
@@ -67,7 +67,7 @@
     .detail-header {
       display: flex;
       align-items: center;
-      padding: 15px 20px;
+      padding: 18px 20px; // 增加上下内边距
       background-color: #ffffff;
       position: relative;
       z-index: 15;
@@ -75,32 +75,34 @@
       .back-button {
         display: flex;
         align-items: center;
-        font-size: 18px;
+        font-size: 24px; // 增大字体
         color: #1890FF;
         cursor: pointer;
-        margin-right: 15px;
+        margin-right: 20px; // 增加右侧间距
         
         .back-icon {
-          margin-right: 5px;
-          font-size: 20px;
+          margin-right: 8px; // 增加图标右侧间距
+          font-size: 26px; // 增大图标
         }
       }
       
       .breadcrumb {
         display: flex;
         align-items: center;
-        font-size: 16px;
+        font-size: 22px; // 增大面包屑字体
         
         .breadcrumb-item {
           color: #999;
           
           &.active {
             color: #333;
-            font-weight: 500;
+            font-weight: 700; // 增加活动项的字体粗细
+            font-size: 24px; // 当前项字体再增大一点
           }
           
           &:not(.active) {
             cursor: pointer;
+            font-weight: 500; // 增加非活动项的字体粗细
             
             &:hover, &:active {
               color: #1890FF;
@@ -110,8 +112,9 @@
         }
         
         .breadcrumb-separator {
-          margin: 0 8px;
+          margin: 0 12px; // 增加分隔符左右间距
           color: #ccc;
+          font-size: 22px; // 增大分隔符字体
         }
       }
     }
@@ -120,15 +123,19 @@
   // 列表模式 - 可滚动的区域列表部分
   .scrollable-regions {
     flex: 1;
-    margin-top: 590px;
-    height: calc(100vh - 590px - 50px); // 减去底部TabBar高度
+    margin-top: 570px; // 轮播图高度(500px) + 统计区域高度(~70px)
     box-sizing: border-box;
     padding: 0 15px;
     padding-top: 15px;
+    padding-bottom: 10px; // 轻微的底部内边距
+    overflow-y: scroll; // 改为scroll确保强制显示滚动条
+    -webkit-overflow-scrolling: touch; // 增加iOS流畅滚动
+    height: calc(100vh - 570px - 110px); // 视窗高度减去顶部区域和TabBar高度
     
     // 区域卡片列表容器
     .region-list-container {
       padding: 8px 0;
+      padding-bottom: 110px; // 增加底部填充，确保可以滚动到底部
       
       // 区域卡片 - 根据图片调整样式
       .region-card {
@@ -239,15 +246,19 @@
   // 详情模式 - 可滚动的客户详情部分
   .scrollable-customers {
     flex: 1;
-    margin-top: 550px; // 轮播图高度(500px) + 标题高度(50px)
-    height: calc(100vh - 550px - 50px); // 减去底部TabBar高度
+    margin-top: 570px; // 轮播图高度(500px) + 标题高度(~70px)
     box-sizing: border-box;
     padding: 0 15px;
     padding-top: 15px;
+    padding-bottom: 10px; // 轻微的底部内边距
+    overflow-y: scroll; // 改为scroll确保强制显示滚动条
+    -webkit-overflow-scrolling: touch; // 增加iOS流畅滚动
+    height: calc(100vh - 570px - 110px); // 视窗高度减去顶部区域和TabBar高度
     
     // 客户列表容器
     .customer-list-container {
       padding: 8px 0;
+      padding-bottom: 110px; // 增加底部填充，确保可以滚动到底部
       
       // 客户卡片样式
       .customer-card {
@@ -339,15 +350,19 @@
   // 设备列表 - 可滚动的设备列表部分
   .scrollable-devices {
     flex: 1;
-    margin-top: 550px; // 轮播图高度(500px) + 标题高度(50px)
-    height: calc(100vh - 550px - 50px); // 减去底部TabBar高度
+    margin-top: 570px; // 轮播图高度(500px) + 标题高度(~70px)
     box-sizing: border-box;
     padding: 0 15px;
     padding-top: 15px;
+    padding-bottom: 10px; // 轻微的底部内边距
+    overflow-y: scroll; // 改为scroll确保强制显示滚动条
+    -webkit-overflow-scrolling: touch; // 增加iOS流畅滚动
+    height: calc(100vh - 570px - 110px); // 视窗高度减去顶部区域和TabBar高度
     
     // 设备列表容器
     .device-list-container {
       padding: 8px 0;
+      padding-bottom: 110px; // 增加底部填充，确保可以滚动到底部
       
       // 设备卡片样式
       .device-card {

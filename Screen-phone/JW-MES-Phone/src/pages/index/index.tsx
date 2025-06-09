@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { View, Text } from '@tarojs/components'
-import { useLoad, navigateTo } from '@tarojs/taro'
+import { useLoad, switchTab } from '@tarojs/taro'
 import { AtButton, AtCard } from 'taro-ui'
 import { useAppContext } from '../../store/AppContext'
 import platform from '../../utils/platform'
@@ -21,7 +21,7 @@ export default function Index() {
 
   // 跳转到我的页面
   const goToMine = () => {
-    navigateTo({ url: '/pages/mine/index' })
+    switchTab({ url: '/pages/mine/index' })
   }
 
   return (

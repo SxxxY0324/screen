@@ -165,7 +165,7 @@ export default function List() {
     setPageMode(PageMode.REGION_LIST);
     setCurrentRegionId('');
     // 恢复原标题
-    Taro.setNavigationBarTitle({ title: '列表' });
+    Taro.setNavigationBarTitle({ title: '地区列表' });
     
     // 重置客户列表状态
     setCustomers([]);
