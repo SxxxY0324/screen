@@ -7,6 +7,7 @@ export default defineAppConfig({
     'pages/service/index',
     'pages/time-selector/index',
     'pages/device-details/index',
+    'pages/device-status-demo/index',
   ],
   window: {
     backgroundTextStyle: 'light',

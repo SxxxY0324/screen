@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react'
 import { View, ScrollView, Text } from '@tarojs/components'
-import Taro from '@tarojs/taro'
 import { RegionData } from '../../../components/RegionStats'
+import { usePagination } from '../../../hooks/usePagination'
+import { PAGINATION_CONFIG } from '../../../constants/config'
 
 interface RegionListProps {
   allRegionData: RegionData[];
@@ -9,90 +9,15 @@ interface RegionListProps {
 }
 
 export default function RegionList({ allRegionData, onRegionClick }: RegionListProps) {
-  // 分页与加载状态 - 地区列表
-  const [regionData, setRegionData] = useState<RegionData[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(6); // 每页显示6条数据
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
-  const [isWeapp, setIsWeapp] = useState(false);
-  
-  // 检查当前环境
-  useEffect(() => {
-    setIsWeapp(Taro.getEnv() === Taro.ENV_TYPE.WEAPP);
-  }, []);
-  
-  // 加载初始数据
-  const loadInitialData = () => {
-    // 地区数据
-    const initialData = allRegionData.slice(0, pageSize);
-    setRegionData(initialData);
-    setCurrentPage(1);
-    
-    // 如果总数据量小于等于页大小，说明已经没有更多数据了
-    if (allRegionData.length <= pageSize) {
-      setHasMore(false);
-    } else {
-      setHasMore(true);
-    }
-  }
-
-  // 刷新数据
-  const handleRefresh = () => {
-    if (isRefreshing) return;
-    
-    setIsRefreshing(true);
-    
-    // 模拟异步请求
-    setTimeout(() => {
-      loadInitialData();
-      setIsRefreshing(false);
-    }, 1000);
-  }
-
-  // 加载更多数据
-  const handleLoadMore = () => {
-    if (isLoading || !hasMore) return;
-    
-    setIsLoading(true);
-    
-    // 计算下一页数据的起始索引和结束索引
-    const nextPage = currentPage + 1;
-    const startIndex = (nextPage - 1) * pageSize;
-    const endIndex = nextPage * pageSize;
-    
-    // 模拟异步请求
-    setTimeout(() => {
-      // 获取下一页数据
-      const newData = allRegionData.slice(startIndex, endIndex);
-      
-      if (newData.length > 0) {
-        // 更新数据和页码
-        setRegionData([...regionData, ...newData]);
-        setCurrentPage(nextPage);
-        
-        // 判断是否还有更多数据
-        setHasMore(endIndex < allRegionData.length);
-      } else {
-        setHasMore(false);
-      }
-      
-      setIsLoading(false);
-    }, 1000);
-  }
-
-  // 处理滚动到底部事件
-  const handleScrollToLower = () => {
-    if (hasMore && !isLoading) {
-      handleLoadMore();
-    }
-  }
-  
-  // 在组件挂载时加载初始数据
-  useEffect(() => {
-    loadInitialData();
-  }, []);
+  // 使用通用分页Hook
+  const {
+    data: regionData,
+    isRefreshing,
+    isLoading,
+    hasMore,
+    handleRefresh,
+    handleScrollToLower
+  } = usePagination(allRegionData, PAGINATION_CONFIG.DEFAULT_PAGE_SIZE);
 
   return (
     <ScrollView 
@@ -103,7 +28,7 @@ export default function RegionList({ allRegionData, onRegionClick }: RegionListP
       refresherTriggered={isRefreshing}
       onRefresherRefresh={handleRefresh}
       onScrollToLower={handleScrollToLower}
-      lowerThreshold={20}
+      lowerThreshold={PAGINATION_CONFIG.SCROLL_LOWER_THRESHOLD}
       enableBackToTop
     >
       <View className='region-list-container'>

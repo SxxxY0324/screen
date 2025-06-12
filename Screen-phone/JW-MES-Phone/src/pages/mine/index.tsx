@@ -14,7 +14,7 @@ export default function Mine() {
   const { state, dispatch } = useAppContext();
   
   useLoad(() => {
-    console.log('Mine page loaded.');
+    // 页面加载完成
   });
 
   // 模拟登录操作

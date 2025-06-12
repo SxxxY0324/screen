@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { View, Text, Picker } from '@tarojs/components'
 import { useLoad } from '@tarojs/taro'
+import Taro from '@tarojs/taro'
 import './index.scss'
 
 // 引入必要的Taro UI样式
@@ -26,7 +27,6 @@ export default function Compare() {
   ])
   
   useLoad(() => {
-    console.log('Compare page loaded.')
     // 初始化当前日期
     const today = new Date()
     const year = today.getFullYear()
@@ -94,21 +94,12 @@ export default function Compare() {
   // 开始对比
   const handleStartCompare = () => {
     if (!device1 || !device2) {
-      console.log('请选择设备')
+      Taro.showToast({
+        title: '请选择设备',
+        icon: 'none'
+      });
       return
     }
-    console.log('开始对比', {
-      device1,
-      startDate1,
-      endDate1,
-      startTime1,
-      endTime1,
-      device2,
-      startDate2,
-      endDate2,
-      startTime2,
-      endTime2
-    })
     // 这里可以添加跳转到对比结果页面的逻辑
   }
 

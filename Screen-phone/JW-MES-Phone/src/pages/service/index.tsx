@@ -11,18 +11,16 @@ import 'taro-ui/dist/style/components/icon.scss'
 
 export default function Service() {
   useLoad(() => {
-    console.log('Service page loaded.')
+    // 页面加载完成
   })
   
   // 处理服务点击
   const handleServiceClick = (item, index) => {
-    console.log('Service clicked:', item, index)
     // 这里可以添加跳转到对应服务页面的逻辑
   }
   
   // 处理联系客服
   const handleContactService = () => {
-    console.log('Contact customer service')
     // 这里可以添加联系客服的逻辑
   }
 

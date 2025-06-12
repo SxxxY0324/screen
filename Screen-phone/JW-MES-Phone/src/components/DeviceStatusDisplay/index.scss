@@ -1,0 +1,101 @@
+/* 
+ * 裁床运行状态组件样式
+ * 注意：容器、标题和内容区域样式已由共享常量提供
+ */
+
+/* 状态图例样式 */
+.device-status-legend {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 20px; /* 增加底部边距 */
+  padding-bottom: 16px; /* 增加内边距 */
+  border-bottom: 1px solid #eee;
+}
+
+.device-status-legend-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 6px; /* 增加水平间距 */
+}
+
+.device-status-legend-label {
+  font-size: 20px; /* 增大字体从16px到20px */
+  margin-top: 8px; /* 增加图标和文字的间距 */
+  color: #333;
+  font-weight: 500;
+}
+
+/* 设备状态列表样式 */
+.device-status-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center; /* 使列表整体居中 */
+}
+
+.device-status-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: center; /* 改为居中对齐 */
+  align-items: center;
+  padding: 12px 16px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  width: calc(50% - 6px); /* 每行两个，减去间隔的一半 */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.device-status-code {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  flex: 0 0 auto; /* 不再占据所有剩余空间，只占据自身内容宽度 */
+  margin-right: 30px; /* 保持右边距，使图标和编码有适当间隔 */
+  text-align: center; /* 文本居中对齐 */
+}
+
+/* SVG图标样式 */
+.device-status-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* 加载和空状态样式 */
+.device-status-loading,
+.device-status-empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 150px;
+}
+
+.device-status-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-top-color: #1890ff;
+  border-radius: 50%;
+  animation: device-status-spin 1s linear infinite;
+}
+
+.device-status-empty-text {
+  color: #999;
+  font-size: 16px;
+}
+
+@keyframes device-status-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 响应式调整 */
+@media screen and (max-width: 340px) {
+  .device-status-item {
+    width: 100%; /* 在非常小的屏幕上，每行只显示一个 */
+  }
+} 

@@ -10,11 +10,13 @@ import {
   contentStyle 
 } from '../../constants/chart'
 
-interface MobilityRateProps {
-  /** 移动率值，范围0-100 */
+interface TotalCircumferenceProps {
+  /** 总周长值 */
   value: number;
   /** 最大值 */
   max?: number;
+  /** 单位 */
+  unit?: string;
   /** 自定义类名 */
   className?: string;
   /** 环形图大小 */
@@ -25,21 +27,21 @@ interface MobilityRateProps {
   isVisible?: boolean;
 }
 
-const MobilityRate: React.FC<MobilityRateProps> = ({ 
+const TotalCircumference: React.FC<TotalCircumferenceProps> = ({ 
   value = 0, 
-  max = 100,
+  max = 1000,
+  unit = 'mm',
   className = '',
-  size = 150, 
+  size = 150,
   strokeWidth = 10,
   isVisible = true
 }) => {
   // 使用环境检测Hook
-  const { isWeapp, executeWithDelay } = useEnvironment();
-  
+  const { isWeapp } = useEnvironment();
   // 加载状态
   const [isLoading, setIsLoading] = useState(true);
   
-  // 确保值在0-100之间
+  // 确保值在0-max之间
   const normalizedValue = Math.min(Math.max(0, value), max);
   const percentage = Math.round((normalizedValue / max) * 100);
   
@@ -51,12 +53,12 @@ const MobilityRate: React.FC<MobilityRateProps> = ({
     () => setIsLoading(false)
   );
   
-  // 根据百分比设置颜色
+  // 根据百分比设置颜色 (使用蓝色主题，可根据需求调整)
   const getColor = (percent: number) => {
-    if (percent >= 80) return '#52c41a'; // 绿色，优秀
-    if (percent >= 60) return '#1890ff'; // 蓝色，良好
-    if (percent >= 40) return '#faad14'; // 黄色，一般
-    return '#f5222d'; // 红色，不佳
+    if (percent >= 80) return '#0066cc'; // 深蓝色，高值
+    if (percent >= 60) return '#1890ff'; // 中蓝色，中高值
+    if (percent >= 40) return '#69c0ff'; // 浅蓝色，中值
+    return '#bae7ff'; // 极浅蓝色，低值
   };
   
   const color = getColor(animatedValue);
@@ -123,7 +125,7 @@ const MobilityRate: React.FC<MobilityRateProps> = ({
   return (
     <View style={containerStyle}>
       <View style={headerSectionStyle}>
-        <Text style={headerTitleStyle}>移动率 MU</Text>
+        <Text style={headerTitleStyle}>总周长</Text>
       </View>
       
       <View style={contentStyle}>
@@ -196,21 +198,23 @@ const MobilityRate: React.FC<MobilityRateProps> = ({
               left: '50%',
               transform: 'translate(-50%, -50%)',
               display: 'flex',
-              alignItems: 'baseline',
+              flexDirection: 'column',
+              alignItems: 'center',
               visibility: (isLoading || isAnimating) ? 'hidden' : 'visible',
               zIndex: 4
             }}
           >
             <Text style={{
-              fontSize: '28px',
+              fontSize: '32px',
               fontWeight: 'bold',
-              color
+              color,
+              lineHeight: 1.2
             }}>{Math.round(animatedValue * max / 100)}</Text>
             <Text style={{
               fontSize: '16px',
               color: '#999',
-              marginLeft: '4px'
-            }}>/ {max}</Text>
+              marginTop: '4px'
+            }}>{unit}</Text>
           </View>
         </View>
       </View>
@@ -218,4 +222,4 @@ const MobilityRate: React.FC<MobilityRateProps> = ({
   )
 }
 
-export default MobilityRate 
+export default TotalCircumference 

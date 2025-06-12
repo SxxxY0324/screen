@@ -1,0 +1,11 @@
+{
+  "symbol_url": "",
+  "parse_local_svg": true,
+  "local_svg_dir": "./src/assets/svg",
+  "save_dir": "./src/components/iconfont",
+  "default_icon_size": 28,
+  "platforms": ["weapp", "h5"],
+  "use_rpx": true,
+  "trim_icon_prefix": "",
+  "use_typescript": true
+} 

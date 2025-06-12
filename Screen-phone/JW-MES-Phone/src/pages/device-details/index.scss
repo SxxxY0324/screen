@@ -1,8 +1,27 @@
+/* 预定义CSS变量，用于动态设置高度 */
+:root {
+  --fixed-area-height: 300px;
+  --window-height: 100vh;
+}
+
 .device-details-page {
   background-color: #f5f7fa;
   min-height: 100vh;
+  height: var(--window-height, 100vh);
   display: flex;
   flex-direction: column;
+  position: relative;
+  overflow: hidden; // 防止内容溢出
+  
+  // 固定区域样式
+  .fixed-area {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    background-color: #f5f7fa;
+  }
   
   // 顶部蓝色区域
   .header-section {
@@ -110,6 +129,14 @@
     }
   }
   
+  // 可滚动区域样式
+  .scrollable-content {
+    flex: 1;
+    height: calc(var(--window-height, 100vh) - var(--fixed-area-height, 300px)); // 动态高度，减去固定区域高度
+    box-sizing: border-box;
+    -webkit-overflow-scrolling: touch; // 增加滚动顺畅度
+  }
+  
   // 内容区域
   .stats-content {
     padding: 16px;
@@ -139,6 +166,7 @@
             align-items: center;
             justify-content: center;
             min-height: 230px;
+            width: 100%;
           }
           
           .empty-chart {
@@ -245,4 +273,26 @@
       font-size: 22px; // 增大分隔符字体
     }
   }
+}
+
+/* 微信小程序特定样式 */
+:host {
+  .device-details-page {
+    box-sizing: border-box;
+  }
+
+  /* 修正微信小程序滚动区域样式 */
+  .scrollable-content {
+    -webkit-overflow-scrolling: touch;
+    box-sizing: border-box;
+  }
+}
+
+/* 裁床运行状态样式 */
+.device-status-section {
+  margin-top: 16px;
+}
+
+.monitor-section {
+  margin-bottom: 24px;
 } 

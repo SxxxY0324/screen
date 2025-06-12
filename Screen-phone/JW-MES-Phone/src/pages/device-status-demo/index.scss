@@ -1,0 +1,50 @@
+.device-status-demo {
+  padding: 16px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.status-section {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 16px;
+}
+
+.status-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.status-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  width: calc(50% - 6px); /* 每行两个，减去间隔的一半 */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.device-code {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* 响应式调整 */
+@media screen and (max-width: 340px) {
+  .status-item {
+    width: 100%; /* 在非常小的屏幕上，每行只显示一个 */
+  }
+} 

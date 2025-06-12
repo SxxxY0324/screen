@@ -58,12 +58,28 @@ const config = {
     publicPath: '/',
     staticDirectory: 'static',
     webpackChain(chain) {
-      // 忽略CSS顺序冲突警告
-      chain.plugin('miniCssExtractPlugin')
-        .tap(args => {
-          args[0].ignoreOrder = true;
-          return args;
-        });
+      // 使用直接配置方式处理CSS顺序冲突警告
+      chain.optimization.splitChunks({
+        cacheGroups: {
+          styles: {
+            name: 'styles',
+            test: /\.(css|scss|less)$/,
+            chunks: 'all',
+            enforce: true,
+          },
+        },
+      });
+      
+      chain.merge({
+        plugins: [
+          {
+            plugin: require('mini-css-extract-plugin'),
+            args: [{
+              ignoreOrder: true
+            }]
+          }
+        ]
+      });
     },
     postcss: {
       autoprefixer: {

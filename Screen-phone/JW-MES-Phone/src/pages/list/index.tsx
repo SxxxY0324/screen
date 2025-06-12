@@ -120,17 +120,16 @@ export default function List() {
   const totalRunning = allRegionData.reduce((sum, region) => sum + region.runningCount, 0)
   
   useLoad(() => {
-    console.log('List page loaded.')
+    // 页面加载完成
   })
 
-  // 轮播图点击
+  // 轮播图点击事件
   const handleBannerClick = (id: number) => {
-    console.log('Banner clicked:', id)
+    // 这里可以添加轮播图点击后的逻辑
   }
-  
-  // 区域卡片点击
+
+  // 区域卡片点击事件
   const handleRegionClick = (regionId: string) => {
-    console.log('Region clicked:', regionId)
     // 切换到客户列表模式
     setCurrentRegionId(regionId);
     
@@ -179,9 +178,8 @@ export default function List() {
     }, 50);
   }
   
-  // 客户详情点击
-  const handleCustomerDetail = (customerId: string) => {
-    console.log('Customer detail clicked:', customerId);
+  // 客户详情点击事件
+  const handleCustomerDetailClick = (customerId: string) => {
     // 保存当前客户ID
     setCurrentCustomerId(customerId);
     
@@ -202,7 +200,7 @@ export default function List() {
         duration: 0
       });
     }, 50);
-  }
+  };
   
   // 从设备列表返回到客户列表
   const handleBackToCustomerList = () => {
@@ -226,20 +224,13 @@ export default function List() {
     }
   }
   
-  // 切换设备开关状态
-  const handleDeviceSwitchChange = (id: string, isChecked: boolean) => {
-    console.log(`设备 ${id} 状态已切换为: ${isChecked ? 'on' : 'off'}`);
-    
+  // 设备状态切换事件
+  const handleDeviceStatusToggle = (id: string, isChecked: boolean) => {
     // 更新设备状态
-    const updatedDevices = deviceData.map(device => {
-      if (device.id === id) {
-        return { ...device, isOn: isChecked };
-      }
-      return device;
-    });
-    
-    setDeviceData(updatedDevices);
-  }
+    setDeviceData(prevData => prevData.map(device => 
+      device.id === id ? {...device, isOn: isChecked} : device
+    ));
+  };
 
   return (
     <View className='list-page'>
@@ -309,7 +300,7 @@ export default function List() {
       {pageMode === PageMode.CUSTOMER_LIST && (
         <CustomerList 
           initialCustomers={customers} 
-          onCustomerClick={handleCustomerDetail}
+          onCustomerClick={handleCustomerDetailClick}
         />
       )}
 
@@ -317,7 +308,7 @@ export default function List() {
       {pageMode === PageMode.DEVICE_LIST && (
         <DeviceList 
           initialDevices={deviceData} 
-          onDeviceStatusChange={handleDeviceSwitchChange}
+          onDeviceStatusChange={handleDeviceStatusToggle}
         />
       )}
     </View>

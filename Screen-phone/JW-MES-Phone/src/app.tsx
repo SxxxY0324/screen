@@ -9,7 +9,7 @@ import 'taro-ui/dist/style/index.scss'
 
 function App({ children }: PropsWithChildren) {
   useLaunch(() => {
-    console.log('App launched.')
+    // 应用启动
   })
 
   // 使用AppProvider包装应用

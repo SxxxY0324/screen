@@ -1,103 +1,24 @@
-import { useState, useEffect } from 'react'
 import { View, ScrollView, Text } from '@tarojs/components'
 import Taro from '@tarojs/taro'
-
-// 设备数据类型定义
-interface DeviceInfo {
-  id: string;
-  name: string;
-  code: string;
-  lastUpdateTime: string;
-  location: string;
-  series: string;
-  isOn: boolean;
-}
+import { DeviceInfo } from '../../../types'
+import { usePagination } from '../../../hooks/usePagination'
+import { PAGINATION_CONFIG } from '../../../constants/config'
 
 interface DeviceListProps {
   initialDevices: DeviceInfo[];
-  onDeviceStatusChange: (id: string, isChecked: boolean) => void;
+  onDeviceStatusChange: (deviceId: string, isOn: boolean) => void;
 }
 
 export default function DeviceList({ initialDevices, onDeviceStatusChange }: DeviceListProps) {
-  // 分页与加载状态 - 设备列表
-  const [deviceData, setDeviceData] = useState<DeviceInfo[]>([]);
-  const [allDeviceData, setAllDeviceData] = useState<DeviceInfo[]>([]);
-  const [devicePageSize] = useState(6); // 设备列表每页6条数据
-  const [deviceCurrentPage, setDeviceCurrentPage] = useState(1);
-  const [deviceLoading, setDeviceLoading] = useState(false);
-  const [deviceRefreshing, setDeviceRefreshing] = useState(false);
-  const [deviceHasMore, setDeviceHasMore] = useState(true);
-  const [isWeapp, setIsWeapp] = useState(false);
-  
-  // 检查当前环境
-  useEffect(() => {
-    setIsWeapp(Taro.getEnv() === Taro.ENV_TYPE.WEAPP);
-  }, []);
-
-  // 初始化数据
-  useEffect(() => {
-    setAllDeviceData(initialDevices);
-    const firstPageData = initialDevices.slice(0, devicePageSize);
-    setDeviceData(firstPageData);
-    setDeviceCurrentPage(1);
-    setDeviceHasMore(initialDevices.length > devicePageSize);
-  }, [initialDevices, devicePageSize]);
-
-  // 设备列表刷新数据
-  const handleDeviceRefresh = () => {
-    if (deviceRefreshing) return;
-    
-    setDeviceRefreshing(true);
-    
-    // 模拟异步请求
-    setTimeout(() => {
-      // 只加载第一页设备数据
-      const initialDevices = allDeviceData.slice(0, devicePageSize);
-      setDeviceData(initialDevices);
-      setDeviceCurrentPage(1);
-      setDeviceHasMore(allDeviceData.length > devicePageSize);
-      
-      setDeviceRefreshing(false);
-    }, 1000);
-  }
-
-  // 设备列表加载更多
-  const handleDeviceLoadMore = () => {
-    if (deviceLoading || !deviceHasMore) return;
-    
-    setDeviceLoading(true);
-    
-    // 计算下一页数据
-    const nextPage = deviceCurrentPage + 1;
-    const startIndex = (nextPage - 1) * devicePageSize;
-    const endIndex = nextPage * devicePageSize;
-    
-    // 模拟异步请求
-    setTimeout(() => {
-      // 获取下一页数据
-      const newData = allDeviceData.slice(startIndex, endIndex);
-      
-      if (newData.length > 0) {
-        // 更新数据和页码
-        setDeviceData([...deviceData, ...newData]);
-        setDeviceCurrentPage(nextPage);
-        
-        // 判断是否还有更多数据
-        setDeviceHasMore(endIndex < allDeviceData.length);
-      } else {
-        setDeviceHasMore(false);
-      }
-      
-      setDeviceLoading(false);
-    }, 1000);
-  }
-  
-  // 处理设备列表滚动到底部事件
-  const handleDeviceScrollToLower = () => {
-    if (deviceHasMore && !deviceLoading) {
-      handleDeviceLoadMore();
-    }
-  }
+  // 使用通用分页Hook
+  const {
+    data: deviceData,
+    isRefreshing: deviceRefreshing,
+    isLoading: deviceLoading,
+    hasMore: deviceHasMore,
+    handleRefresh: handleDeviceRefresh,
+    handleScrollToLower: handleDeviceScrollToLower
+  } = usePagination(initialDevices, PAGINATION_CONFIG.DEFAULT_PAGE_SIZE);
 
   // 处理设备卡片点击事件
   const handleDeviceCardClick = (device: DeviceInfo) => {
@@ -114,12 +35,11 @@ export default function DeviceList({ initialDevices, onDeviceStatusChange }: Dev
     <ScrollView 
       className='scrollable-devices'
       scrollY
-      scrollTop={0}
       refresherEnabled
       refresherTriggered={deviceRefreshing}
       onRefresherRefresh={handleDeviceRefresh}
       onScrollToLower={handleDeviceScrollToLower}
-      lowerThreshold={20}
+      lowerThreshold={PAGINATION_CONFIG.SCROLL_LOWER_THRESHOLD}
       enableBackToTop
     >
       <View className='device-list-container'>

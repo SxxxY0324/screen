@@ -1,0 +1,104 @@
+.device-status-component {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.device-status-header {
+  margin-bottom: 16px;
+}
+
+.device-status-title {
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+}
+
+.device-status-content {
+  position: relative;
+  min-height: 180px;
+}
+
+/* 状态图例样式 */
+.device-status-legend {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.device-status-legend-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.device-status-legend-label {
+  font-size: 12px;
+  margin-top: 4px;
+  color: #333;
+}
+
+/* 设备状态列表样式 */
+.device-status-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.device-status-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  width: calc(50% - 6px); /* 每行两个，减去间隔的一半 */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.device-status-code {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* 加载和空状态样式 */
+.device-status-loading,
+.device-status-empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 150px;
+}
+
+.device-status-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-top-color: #1890ff;
+  border-radius: 50%;
+  animation: device-status-spin 1s linear infinite;
+}
+
+.device-status-empty-text {
+  color: #999;
+  font-size: 16px;
+}
+
+@keyframes device-status-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 响应式调整 */
+@media screen and (max-width: 340px) {
+  .device-status-item {
+    width: 100%; /* 在非常小的屏幕上，每行只显示一个 */
+  }
+} 

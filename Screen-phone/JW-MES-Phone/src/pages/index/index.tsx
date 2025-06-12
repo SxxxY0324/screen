@@ -16,7 +16,7 @@ export default function Index() {
   const { state } = useAppContext()
 
   useLoad(() => {
-    console.log('Index page loaded.')
+    // 页面加载完成
   })
 
   // 跳转到我的页面

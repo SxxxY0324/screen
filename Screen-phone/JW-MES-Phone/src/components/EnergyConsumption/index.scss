@@ -1,0 +1,85 @@
+.energy-consumption {
+  padding: 16px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 16px;
+  
+  .chart-header {
+    margin-bottom: 16px;
+    
+    .chart-title {
+      font-size: 18px;
+      font-weight: 500;
+      color: #333;
+    }
+  }
+  
+  .chart-content {
+    position: relative;
+    min-height: 180px;
+    
+    // 加载动画样式
+    .loading-spinner {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 5;
+      
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(0, 0, 0, 0.1);
+        border-radius: 50%;
+        border-top-color: #1890ff;
+        animation: spin 1s ease-in-out infinite;
+      }
+      
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    }
+    
+    // 空状态样式
+    .empty-state {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100px;
+      
+      .empty-text {
+        color: #999;
+        font-size: 16px;
+      }
+    }
+    
+    // 柱状图整体布局
+    .bar-chart {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 100%;
+      // 注意：不再在这里定义子元素样式，全部使用内联样式
+    }
+  }
+}
+
+/* 微信小程序特定样式优化 - 只保留非进度条相关样式 */
+:host {
+  .energy-consumption {
+    /* 确保微信小程序和H5尺寸一致 */
+    box-sizing: border-box;
+    
+    /* 微信小程序环境下字体大小优化 */
+    .chart-header .chart-title {
+      font-size: 32rpx;
+    }
+  }
+} 
