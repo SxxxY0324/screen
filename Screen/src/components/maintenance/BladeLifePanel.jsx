@@ -140,15 +140,10 @@ function LifeTable({ tableData, headers, visibleRows = 4, cellHeight = 38, scrol
   
   // 进度条组件 - 改进版
   const ProgressBar = ({ percentage }) => {
-    // 根据百分比获取颜色渐变
+    // 根据百分比获取颜色渐变 - 统一改为深橙色
     const getGradientColor = (percent) => {
-      if (percent < 30) {
-        return 'linear-gradient(to right, #ff3d00, #ff6e40)'; // 红色渐变（低）
-      } else if (percent < 70) {
-        return 'linear-gradient(to right, #ffab00, #ffd740)'; // 黄色渐变（中）
-      } else {
-        return 'linear-gradient(to right, #00c853, #69f0ae)'; // 绿色渐变（高）
-      }
+      // 统一返回深橙色渐变，不再根据百分比区分颜色
+      return 'linear-gradient(to right, #e65100, #ff9800)'; // 深橙色渐变
     };
 
     return (
