@@ -1,9 +1,12 @@
 import React, { useRef, useEffect, useState } from 'react';
+import { useTranslation } from '../../hooks/useTranslation';
 
 /**
  * 当前设备故障清单面板组件
  */
 const FaultListPanel = ({ tableData, headers }) => {
+  const { t } = useTranslation();
+
   return (
     <div style={{ 
       width: '100%', 
@@ -36,7 +39,7 @@ const FaultListPanel = ({ tableData, headers }) => {
           color: '#fff', 
           fontSize: '22px', 
           fontWeight: 'bold'
-        }}>当前设备故障清单</div>
+        }}>{t('maintenance.panels.faultList')}</div>
       </div>
       
       {/* 表格区域 */}

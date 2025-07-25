@@ -1,5 +1,6 @@
 import React from 'react';
 import MetricCard from '../MetricCard';
+import { useTranslation } from '../../hooks/useTranslation';
 
 // 导入图片
 import faultCountImg from '../../assets/images/故障台数.jpg';
@@ -17,40 +18,42 @@ const MetricsPanel = ({
   faultDuration, 
   avgFaultTime 
 }) => {
+  const { t } = useTranslation();
+
   return (
     <div className="metrics-row">
       {/* 故障台数 */}
       <MetricCard
-        title="故障台数"
+        title={t('maintenance.metrics.faultCount')}
         value={faultCount}
-        unit="台"
+        unit={t('maintenance.units.devices')}
         bgImage={faultCountImg}
         className="fault-count-card"
       />
       
       {/* 故障次数 */}
       <MetricCard
-        title="故障次数"
+        title={t('maintenance.metrics.faultTimes')}
         value={faultTimes}
-        unit="次"
+        unit={t('maintenance.units.times')}
         bgImage={faultTimesImg}
         className="fault-count-card"
       />
       
       {/* 故障时长 */}
       <MetricCard
-        title="故障时长"
+        title={t('maintenance.metrics.faultDuration')}
         value={faultDuration}
-        unit="H"
+        unit={t('maintenance.units.hours')}
         bgImage={faultDurationImg}
         className="fault-count-card"
       />
       
       {/* 平均故障时长 */}
       <MetricCard
-        title="平均故障时长"
+        title={t('maintenance.metrics.avgFaultTime')}
         value={avgFaultTime}
-        unit="H"
+        unit={t('maintenance.units.hours')}
         bgImage={avgFaultTimeImg}
         className="fault-count-card"
       />

@@ -1,0 +1,82 @@
+// 裁剪周长模块样式
+.cutting-perimeter-module {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+
+  .module-title {
+    font-size: 26px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .perimeter-content {
+    .total-perimeter-section {
+      text-align: center;
+      margin-bottom: 24px;
+      padding: 20px 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 12px;
+      color: #fff;
+
+      .total-perimeter-display {
+        display: flex;
+        justify-content: center;
+        align-items: baseline;
+        margin-bottom: 8px;
+
+        .total-number {
+          font-size: 40px;
+          font-weight: 700;
+          line-height: 1;
+        }
+
+        .total-unit {
+          font-size: 18px;
+          font-weight: 600;
+          margin-left: 4px;
+          opacity: 0.9;
+        }
+      }
+
+      .total-label {
+        font-size: 16px;
+        opacity: 0.9;
+        font-weight: 500;
+      }
+    }
+
+    // 修改为换行显示的信息区域样式
+    .perimeter-info-section {
+      width: 100%;
+
+      .perimeter-info-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #f0f0f0;
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        .info-label {
+          font-size: 20px;
+          color: #666;
+          font-weight: 500;
+        }
+
+        .info-value {
+          font-size: 20px;
+          color: #333;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+} 

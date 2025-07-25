@@ -2,6 +2,7 @@ import React, { memo } from 'react';
 import { ensureValidNumber } from '../../utils/chartUtils';
 import { useAppSelector } from '../../store/hooks';
 import { selectIsDataInitialized } from '../../store/slices/monitorSlice';
+import { useTranslation } from '../../hooks/useTranslation';
 
 /**
  * 图表包装组件 - 提供通用的错误处理和数据验证
@@ -18,6 +19,8 @@ const ChartWrapper = ({
   defaultValue = 0, 
   chartProps = {} 
 }) => {
+  const { getCommon } = useTranslation();
+  
   // 从Redux中获取数据初始化状态
   const isDataInitialized = useAppSelector(selectIsDataInitialized);
   
@@ -49,7 +52,7 @@ const ChartWrapper = ({
         color: '#fff',
         backgroundColor: 'rgba(0,0,0,0.2)'
       }}>
-        数据加载中...
+        {getCommon('loading')}
       </div>
     );
   }

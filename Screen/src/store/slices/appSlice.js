@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { getCurrentLanguage } from '../../utils/i18n';
 
 // 初始状态
 const initialState = {
@@ -6,6 +7,7 @@ const initialState = {
   isLoading: false,      // 全局加载状态
   error: null,           // 全局错误信息
   theme: 'dark',         // 应用主题
+  language: getCurrentLanguage(), // 当前语言
   dataRefreshInterval: 60000, // 数据刷新间隔(毫秒)
   filters: {
     country: '中国',
@@ -36,6 +38,9 @@ const appSlice = createSlice({
     setTheme(state, action) {
       state.theme = action.payload;
     },
+    setLanguage(state, action) {
+      state.language = action.payload;
+    },
     setDataRefreshInterval(state, action) {
       state.dataRefreshInterval = action.payload;
     },
@@ -61,6 +66,7 @@ export const {
   setGlobalError,
   clearGlobalError,
   setTheme,
+  setLanguage,
   setDataRefreshInterval,
   updateFilter,
   updateSelectedDevices,
@@ -72,6 +78,7 @@ export const selectActiveTab = (state) => state.app.activeTab;
 export const selectIsLoading = (state) => state.app.isLoading;
 export const selectError = (state) => state.app.error;
 export const selectTheme = (state) => state.app.theme;
+export const selectLanguage = (state) => state.app.language;
 export const selectDataRefreshInterval = (state) => state.app.dataRefreshInterval;
 export const selectFilters = (state) => state.app.filters;
 export const selectSelectedDevices = (state) => state.app.filters.selectedDevices;

@@ -4,7 +4,7 @@
   "description": "这是一个基于taro框架搭建的移动端系统",
   "appid": "wx234a340a08a26521",
   "setting": {
-    "urlCheck": true,
+    "urlCheck": false,
     "es6": false,
     "enhance": false,
     "compileHotReLoad": false,

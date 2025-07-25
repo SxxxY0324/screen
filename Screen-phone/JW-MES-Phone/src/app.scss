@@ -1,3 +1,6 @@
+/* NutUI 样式导入 */
+@import "@nutui/nutui-react-taro/dist/style.css";
+
 /* 全局样式 */
 page {
   background-color: #f5f5f5;
@@ -31,4 +34,60 @@ page {
   border-radius: 50%;
   border-top-color: #1890ff;
   animation: spin 1s ease-in-out infinite;
+}
+
+/* Taro UI AtButton 全局样式重置 - 确保按钮文字可见 */
+.at-button {
+  // 基础重置
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+
+  // 确保文字可见
+  color: inherit !important;
+  font-size: inherit !important;
+  line-height: normal !important;
+  
+  // 移除可能影响显示的样式
+  text-shadow: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  
+  // 按钮内文字元素
+  .at-button__text, span, div {
+    color: inherit !important;
+    font-size: inherit !important;
+    font-weight: inherit !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: inline !important;
+  }
+  
+  // 修复小程序兼容性：将属性选择器改为具体类名
+  &.at-button--primary, &.query-btn-inline {
+    color: #fff !important;
+    font-size: 20px !important;  // 增大字体
+    font-weight: 700 !important;  // 增强加粗
+    
+    .at-button__text, span, div {
+      color: #fff !important;
+      font-size: 20px !important;
+      font-weight: 700 !important;
+    }
+  }
+  
+  &.at-button--secondary, &.mine-btn {
+    color: #333 !important;
+    font-size: 20px !important;  // 增大字体
+    font-weight: 700 !important;  // 增强加粗
+    
+    .at-button__text, span, div {
+      color: #333 !important;
+      font-size: 20px !important;
+      font-weight: 700 !important;
+    }
+  }
 }

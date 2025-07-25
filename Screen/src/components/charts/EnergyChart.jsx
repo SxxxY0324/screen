@@ -1,6 +1,7 @@
 import React, { memo, useState, useEffect, useRef, useMemo } from 'react';
 import { useAppSelector } from '../../store/hooks';
 import { selectDeviceEnergyData, selectIsDataInitialized } from '../../store/slices/monitorSlice';
+import { useTranslation } from '../../hooks/useTranslation';
 
 // 颜色常量定义
 const COLORS = {
@@ -24,6 +25,8 @@ const SCROLL_SPEED = 0.8; // 调整滚动速度为0.8
 const VISIBLE_ROWS = 7; // 增加可见行数到7行
 
 const EnergyChart = () => {
+  const { getCommon } = useTranslation();
+  
   // 获取设备能耗数据和数据初始化状态
   const deviceEnergyData = useAppSelector(selectDeviceEnergyData);
   const isDataInitialized = useAppSelector(selectIsDataInitialized);
@@ -153,7 +156,7 @@ const EnergyChart = () => {
         color: COLORS.WHITE,
         fontSize: '20px'
       }}>
-        数据加载中...
+        {getCommon('loading')}
       </div>
     );
   }

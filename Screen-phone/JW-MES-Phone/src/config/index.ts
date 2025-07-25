@@ -21,4 +21,4 @@ export const appConfig = {
     defaultExpireTime: 5 * 60 * 1000, // 5分钟默认缓存过期时间
     maxCacheItems: 100, // 最大缓存项数
   }
-} 
+}

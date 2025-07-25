@@ -1,6 +1,7 @@
 import { useEffect, useState, Suspense, lazy } from 'react'
 import './App.css'
 import Header from './components/Header'
+import LanguageSelector from './components/LanguageSelector'
 import { useAppDispatch, useAppSelector } from './store/hooks'
 import { 
   selectActiveTab, 
@@ -17,6 +18,7 @@ import imageCache from './utils/imageCache'
 import { selectDeviceStatusData, selectDeviceStatusLoading } from './store/slices/monitorSlice'
 import DeviceMultiSelect from './components/DeviceMultiSelect'
 import WorkshopMultiSelect from './components/WorkshopMultiSelect'
+import { useTranslation } from './hooks/useTranslation'
 
 // 懒加载页面组件
 const MonitorPage = lazy(() => import('./pages/MonitorPage'));
@@ -30,6 +32,9 @@ function App() {
   const deviceStatusLoading = useAppSelector(selectDeviceStatusLoading);
   const selectedDevices = useAppSelector(selectSelectedDevices);
   const selectedWorkshops = useAppSelector(selectSelectedWorkshops);
+  
+  // 使用翻译Hook
+  const { getNav, getTimeRange, getMessage, getCommon } = useTranslation();
   
   // 应用初始化状态
   const [appInitialized, setAppInitialized] = useState(false);
@@ -67,9 +72,9 @@ function App() {
     const preloadNextPageImages = async () => {
       try {
         // 根据目标页面预加载不同的图片组
-        if (tabName === '维保管理') {
+        if (tabName === getNav('maintenance')) {
           await import('./utils/imagePreloader').then(module => module.default.preloadMaintenanceImages());
-        } else if (tabName === '实时监控') {
+        } else if (tabName === getNav('monitoring')) {
           await import('./utils/imagePreloader').then(module => module.default.preloadMonitorImages());
         }
       } catch (err) {
@@ -106,13 +111,13 @@ function App() {
     dispatch(updateSelectedDevices(deviceIds));
     
     // 更新显示文本
-    let displayText = '设备';
+    let displayText = getNav('device');
     if (deviceIds.length === 1) {
       displayText = deviceIds[0];
     } else if (deviceStatusData && deviceIds.length === deviceStatusData.length) {
-      displayText = '全部设备';
+      displayText = getNav('allDevices');
     } else if (deviceIds.length > 0) {
-      displayText = `已选${deviceIds.length}个设备`;
+      displayText = getNav('selectedDevices').replace('{count}', deviceIds.length);
     }
     
     dispatch(updateFilter({ key: 'devices', value: displayText }));
@@ -123,7 +128,7 @@ function App() {
     dispatch(updateSelectedWorkshops(workshops));
     
     // 更新显示文本
-    let displayText = '车间';
+    let displayText = getNav('workshop');
     if (workshops.length === 1) {
       displayText = workshops[0];
     } else if (workshops.length > 0) {
@@ -138,9 +143,9 @@ function App() {
       }
       
       if (uniqueWorkshops.size > 0 && workshops.length === uniqueWorkshops.size) {
-        displayText = '全部车间';
+        displayText = getNav('allWorkshops');
       } else {
-        displayText = `已选${workshops.length}个车间`;
+        displayText = getNav('selectedWorkshops').replace('{count}', workshops.length);
       }
     }
     
@@ -154,7 +159,8 @@ function App() {
     
     // 根据活动标签渲染不同页面组件
     switch(activeTab) {
-      case '实时监控':
+      case getNav('monitoring'):
+      case '实时监控': // 保持向后兼容
         return (
           <div className={`page-container ${transitionClass}`}>
             <Suspense fallback={<LoadingIndicator />}>
@@ -162,7 +168,8 @@ function App() {
             </Suspense>
           </div>
         );
-      case '维保管理':
+      case getNav('maintenance'):
+      case '维保管理': // 保持向后兼容
         return (
           <div className={`page-container ${transitionClass}`}>
             <Suspense fallback={<LoadingIndicator />}>
@@ -170,7 +177,8 @@ function App() {
             </Suspense>
           </div>
         );
-      case '业绩分析':
+      case getNav('analysis'):
+      case '业绩分析': // 保持向后兼容
         return (
           <div className={`page-container ${transitionClass}`}>
             <Suspense fallback={<LoadingIndicator />}>
@@ -193,7 +201,7 @@ function App() {
   if (!appInitialized) {
     return (
       <div className="preloader-container">
-        <LoadingIndicator progress={initProgress} message="资源加载中..." />
+        <LoadingIndicator progress={initProgress} message={getCommon('loading')} />
       </div>
     );
   }
@@ -211,33 +219,33 @@ function App() {
           <div className="top-nav">
             <div className="nav-left">
               <div 
-                className={`nav-button ${activeTab === '实时监控' ? 'active' : ''} ${nextTab === '实时监控' ? 'next-active' : ''}`}
-                onClick={() => handleTabClick('实时监控')}
+                className={`nav-button ${activeTab === getNav('monitoring') || activeTab === '实时监控' ? 'active' : ''} ${nextTab === getNav('monitoring') ? 'next-active' : ''}`}
+                onClick={() => handleTabClick(getNav('monitoring'))}
               >
-                实时监控
+                {getNav('monitoring')}
               </div>
               <div 
-                className={`nav-button ${activeTab === '维保管理' ? 'active' : ''} ${nextTab === '维保管理' ? 'next-active' : ''}`}
-                onClick={() => handleTabClick('维保管理')}
+                className={`nav-button ${activeTab === getNav('maintenance') || activeTab === '维保管理' ? 'active' : ''} ${nextTab === getNav('maintenance') ? 'next-active' : ''}`}
+                onClick={() => handleTabClick(getNav('maintenance'))}
               >
-                维保管理
+                {getNav('maintenance')}
               </div>
               <div 
-                className={`nav-button ${activeTab === '业绩分析' ? 'active' : ''} ${nextTab === '业绩分析' ? 'next-active' : ''}`}
-                onClick={() => handleTabClick('业绩分析')}
+                className={`nav-button ${activeTab === getNav('analysis') || activeTab === '业绩分析' ? 'active' : ''} ${nextTab === getNav('analysis') ? 'next-active' : ''}`}
+                onClick={() => handleTabClick(getNav('analysis'))}
               >
-                业绩分析
+                {getNav('analysis')}
               </div>
             </div>
             <div className="nav-right">
               <div className="ai-button">
-                <span className="ai-icon">AI</span>
+                <span className="ai-icon">{getNav('ai')}</span>
               </div>
               <select 
                 className="nav-select" 
                 onChange={(e) => handleFilterChange('country', e.target.value)}
               >
-                <option>中国</option>
+                <option>{getNav('country')}</option>
               </select>
               <WorkshopMultiSelect
                 selectedWorkshops={selectedWorkshops}
@@ -251,19 +259,20 @@ function App() {
                 className="nav-select"
                 onChange={(e) => handleFilterChange('additional', e.target.value)}
               >
-                <option value="本年">本年</option>
-                <option value="不选">不选</option>
-                <option value="今天">今天</option>
-                <option value="昨天">昨天</option>
-                <option value="前天">前天</option>
-                <option value="本周">本周</option>
-                <option value="上周">上周</option>
-                <option value="本月">本月</option>
-                <option value="上月">上月</option>
-                <option value="本季度">本季度</option>
-                <option value="上季度">上季度</option>
-                <option value="上年">上年</option>
+                <option value="本年">{getTimeRange('thisYear')}</option>
+                <option value="不选">{getTimeRange('none')}</option>
+                <option value="今天">{getTimeRange('today')}</option>
+                <option value="昨天">{getTimeRange('yesterday')}</option>
+                <option value="前天">{getTimeRange('dayBeforeYesterday')}</option>
+                <option value="本周">{getTimeRange('thisWeek')}</option>
+                <option value="上周">{getTimeRange('lastWeek')}</option>
+                <option value="本月">{getTimeRange('thisMonth')}</option>
+                <option value="上月">{getTimeRange('lastMonth')}</option>
+                <option value="本季度">{getTimeRange('thisQuarter')}</option>
+                <option value="上季度">{getTimeRange('lastQuarter')}</option>
+                <option value="上年">{getTimeRange('lastYear')}</option>
               </select>
+              <LanguageSelector />
             </div>
           </div>
         </div>

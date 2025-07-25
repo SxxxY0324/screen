@@ -2,6 +2,7 @@ import React, { memo } from 'react';
 import { ErrorBoundary, COLORS } from '../index';
 import ChartWrapper from '../charts/ChartWrapper';
 import { EfficiencyChart } from '../charts';
+import { useTranslation } from '../../hooks/useTranslation';
 
 /**
  * 移动率MU监控组件
@@ -11,6 +12,8 @@ import { EfficiencyChart } from '../charts';
  * @returns {React.Component} 移动率MU监控组件
  */
 const EfficiencyMonitorBase = ({ value, defaultValue = 69.03 }) => {
+  const { getMonitor, getCommon } = useTranslation();
+
   // 图表错误回退组件
   const ChartErrorFallback = ({ title }) => (
     <div style={{ 
@@ -23,22 +26,24 @@ const EfficiencyMonitorBase = ({ value, defaultValue = 69.03 }) => {
       color: COLORS.WHITE,
       backgroundColor: 'rgba(0,0,0,0.5)'
     }}>
-      <div>图表加载失败</div>
+      <div>{getCommon('error')}</div>
       <div>{title}</div>
     </div>
   );
+
+  const efficiencyLabel = getMonitor('efficiency');
 
   return (
     <div className="monitor-card">
       {/* 卡片标题 */}
       <div className="monitor-card-title">
         <div className="title-indicator"></div>
-        <span>移动率MU</span>
+        <span>{efficiencyLabel}</span>
       </div>
       
       {/* 图表内容 */}
       <div className="monitor-card-content">
-        <ErrorBoundary fallback={<ChartErrorFallback title="移动率MU" />}>
+        <ErrorBoundary fallback={<ChartErrorFallback title={efficiencyLabel} />}>
           <ChartWrapper 
             Chart={EfficiencyChart} 
             value={value} 

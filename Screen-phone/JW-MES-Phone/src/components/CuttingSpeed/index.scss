@@ -1,0 +1,59 @@
+// 裁剪速度模块样式
+.cutting-speed-module {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+
+  .module-title {
+    font-size: 26px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .speed-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    // 仪表盘区域 - 进一步减少下边距
+    .gauge-section {
+      margin-bottom: 15px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+
+    // 速度信息展示区域
+    .speed-info-section {
+      width: 100%;
+
+      .speed-info-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #f0f0f0;
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        .speed-label {
+          font-size: 20px;
+          color: #666;
+          font-weight: 500;
+        }
+
+        .speed-value {
+          font-size: 20px;
+          color: #333;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+} 

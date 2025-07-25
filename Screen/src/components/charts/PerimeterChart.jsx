@@ -1,5 +1,6 @@
 import React, { memo, useState, useRef, useEffect, useCallback } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+import { useTranslation } from '../../hooks/useTranslation';
 
 // 颜色常量定义
 const COLORS = {
@@ -18,22 +19,25 @@ const COLORS = {
 };
 
 // 加载状态组件
-const Loading = () => (
-  <div
-    style={{
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      textAlign: 'center',
-      fontSize: '18px',
-      color: COLORS.LIGHT_GRAY,
-      fontFamily: 'Arial'
-    }}
-  >
-    加载中...
-  </div>
-);
+const LoadingComponent = () => {
+  const { getCommon } = useTranslation();
+  
+  return (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100%',
+        fontSize: '18px',
+        color: COLORS.LIGHT_GRAY,
+        fontFamily: 'Arial'
+      }}
+    >
+      {getCommon('loading')}
+    </div>
+  );
+};
 
 /**
  * 周长图表组件
@@ -44,6 +48,8 @@ const Loading = () => (
  * @param {boolean} props.isInitialized 数据是否已初始化
  */
 const PerimeterChartBase = ({ value, defaultValue = 1238.5, isInitialized = false }) => {
+  const { getCommon } = useTranslation();
+  
   // 使用提供的值或默认值
   const displayValue = Number.isFinite(value) ? value : defaultValue;
   
@@ -159,7 +165,7 @@ const PerimeterChartBase = ({ value, defaultValue = 1238.5, isInitialized = fals
             />
           </PieChart>
         </ResponsiveContainer>
-        <Loading />
+        <LoadingComponent />
       </div>
     );
   }

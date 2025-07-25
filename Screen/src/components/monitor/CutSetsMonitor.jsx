@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
 import { COLORS } from '../index';
+import { useTranslation } from '../../hooks/useTranslation';
 
 /**
  * 裁剪套数监控组件
@@ -9,6 +10,8 @@ import { COLORS } from '../index';
  * @returns {React.Component} 裁剪套数监控组件
  */
 const CutSetsMonitorBase = ({ value, iconSrc }) => {
+  const { getMonitor } = useTranslation();
+
   // 样式常量
   const STYLES = {
     cutSetsOverlay: {
@@ -21,7 +24,7 @@ const CutSetsMonitorBase = ({ value, iconSrc }) => {
       width: '80px', 
       height: '80px', 
       display: 'flex', 
-      justifyContent: 'center', 
+      justifyContent: 'center',
       alignItems: 'center', 
       marginRight: '20px'
     },
@@ -38,12 +41,14 @@ const CutSetsMonitorBase = ({ value, iconSrc }) => {
     }
   };
 
+  const cutSetsLabel = getMonitor('cutSets');
+
   return (
     <div className="monitor-card">
       {/* 卡片标题 */}
       <div className="monitor-card-title">
         <div className="title-indicator"></div>
-        <span>裁剪套数</span>
+        <span>{cutSetsLabel}</span>
       </div>
       
       {/* 图表内容 */}

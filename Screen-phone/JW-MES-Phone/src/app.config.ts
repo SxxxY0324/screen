@@ -1,13 +1,14 @@
 export default defineAppConfig({
   pages: [
+    'pages/login/index',
     'pages/index/index',
-    'pages/mine/index',
     'pages/list/index',
-    'pages/compare/index',
-    'pages/service/index',
-    'pages/time-selector/index',
-    'pages/device-details/index',
     'pages/device-status-demo/index',
+    'pages/device-details/index',
+    'pages/time-selector/index',
+    'pages/service/index',
+    'pages/compare/index',
+    'pages/mine/index',
   ],
   window: {
     backgroundTextStyle: 'light',

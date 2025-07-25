@@ -36,22 +36,12 @@ public class MaintenanceRepositoryImpl implements MaintenanceRepository {
     public Integer getFaultCount() {
         logger.info("开始获取故障台数");
         try {
-            // 由于数据库不支持JSON函数，临时硬编码返回2
-            // 实际环境应该解析JSON提取state值
-            logger.info("故障台数查询成功，返回2");
-            return 2;
-            
-            // 下面是适用于支持JSON函数的数据库的代码（SQL Server 2016+）
-            /*
-            String sql = "SELECT COUNT(DISTINCT MachineID) " +
-                         "FROM da_Machine_fault " +
-                         "WHERE ISNULL(Description, '') <> '' " +
-                         "AND ISJSON(Description) = 1 " +
-                         "AND JSON_VALUE(Description, '$.state') = '1'";
+            // 查询具有故障记录的设备数量
+            String sql = "SELECT COUNT(DISTINCT MachineID) FROM da_Machine_fault WHERE ISNULL(Description, '') <> ''";
                          
             Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
+            logger.info("故障台数查询成功，结果: {}", count);
             return count != null ? count : 0;
-            */
         } catch (DataAccessException e) {
             logger.error("获取故障台数失败: {}", e.getMessage(), e);
             return 0;
@@ -67,25 +57,15 @@ public class MaintenanceRepositoryImpl implements MaintenanceRepository {
     public Integer getFaultTimes() {
         logger.info("开始获取故障次数");
         try {
-            // 使用简单的计数SQL，应该适用于所有版本的SQL Server
             String sql = "SELECT COUNT(*) FROM da_Machine_fault";
             logger.info("执行SQL查询: {}", sql);
             
-            // 执行查询
             Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
-            
-            // 如果数据库还未建立，临时返回固定值
-            if (count == null) {
-                logger.info("故障次数查询结果为空，返回默认值24");
-                return 24;
-            }
-            
             logger.info("故障次数查询成功，结果: {}", count);
-            return count;
+            return count != null ? count : 0;
         } catch (DataAccessException e) {
             logger.error("获取故障次数失败: {}", e.getMessage(), e);
-            logger.info("返回默认故障次数: 24");
-            return 24;  // 临时返回固定值
+            return 0;
         }
     }
     
@@ -99,28 +79,15 @@ public class MaintenanceRepositoryImpl implements MaintenanceRepository {
     public Double getFaultDuration() {
         logger.info("开始获取故障总时长");
         try {
-            // SQL查询：计算所有故障的总时长（小时）
-            // 使用更兼容的SQL语法
-            String sql = "SELECT SUM(DATEDIFF(HOUR, Occurrence_Time, CASE WHEN End_Time IS NULL THEN GETDATE() ELSE End_Time END)) " +
-                         "FROM da_Machine_fault " +
-                         "WHERE Occurrence_Time IS NOT NULL";
-            logger.info("执行SQL查询: {}", sql);
+            // 计算所有故障的总时长（小时）
+            String sql = "SELECT ISNULL(SUM(DATEDIFF(MINUTE, Occurrence_Time, ISNULL(End_Time, GETDATE()))), 0) / 60.0 AS TotalFaultHours FROM da_Machine_fault WHERE Occurrence_Time IS NOT NULL";
             
-            // 执行查询
             Double duration = jdbcTemplate.queryForObject(sql, Double.class);
-            
-            // 如果数据库还未建立或查询结果为空，返回固定值
-            if (duration == null) {
-                logger.info("故障总时长查询结果为空，返回默认值1.0小时");
-                return 1.0;
-            }
-            
             logger.info("故障总时长查询成功，结果: {}小时", duration);
-            return duration;
+            return duration != null ? duration : 0.0;
         } catch (DataAccessException e) {
             logger.error("获取故障总时长失败: {}", e.getMessage(), e);
-            logger.info("返回默认故障总时长: 1.0小时");
-            return 1.0;  // 临时返回固定值
+            return 0.0;
         }
     }
     
@@ -133,28 +100,15 @@ public class MaintenanceRepositoryImpl implements MaintenanceRepository {
     public Double getAvgFaultTime() {
         logger.info("开始获取平均故障时长");
         try {
-            // SQL查询：计算所有故障的平均时长（小时）
-            // 使用更兼容的SQL语法
-            String sql = "SELECT AVG(DATEDIFF(HOUR, Occurrence_Time, CASE WHEN End_Time IS NULL THEN GETDATE() ELSE End_Time END)) " +
-                         "FROM da_Machine_fault " +
-                         "WHERE Occurrence_Time IS NOT NULL";
-            logger.info("执行SQL查询: {}", sql);
+            // 计算平均故障时长（小时）
+            String sql = "SELECT ISNULL(AVG(DATEDIFF(MINUTE, Occurrence_Time, ISNULL(End_Time, GETDATE()))), 0) / 60.0 AS AvgFaultHours FROM da_Machine_fault WHERE Occurrence_Time IS NOT NULL";
             
-            // 执行查询
             Double avgDuration = jdbcTemplate.queryForObject(sql, Double.class);
-            
-            // 如果数据库还未建立或查询结果为空，返回固定值
-            if (avgDuration == null) {
-                logger.info("平均故障时长查询结果为空，返回默认值0.5小时");
-                return 0.5;
-            }
-            
             logger.info("平均故障时长查询成功，结果: {}小时", avgDuration);
-            return avgDuration;
+            return avgDuration != null ? avgDuration : 0.0;
         } catch (DataAccessException e) {
             logger.error("获取平均故障时长失败: {}", e.getMessage(), e);
-            logger.info("返回默认平均故障时长: 0.5小时");
-            return 0.5;  // 临时返回固定值
+            return 0.0;
         }
     }
     

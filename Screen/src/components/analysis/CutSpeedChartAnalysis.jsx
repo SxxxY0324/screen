@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
 import ReactECharts from 'echarts-for-react';
+import { useTranslation } from '../../hooks/useTranslation';
 
 /**
  * 业绩分析 - 裁剪速度(m/s)图表组件
@@ -9,6 +10,7 @@ import ReactECharts from 'echarts-for-react';
  * @returns {React.Component} 裁剪速度(m/s)图表组件
  */
 const CutSpeedChartAnalysisBase = ({ categories, values }) => {
+  const { t } = useTranslation();
   // 图表配置
   const getOptions = () => {
     return {
@@ -132,7 +134,7 @@ const CutSpeedChartAnalysisBase = ({ categories, values }) => {
           color: '#fff', 
           fontSize: '22px', 
           fontWeight: 'bold'
-        }}>裁剪速度(m/s)</div>
+        }}>{t('analysis.charts.cutSpeed')}</div>
       </div>
       
       {/* 图表区 */}

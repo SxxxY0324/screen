@@ -8,9 +8,7 @@ import {
   fetchDeviceStatusData,
   selectMonitorData,
   selectTableData,
-  selectTableHeaders,
   selectDeviceStatusData,
-  selectStatusLegendItems,
   selectCutSetsValue,
   selectMonitorError,
   selectPagination,
@@ -20,6 +18,7 @@ import {
 import { selectDataRefreshInterval, selectSelectedDevices, selectSelectedWorkshops } from '../store/slices/appSlice';
 import DeviceStatusTransition from '../components/common/DeviceStatusTransition';
 import { COLORS } from '../components';
+import { getStatusLegendItems, getTableHeaders } from '../data/monitorData';
 
 // 导入监控组件
 import {
@@ -39,9 +38,7 @@ function MonitorPage() {
   const dispatch = useAppDispatch();
   const monitorData = useAppSelector(selectMonitorData);
   const tableData = useAppSelector(selectTableData);
-  const tableHeaders = useAppSelector(selectTableHeaders);
   const deviceStatusData = useAppSelector(selectDeviceStatusData);
-  const statusLegendItems = useAppSelector(selectStatusLegendItems);
   const cutSetsValue = useAppSelector(selectCutSetsValue);
   const errorMessage = useAppSelector(selectMonitorError);
   const pagination = useAppSelector(selectPagination);
@@ -65,6 +62,10 @@ function MonitorPage() {
       default: return COLORS.GRAY;
     }
   };
+  
+  // 获取翻译版本的状态图例项和表格头部
+  const statusLegendItems = getStatusLegendItems();
+  const tableHeaders = getTableHeaders();
   
   // 过滤设备状态数据，同时应用设备和车间的筛选条件
   const filteredDeviceStatusData = React.useMemo(() => {

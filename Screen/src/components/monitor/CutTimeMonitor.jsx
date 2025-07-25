@@ -2,6 +2,7 @@ import React, { memo } from 'react';
 import { ErrorBoundary, COLORS } from '../index';
 import ChartWrapper from '../charts/ChartWrapper';
 import { CutTimeChart } from '../charts';
+import { useTranslation } from '../../hooks/useTranslation';
 
 /**
  * 裁剪时间监控组件
@@ -11,6 +12,8 @@ import { CutTimeChart } from '../charts';
  * @returns {React.Component} 裁剪时间监控组件
  */
 const CutTimeMonitorBase = ({ value, defaultValue = 16.5 }) => {
+  const { getMonitor, getCommon } = useTranslation();
+
   // 图表错误回退组件
   const ChartErrorFallback = ({ title }) => (
     <div style={{ 
@@ -23,22 +26,24 @@ const CutTimeMonitorBase = ({ value, defaultValue = 16.5 }) => {
       color: COLORS.WHITE,
       backgroundColor: 'rgba(0,0,0,0.5)'
     }}>
-      <div>图表加载失败</div>
+      <div>{getCommon('error')}</div>
       <div>{title}</div>
     </div>
   );
+
+  const cutTimeLabel = getMonitor('cutTime');
 
   return (
     <div className="monitor-card">
       {/* 卡片标题 */}
       <div className="monitor-card-title">
         <div className="title-indicator"></div>
-        <span>裁剪时间</span>
+        <span>{cutTimeLabel}</span>
       </div>
       
       {/* 图表内容 */}
       <div className="monitor-card-content">
-        <ErrorBoundary fallback={<ChartErrorFallback title="裁剪时间" />}>
+        <ErrorBoundary fallback={<ChartErrorFallback title={cutTimeLabel} />}>
           <ChartWrapper 
             Chart={CutTimeChart} 
             value={value} 

@@ -1,9 +1,12 @@
 import React, { useRef, useEffect, useState } from 'react';
+import { useTranslation } from '../../hooks/useTranslation';
 
 /**
  * 刀片和磨刀棒寿命面板组件
  */
 const BladeLifePanel = ({ tableData, headers }) => {
+  const { t } = useTranslation();
+
   return (
     <div style={{ 
       width: '100%', 
@@ -36,7 +39,7 @@ const BladeLifePanel = ({ tableData, headers }) => {
           color: '#fff', 
           fontSize: '22px', 
           fontWeight: 'bold'
-        }}>刀片和磨刀棒寿命</div>
+        }}>{t('maintenance.panels.bladeLife')}</div>
       </div>
       
       {/* 表格区域 */}

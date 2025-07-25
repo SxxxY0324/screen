@@ -1,0 +1,380 @@
+.filter-form {
+  .filter-section {
+    margin-bottom: 30px;
+    
+    .filter-item {
+      margin-bottom: 24px;
+      
+      .filter-label {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 16px;
+        font-weight: 600;
+      }
+      
+      // 选择器输入框样式
+      .picker-input {
+        height: 60px;
+        line-height: 60px;
+        padding: 0 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #fff;
+        font-size: 22px;
+        color: #333;
+        
+        &.disabled {
+          background-color: #f5f5f5;
+          color: #999;
+        }
+      }
+      
+      // 输入框样式
+      .input-field {
+        height: 60px;
+        padding: 0 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #fff;
+        font-size: 22px;
+        
+        &::placeholder {
+          color: #999;
+          font-size: 20px;
+        }
+      }
+    }
+    
+    .date-range-section {
+      .date-input-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        
+        .date-picker {
+          flex: 1;
+          min-width: 100px;
+          height: 60px;
+          line-height: 60px;
+          padding: 0 15px;
+          border: 1px solid #ddd;
+          border-radius: 8px;
+          background-color: #fff;
+          font-size: 20px;
+          color: #333;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        
+        .date-separator {
+          font-size: 18px;
+          color: #666;
+          flex-shrink: 0;
+          margin: 0 4px;
+        }
+        
+        // 内联查询按钮样式
+        .query-btn-inline {
+          flex-shrink: 0;
+          height: 60px;
+          min-width: 80px;
+          font-size: 18px !important;
+          font-weight: 700 !important;
+          margin-left: 8px;
+          color: #fff !important;
+          background-color: #1890ff !important;
+          border: none !important;
+          border-radius: 8px !important;
+          
+          // 确保按钮内文字可见
+          .at-button__text {
+            color: #fff !important;
+            font-size: 18px !important;
+            font-weight: 700 !important;
+          }
+        }
+        
+        // 内联前往我的按钮样式
+        .mine-btn-inline {
+          flex-shrink: 0;
+          height: 60px;
+          min-width: 90px !important;
+          font-size: 18px !important;
+          font-weight: 700 !important;
+          margin-left: 8px;
+          color: #333 !important;
+          background-color: #f5f5f5 !important;
+          border: 1px solid #ddd !important;
+          border-radius: 8px !important;
+          
+          // 确保按钮内文字可见
+          .at-button__text {
+            color: #333 !important;
+            font-size: 18px !important;
+            font-weight: 700 !important;
+          }
+        }
+      }
+    }
+  }
+
+  // 全局按钮样式覆盖，确保所有AtButton组件的文字都可见
+  .at-button {
+    &.query-btn-inline {
+      height: 60px !important;
+      min-width: 80px !important;
+      font-size: 18px !important;
+      font-weight: 700 !important;
+      color: #fff !important;
+      background-color: #1890ff !important;
+      border: none !important;
+      border-radius: 8px !important;
+      
+      // 修复小程序兼容性：替换通配符选择器
+      &, & span, & div, & text, .at-button__text {
+        color: #fff !important;
+        font-size: 18px !important;
+        font-weight: 700 !important;
+      }
+    }
+    
+    &.mine-btn-inline {
+      height: 60px !important;
+      min-width: 120px !important;
+      font-size: 20px !important;
+      font-weight: 700 !important;
+      color: #333 !important;
+      background-color: #f5f5f5 !important;
+      border: 1px solid #ddd !important;
+      border-radius: 8px !important;
+      
+      // 修复小程序兼容性：替换通配符选择器
+      &, & span, & div, & text, .at-button__text {
+        color: #333 !important;
+        font-size: 18px !important;
+        font-weight: 700 !important;
+      }
+    }
+  }
+
+  // 更强的选择器优先级 - 针对Taro UI 3.x版本
+  :global(.at-button) {
+    // 查询按钮样式
+    &.query-btn-inline {
+      height: 60px !important;
+      min-width: 80px !important;
+      font-size: 18px !important;
+      font-weight: 700 !important;
+      color: #fff !important;
+      background-color: #1890ff !important;
+      border: none !important;
+      border-radius: 8px !important;
+      line-height: 60px !important;
+      
+      // 深层选择器覆盖
+      &::before, &::after {
+        display: none !important;
+      }
+      
+      // 修复小程序兼容性：替换通配符选择器
+      &, & span, & div, & text, & .at-button__text, & .at-button__icon {
+        color: #fff !important;
+        font-size: 18px !important;
+        font-weight: 700 !important;
+        line-height: 60px !important;
+      }
+      
+      // 确保按钮内容居中
+      & .at-button__text {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+        height: 100% !important;
+      }
+    }
+    
+    // 前往我的按钮样式（内联版本）
+    &.mine-btn-inline {
+      height: 60px !important;
+      min-width: 90px !important;
+      font-size: 18px !important;
+      font-weight: 700 !important;
+      color: #333 !important;
+      background-color: #f5f5f5 !important;
+      border: 1px solid #ddd !important;
+      border-radius: 8px !important;
+      line-height: 60px !important;
+      
+      // 深层选择器覆盖
+      &::before, &::after {
+        display: none !important;
+      }
+      
+      // 修复小程序兼容性：替换通配符选择器
+      &, & span, & div, & text, & .at-button__text, & .at-button__icon {
+        color: #333 !important;
+        font-size: 18px !important;
+        font-weight: 700 !important;
+        line-height: 60px !important;
+      }
+      
+      // 确保按钮内容居中
+      & .at-button__text {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+        height: 100% !important;
+      }
+    }
+  }
+
+  // 全局AtButton重置 - 最高优先级
+  :global(.filter-form) {
+    .at-button {
+      // 重置所有AtButton的基础样式
+      &.query-btn-inline, &.mine-btn-inline {
+        position: relative !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
+        vertical-align: middle !important;
+        touch-action: manipulation !important;
+        cursor: pointer !important;
+        user-select: none !important;
+        
+        // 确保文字不被隐藏
+        overflow: visible !important;
+        text-overflow: clip !important;
+        white-space: nowrap !important;
+        
+        // 移除可能的透明度
+        opacity: 1 !important;
+        
+        // 移除可能的变换
+        transform: none !important;
+        
+        // 确保z-index
+        z-index: 1 !important;
+      }
+      
+      // 查询按钮特定样式
+      &.query-btn-inline {
+        color: #fff !important;
+        background: #1890ff !important;
+        border-color: #1890ff !important;
+        
+        // 修复小程序兼容性：替换通配符选择器
+        &, & span, & div, & text, & .at-button__text {
+          color: #fff !important;
+          background: transparent !important;
+          font-weight: 700 !important;
+        }
+      }
+      
+      // 前往我的按钮特定样式（内联版本）
+      &.mine-btn-inline {
+        color: #333 !important;
+        background: #f5f5f5 !important;
+        border-color: #ddd !important;
+        
+        // 修复小程序兼容性：替换通配符选择器
+        &, & span, & div, & text, & .at-button__text {
+          color: #333 !important;
+          background: transparent !important;
+          font-weight: 700 !important;
+        }
+      }
+    }
+  }
+} 
+
+// 响应式优化 - 小屏幕设备
+@media (max-width: 375px) {
+  .filter-form {
+    .date-range-section {
+      .date-input-group {
+        gap: 6px;
+        
+        .date-picker {
+          min-width: 90px;
+          padding: 0 12px;
+          font-size: 18px;
+        }
+        
+        .date-separator {
+          font-size: 16px;
+          margin: 0 2px;
+        }
+        
+        .query-btn-inline {
+          min-width: 70px;
+          font-size: 16px !important;
+          margin-left: 6px;
+          
+          .at-button__text {
+            font-size: 16px !important;
+          }
+        }
+        
+        .mine-btn-inline {
+          min-width: 80px;
+          font-size: 16px !important;
+          margin-left: 6px;
+          
+          .at-button__text {
+            font-size: 16px !important;
+          }
+        }
+      }
+    }
+    
+    // 全局按钮样式覆盖 - 小屏幕
+    .at-button {
+      &.query-btn-inline {
+        min-width: 70px !important;
+        font-size: 16px !important;
+        
+        // 修复小程序兼容性：替换通配符选择器
+        &, & span, & div, & text, .at-button__text {
+          font-size: 16px !important;
+        }
+      }
+      
+      &.mine-btn-inline {
+        min-width: 80px !important;
+        font-size: 16px !important;
+        
+        // 修复小程序兼容性：替换通配符选择器
+        &, & span, & div, & text, .at-button__text {
+          font-size: 16px !important;
+        }
+      }
+    }
+    
+    :global(.at-button) {
+      &.query-btn-inline {
+        min-width: 70px !important;
+        font-size: 16px !important;
+        
+        // 修复小程序兼容性：替换通配符选择器
+        &, & span, & div, & text, & .at-button__text, & .at-button__icon {
+          font-size: 16px !important;
+        }
+      }
+      
+      &.mine-btn-inline {
+        min-width: 80px !important;
+        font-size: 16px !important;
+        
+        // 修复小程序兼容性：替换通配符选择器
+        &, & span, & div, & text, & .at-button__text, & .at-button__icon {
+          font-size: 16px !important;
+        }
+      }
+    }
+  }
+} 

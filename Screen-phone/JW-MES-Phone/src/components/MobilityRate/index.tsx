@@ -1,14 +1,15 @@
+import React, { useState, useEffect } from 'react'
 import { View, Text } from '@tarojs/components'
 import Taro, { useReady } from '@tarojs/taro'
-import { useEffect, useState } from 'react'
-import { useValueAnimation } from '../../hooks/useChartAnimation'
 import { useEnvironment } from '../../hooks/useEnvironment'
+import { useValueAnimation } from '../../hooks/useChartAnimation'
 import { 
   containerStyle, 
   headerSectionStyle, 
   headerTitleStyle, 
   contentStyle 
 } from '../../constants/chart'
+import './index.scss'
 
 interface MobilityRateProps {
   /** 移动率值，范围0-100 */
@@ -23,6 +24,10 @@ interface MobilityRateProps {
   strokeWidth?: number;
   /** 是否可见（用于Tab切换时检测可见性） */
   isVisible?: boolean;
+  /** 是否隐藏标题 */
+  hideTitle?: boolean;
+  /** 样式变体 */
+  variant?: 'default' | 'card' | 'embedded';
 }
 
 const MobilityRate: React.FC<MobilityRateProps> = ({ 
@@ -31,11 +36,12 @@ const MobilityRate: React.FC<MobilityRateProps> = ({
   className = '',
   size = 150, 
   strokeWidth = 10,
-  isVisible = true
+  isVisible = true,
+  hideTitle = false,
+  variant = 'default'
 }) => {
   // 使用环境检测Hook
-  const { isWeapp, executeWithDelay } = useEnvironment();
-  
+  const { isWeapp } = useEnvironment();
   // 加载状态
   const [isLoading, setIsLoading] = useState(true);
   
@@ -51,12 +57,9 @@ const MobilityRate: React.FC<MobilityRateProps> = ({
     () => setIsLoading(false)
   );
   
-  // 根据百分比设置颜色
+  // 根据百分比设置颜色 - 改为固定蓝色主题
   const getColor = (percent: number) => {
-    if (percent >= 80) return '#52c41a'; // 绿色，优秀
-    if (percent >= 60) return '#1890ff'; // 蓝色，良好
-    if (percent >= 40) return '#faad14'; // 黄色，一般
-    return '#f5222d'; // 红色，不佳
+    return '#1890ff'; // 固定蓝色主题
   };
   
   const color = getColor(animatedValue);
@@ -73,7 +76,7 @@ const MobilityRate: React.FC<MobilityRateProps> = ({
       setIsLoading(true);
     }
   }, [isVisible]);
-  
+
   // 渲染加载动画
   const renderLoadingSpinner = () => {
     return (
@@ -82,53 +85,32 @@ const MobilityRate: React.FC<MobilityRateProps> = ({
       </View>
     );
   };
-  
-  // 通过CSS样式生成环形进度条动画的关键帧
-  const getCircleStyle = () => {
-    // 进度条旋转角度：根据百分比计算旋转角度
-    // 100%对应360度，所以进度百分比乘以3.6得到角度
-    const rotation = animatedValue * 3.6;
-    
-    // 如果进度小于50%，右半圆隐藏，左半圆根据进度旋转
-    if (rotation <= 180) {
-      return {
-        rightCircle: {
-          transform: 'rotate(0deg)',
-          backgroundColor: '#f5f5f5' // 背景色
-        },
-        leftCircle: {
-          transform: `rotate(${rotation}deg)`,
-          backgroundColor: color // 进度颜色
-        }
-      };
-    } 
-    // 如果进度大于50%，右半圆根据进度旋转，左半圆显示满
-    else {
-      return {
-        rightCircle: {
-          transform: `rotate(${rotation - 180}deg)`,
-          backgroundColor: color // 进度颜色
-        },
-        leftCircle: {
-          transform: 'rotate(180deg)',
-          backgroundColor: color // 进度颜色
-        }
-      };
+
+  // 根据variant生成对应的CSS类名
+  const getVariantClassName = () => {
+    switch (variant) {
+      case 'card':
+        return 'mobility-rate-card';
+      case 'embedded':
+        return 'mobility-rate-embedded';
+      case 'default':
+      default:
+        return 'mobility-rate';
     }
   };
-  
-  // 计算环形图样式
-  const circleStyles = getCircleStyle();
-  
+
+  // 微信小程序和H5都使用CSS实现的环形进度条
   return (
-    <View style={containerStyle}>
-      <View style={headerSectionStyle}>
-        <Text style={headerTitleStyle}>移动率 MU</Text>
-      </View>
+    <View className={`${getVariantClassName()} ${className}`}>
+      {!hideTitle && (
+        <View style={headerSectionStyle}>
+          <Text style={headerTitleStyle}>移动率 MU</Text>
+        </View>
+      )}
       
-      <View style={contentStyle}>
-        <View style={{
-          position: 'relative' as 'relative',
+      <View className='chart-content'>
+        <View className='circle-progress' style={{
+          position: 'relative',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
@@ -137,80 +119,25 @@ const MobilityRate: React.FC<MobilityRateProps> = ({
         }}>
           {(isLoading || isAnimating) && renderLoadingSpinner()}
           
-          {/* CSS实现的环形进度图 */}
-          <View style={{
-            position: 'relative',
+          <View className='css-circle-progress' style={{
             width: `${size}px`,
             height: `${size}px`,
-            borderRadius: '50%',
-            backgroundColor: '#f5f5f5',
-            overflow: 'hidden',
-            zIndex: 1,
-            visibility: (isLoading || isAnimating) ? 'hidden' : 'visible',
-            transform: isWeapp ? 'translateZ(0)' : 'none' // 微信小程序环境下启用硬件加速
+            background: `conic-gradient(${color} 0deg ${animatedValue * 3.6}deg, #e8e8e8 ${animatedValue * 3.6}deg 360deg)`,
+            visibility: (isLoading || isAnimating) ? 'hidden' : 'visible'
           }}>
-            {/* 进度条背景 */}
-            <View style={{
-              position: 'absolute',
+            {/* 中心遮盖层创建环形效果 */}
+            <View className='circle-inner' style={{
               top: `${strokeWidth}px`,
               left: `${strokeWidth}px`,
               right: `${strokeWidth}px`,
-              bottom: `${strokeWidth}px`,
-              borderRadius: '50%',
-              backgroundColor: '#fff',
-              zIndex: 3
-            }} />
-            
-            {/* 左半圆 */}
-            <View style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '50%',
-              height: '100%',
-              transformOrigin: 'right center',
-              zIndex: 1,
-              transition: isWeapp ? 'none' : 'transform 0.3s ease-out',
-              ...circleStyles.leftCircle
-            }} />
-            
-            {/* 右半圆 */}
-            <View style={{
-              position: 'absolute',
-              top: 0,
-              right: 0,
-              width: '50%',
-              height: '100%',
-              transformOrigin: 'left center',
-              zIndex: 2,
-              transition: isWeapp ? 'none' : 'transform 0.3s ease-out',
-              ...circleStyles.rightCircle
-            }} />
-          </View>
-          
-          {/* 中央显示的值 */}
-          <View 
-            style={{
-              position: 'absolute' as 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              display: 'flex',
-              alignItems: 'baseline',
-              visibility: (isLoading || isAnimating) ? 'hidden' : 'visible',
-              zIndex: 4
-            }}
-          >
-            <Text style={{
-              fontSize: '28px',
-              fontWeight: 'bold',
-              color
-            }}>{Math.round(animatedValue * max / 100)}</Text>
-            <Text style={{
-              fontSize: '16px',
-              color: '#999',
-              marginLeft: '4px'
-            }}>/ {max}</Text>
+              bottom: `${strokeWidth}px`
+            }}>
+              {/* 中心内容：移动率值 */}
+              <View className='value-display'>
+                <Text className='value-text' style={{ color }}>{Math.round(animatedValue * max / 100)}</Text>
+                <Text className='unit-text'>/ {max}</Text>
+              </View>
+            </View>
           </View>
         </View>
       </View>

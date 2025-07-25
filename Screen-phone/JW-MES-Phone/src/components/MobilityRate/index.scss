@@ -1,19 +1,21 @@
+// 通用的chart-header样式
+.chart-header {
+  margin-bottom: 16px;
+  
+  .chart-title {
+    font-size: 18px;
+    font-weight: 500;
+    color: #333;
+  }
+}
+
+// 默认样式保持不变
 .mobility-rate {
   padding: 16px;
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   margin-bottom: 16px;
-  
-  .chart-header {
-    margin-bottom: 16px;
-    
-    .chart-title {
-      font-size: 18px;
-      font-weight: 500;
-      color: #333;
-    }
-  }
   
   .chart-content {
     display: flex;
@@ -27,75 +29,167 @@
       align-items: center;
       margin: 10px 0;
       
-      // 加载动画样式
-      .loading-spinner {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 5;
+      .css-circle-progress {
+        border-radius: 50%;
+        position: relative;
+        transition: background 0.8s ease-in-out;
         
-        .spinner {
-          width: 40px;
-          height: 40px;
-          border: 3px solid rgba(0, 0, 0, 0.1);
+        .circle-inner {
+          position: absolute;
+          background: #fff;
           border-radius: 50%;
-          border-top-color: #1890ff;
-          animation: spin 1s ease-in-out infinite;
-        }
-        
-        @keyframes spin {
-          to {
-            transform: rotate(360deg);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          
+          .value-display {
+            display: flex;
+            align-items: baseline;
+            
+            .value-text {
+              font-size: 24px;
+              font-weight: bold;
+            }
+            
+            .unit-text {
+              font-size: 14px;
+              color: #999;
+              margin-left: 4px;
+            }
           }
         }
       }
+    }
+  }
+}
+
+// Card变体：设备详情页专用，与EnergyConsumption等组件完全一致
+.mobility-rate-card {
+  padding: 16px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 16px;
+  
+  .chart-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    .circle-progress {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 10px 0;
       
-      // Canvas样式
-      .canvas-circle {
-        display: block;
-        z-index: 1;
+      .css-circle-progress {
+        border-radius: 50%;
+        position: relative;
+        transition: background 0.8s ease-in-out;
+        
+        .circle-inner {
+          position: absolute;
+          background: #fff;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          
+          .value-display {
+            display: flex;
+            align-items: baseline;
+            
+            .value-text {
+              font-size: 24px;
+              font-weight: bold;
+            }
+            
+            .unit-text {
+              font-size: 14px;
+              color: #999;
+              margin-left: 4px;
+            }
+          }
+        }
       }
+    }
+  }
+}
+
+// Embedded变体：首页专用，无背景无阴影的嵌入式样式
+.mobility-rate-embedded {
+  padding: 0;
+  background: none;
+  box-shadow: none;
+  margin-bottom: 0;
+  
+  .chart-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    
+    .circle-progress {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 10px 0 0 0;
       
-      svg {
-        transform: rotate(-90deg);
-        overflow: visible;
-        z-index: 1;
+      .css-circle-progress {
+        border-radius: 50%;
+        position: relative;
+        transition: background 0.8s ease-in-out;
         
-        .circle-bg {
-          fill: none;
-          stroke: #f5f5f5;
-        }
-        
-        .circle-progress-bar {
-          fill: none;
-          stroke-linecap: round;
-          transition: stroke-dashoffset 0.3s ease;
+        .circle-inner {
+          position: absolute;
+          background: #fff;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          
+          .value-display {
+            display: flex;
+            align-items: baseline;
+            
+            .value-text {
+              font-size: 24px;
+              font-weight: bold;
+            }
+            
+            .unit-text {
+              font-size: 14px;
+              color: #999;
+              margin-left: 4px;
+            }
+          }
         }
       }
-      
-      .value-display {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        display: flex;
-        align-items: baseline;
-        z-index: 2;
-        
-        .value-text {
-          font-size: 24px;
-          font-weight: bold;
-        }
-        
-        .unit-text {
-          font-size: 14px;
-          color: #999;
-          margin-left: 4px;
+    }
+  }
+}
+
+// 响应式设计
+@media (max-width: 600px) {
+  .mobility-rate,
+  .mobility-rate-card,
+  .mobility-rate-embedded {
+    .chart-content {
+      .circle-progress {
+        .css-circle-progress {
+          .circle-inner {
+            .value-display {
+              .value-text {
+                font-size: 20px;
+              }
+              
+              .unit-text {
+                font-size: 12px;
+              }
+            }
+          }
         }
       }
     }
@@ -104,15 +198,25 @@
 
 /* 微信小程序特定样式优化 */
 :host {
-  .mobility-rate {
+  .mobility-rate,
+  .mobility-rate-card,
+  .mobility-rate-embedded {
     /* 确保微信小程序和H5尺寸一致 */
     box-sizing: border-box;
     
     .circle-progress {
-      .canvas-circle {
-        /* 修正微信小程序Canvas对齐问题 */
-        position: relative;
-        margin: 0 auto;
+      .css-circle-progress {
+        .circle-inner {
+          .value-display {
+            .value-text {
+              font-size: 24px;
+            }
+            
+            .unit-text {
+              font-size: 14px;
+            }
+          }
+        }
       }
     }
   }

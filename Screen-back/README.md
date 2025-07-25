@@ -1,69 +1,107 @@
-# Screen-back 后端项目
+# JW-MES-Phone 后端服务
 
-## 配置敏感信息
+## 项目概述
 
-为了保护敏感信息（如数据库密码、API密钥等），本项目使用环境变量来管理这些配置。在启动应用程序前，请按照以下步骤设置必要的环境变量：
+JW-MES-Phone 是一个基于 Spring Boot 的制造执行系统(MES)后端服务，为微信小程序提供API支持。
 
-### 环境变量设置
+## 技术栈
 
-#### 必要的环境变量：
+- **Spring Boot**: 2.7.18
+- **Java**: 11 (推荐)
+- **数据库**: SQL Server 2012
+- **安全框架**: Spring Security + JWT
+- **连接池**: HikariCP
 
-- `DB_URL`: 数据库连接URL
-- `DB_USERNAME`: 数据库用户名
-- `DB_PASSWORD`: 数据库密码
-- `WECHAT_APP_ID`: 微信小程序AppID
-- `WECHAT_APP_SECRET`: 微信小程序AppSecret
+## 核心特性
 
-#### 设置方法：
+- ✅ **TLS兼容性**: 内置SQL Server 2012 TLS 1.0支持
+- ✅ **密码自动升级**: 支持SHA-256/明文密码自动升级为BCrypt
+- ✅ **JWT认证**: 完整的登录认证和令牌管理
+- ✅ **CORS支持**: 跨域请求配置
+- ✅ **微信小程序集成**: 微信登录API支持
 
-**在开发环境中：**
+## 快速开始
 
-1. 创建一个`.env`文件（已被添加到.gitignore中，不会被提交）
-2. 按照以下格式填写环境变量：
+### 1. 环境要求
+- Java 11或更高版本
+- SQL Server 2012或更高版本
+- Maven 3.6+
 
+### 2. 配置数据库
+更新 `src/main/resources/application.properties` 中的数据库连接信息：
+```properties
+spring.datasource.url=jdbc:sqlserver://[服务器地址]:1433;databaseName=CutDB03;encrypt=false;trustServerCertificate=true;loginTimeout=120;socketTimeout=120
+spring.datasource.username=sa
+spring.datasource.password=123456
 ```
-DB_URL=jdbc:sqlserver://your_server;databaseName=your_db;encrypt=false
-DB_USERNAME=your_username
-DB_PASSWORD=your_password
-WECHAT_APP_ID=your_app_id
-WECHAT_APP_SECRET=your_app_secret
+
+### 3. IDEA运行配置
+在IDEA的Run Configuration中添加VM options：
+```
+-Djdk.tls.client.protocols=TLSv1,TLSv1.1,TLSv1.2 -Dhttps.protocols=TLSv1,TLSv1.1,TLSv1.2 -Djdk.tls.disabledAlgorithms= -Djdk.tls.legacyAlgorithms= -Djdk.tls.useExtendedMasterSecret=false -Dcom.sun.net.ssl.checkRevocation=false -Dsun.security.ssl.allowUnsafeRenegotiation=true -Dsun.security.ssl.allowLegacyHelloMessages=true
 ```
 
-**在生产环境中：**
-
-- 根据您的部署平台（如Docker、Kubernetes、服务器等）设置环境变量。
-
-### 使用配置文件
-
-1. 项目中提供了一个`application-example.properties`文件作为配置模板
-2. 首次设置项目时，请复制此文件并重命名为`application-dev.properties`或`application-prod.properties`
-3. 在复制的文件中填入真实的配置信息
-
-### 安全注意事项
-
-- 请勿在代码中硬编码敏感信息
-- 不要将包含敏感信息的配置文件提交到Git仓库
-- 定期更新密码和密钥
-- 遵循最小权限原则设置数据库用户权限
-
-## 启动项目
-
-设置好环境变量后，可以使用以下命令启动项目：
-
+### 4. 启动应用
 ```bash
-# 开发环境
-./mvnw spring-boot:run -Dspring.profiles.active=dev
-
-# 生产环境
-./mvnw spring-boot:run -Dspring.profiles.active=prod
+mvn clean compile
+mvn spring-boot:run
 ```
 
-或者通过Java命令：
+应用将在 http://localhost:8081 启动
 
-```bash
-# 开发环境
-java -jar target/app.jar --spring.profiles.active=dev
+## API接口
 
-# 生产环境
-java -jar target/app.jar --spring.profiles.active=prod
-``` 
+### 认证接口
+- `POST /api/auth/login` - 用户登录
+- `POST /api/auth/refresh` - 刷新令牌
+- `POST /api/auth/logout` - 用户登出
+
+### 测试默认账号
+- **用户名**: admin
+- **密码**: admin
+
+## 开发说明
+
+### TLS配置
+系统已内置SQL Server 2012的TLS兼容性配置，无需额外脚本。
+
+### 密码加密
+- 系统支持多种密码格式：SHA-256哈希、明文、BCrypt
+- 首次登录时自动升级为BCrypt格式
+
+### 日志配置
+调试级别日志已启用，可在控制台查看详细的数据库操作和认证过程。
+
+## 项目结构
+```
+src/main/java/com/jwsxy/screenback/
+├── ScreenBackApplication.java      # 主启动类（含TLS配置）
+├── config/                         # 配置类
+├── controller/                     # REST控制器
+├── service/                        # 业务逻辑服务
+├── repository/                     # 数据访问层
+├── entity/                         # 实体类
+├── dto/                           # 数据传输对象
+├── security/                      # 安全相关
+└── utils/                         # 工具类
+```
+
+## 故障排除
+
+### 数据库连接问题
+1. 确认SQL Server服务正在运行
+2. 检查网络连通性：`ping [数据库服务器IP]`
+3. 验证端口访问：`telnet [数据库服务器IP] 1433`
+
+### TLS连接问题
+1. 确认IDEA中已添加VM options
+2. 查看启动日志是否显示"TLS兼容性配置已加载"
+
+### 登录问题
+1. 查看控制台日志的密码验证详细信息
+2. 确认数据库中用户数据存在
+3. 检查密码格式（SHA-256/明文/BCrypt）
+
+## 技术支持
+
+如有问题，请查看应用日志获取详细错误信息。 

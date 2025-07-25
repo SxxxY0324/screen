@@ -25,11 +25,11 @@ export const ENV = process.env.NODE_ENV as EnvType || EnvType.DEV;
 const envConfigMap: Record<EnvType, EnvConfig> = {
   // 开发环境
   [EnvType.DEV]: {
-    apiBaseUrl: 'http://localhost:3000/api',
-    uploadUrl: 'http://localhost:3000/upload',
+    apiBaseUrl: 'http://localhost:8081/api',
+    uploadUrl: 'http://localhost:8081/upload',
     timeout: 10000, // 10秒
     enableLog: true,
-    enableMock: true, // 开发环境默认使用模拟数据
+    enableMock: false, // 关闭模拟数据，使用真实后端API
   },
   
   // 测试环境
@@ -43,8 +43,8 @@ const envConfigMap: Record<EnvType, EnvConfig> = {
   
   // 生产环境
   [EnvType.PROD]: {
-    apiBaseUrl: 'https://api.example.com',
-    uploadUrl: 'https://api.example.com/upload',
+    apiBaseUrl: 'http://192.168.0.63:8081/api', // 更新为实际服务器IP
+    uploadUrl: 'http://192.168.0.63:8081/upload', // 更新为实际服务器IP
     timeout: 20000, // 20秒
     enableLog: false,
     enableMock: false,

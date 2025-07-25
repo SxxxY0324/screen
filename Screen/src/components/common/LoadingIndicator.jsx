@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from '../../hooks/useTranslation';
 
 /**
  * 加载指示器组件
@@ -10,9 +11,13 @@ import React from 'react';
  */
 const LoadingIndicator = ({ 
   progress = null, 
-  message = '加载中...', 
+  message = null, 
   showSpinner = true 
 }) => {
+  const { getCommon } = useTranslation();
+  
+  // 使用传入的消息或默认翻译消息
+  const displayMessage = message || getCommon('loading');
   // 样式定义
   const styles = {
     container: {
@@ -76,7 +81,7 @@ const LoadingIndicator = ({
       
       {showSpinner && <div style={styles.spinner} />}
       
-      <div style={styles.message}>{message}</div>
+      <div style={styles.message}>{displayMessage}</div>
       
       {progress !== null && (
         <>

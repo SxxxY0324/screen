@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useTranslation } from '../hooks/useTranslation';
 
 const StatusTable = ({ 
   tableData, 
@@ -10,6 +11,7 @@ const StatusTable = ({
   canLoadMore = false,
   isLoadingMore = false
 }) => {
+  const { getCommon } = useTranslation();
   const [scrollPosition, setScrollPosition] = useState(0);
   const animationRef = useRef(null);
   const containerRef = useRef(null);
@@ -152,7 +154,7 @@ const StatusTable = ({
         fontSize: '24px',
         fontWeight: 'bold'
       }}>
-        数据加载中...
+        {getCommon('loading')}
       </div>
     );
   }

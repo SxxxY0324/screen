@@ -1,7 +1,7 @@
 import { View, Text } from '@tarojs/components'
 import { useState, useMemo } from 'react'
 import { DeviceStatusInfo, STATUS_LEGEND_ITEMS } from '../../types/deviceStatus'
-import StatusIcon from '../StatusIcon/index'
+import StatusIcon from '../StatusIcon'
 import './index.scss'
 
 interface DeviceStatusProps {

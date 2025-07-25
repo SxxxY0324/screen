@@ -4,7 +4,8 @@ import Taro, { useRouter } from '@tarojs/taro'
 import MobilityRate from '../../components/MobilityRate'
 import EnergyConsumption from '../../components/EnergyConsumption'
 import TotalCircumference from '../../components/TotalCircumference'
-import DeviceStatusDisplay, { DeviceStatus, DeviceStatusInfo } from '../../components/DeviceStatusDisplay'
+import DeviceStatusDisplay from '../../components/DeviceStatusDisplay'
+import { DeviceStatus, DeviceStatusInfo } from '../../types/deviceStatus'
 import './index.scss'
 
 // 定义Tab类型
@@ -192,7 +193,7 @@ export default function DeviceDetails() {
                   max={100} 
                   size={150}
                   strokeWidth={12}
-                  className='chart-card'
+                  variant="card"
                   isVisible={activeTab === 'monitor' && dataLoaded}
                   key={`mobility-rate-${tabSwitchCount}`} // 强制重新渲染
                 />

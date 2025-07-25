@@ -131,3 +131,6 @@ credentials.json
 # 其他敏感信息
 .npmrc
 .yarnrc 
+
+JW-MES.xml
+Screen-phone\JW-MES-Phone\docs\SVG-Gauge-Pointer-Alignment-Guide.md

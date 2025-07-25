@@ -12,6 +12,7 @@ import {
   getAvgFaultTime, 
   getFaultEquipmentList 
 } from '../api/maintenanceApi';
+import { getTableHeaderText } from '../locales';
 
 function ManagementPage() {
   // 状态变量声明 - 维保指标和故障清单
@@ -89,8 +90,22 @@ function ManagementPage() {
     ['18', '三车间', 'CN01018', '57', '84']
   ];
   
-  const bladeHeaders = ['序号', '车间', '设备编号', '刀片', '磨刀棒'];
-  const faultHeaders = ['序号', '车间', '设备编号', '故障代码', '开始时间'];
+  // 生成翻译版本的表格头部
+  const bladeHeaders = [
+    getTableHeaderText('index'),
+    getTableHeaderText('workshop'),
+    getTableHeaderText('deviceId'),
+    getTableHeaderText('blade'),
+    getTableHeaderText('grindingRod')
+  ];
+  
+  const faultHeaders = [
+    getTableHeaderText('index'),
+    getTableHeaderText('workshop'),
+    getTableHeaderText('deviceId'),
+    getTableHeaderText('faultCode'),
+    getTableHeaderText('startTime')
+  ];
 
   return (
     <div className="management-page" style={{ 

@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
 import ReactECharts from 'echarts-for-react';
+import { useTranslation } from '../../hooks/useTranslation';
 
 /**
  * 业绩分析 - 裁剪时间(H)图表组件
@@ -9,6 +10,8 @@ import ReactECharts from 'echarts-for-react';
  * @returns {React.Component} 裁剪时间(H)图表组件
  */
 const CutTimeChartAnalysisBase = ({ categories, values }) => {
+  const { t } = useTranslation();
+
   // 图表配置
   const getOptions = () => {
     return {
@@ -105,7 +108,7 @@ const CutTimeChartAnalysisBase = ({ categories, values }) => {
           color: '#fff', 
           fontSize: '22px', 
           fontWeight: 'bold'
-        }}>裁剪时间(H)</div>
+        }}>{t('analysis.charts.cutTime')}</div>
       </div>
       
       {/* 图表区 */}

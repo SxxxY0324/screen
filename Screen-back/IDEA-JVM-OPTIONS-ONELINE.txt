@@ -1,0 +1,4 @@
+# IDEA运行配置 - VM Options参数
+# 复制以下参数到IDEA的Run Configuration -> VM options中
+ 
+-Djdk.tls.client.protocols=TLSv1,TLSv1.1,TLSv1.2 -Dhttps.protocols=TLSv1,TLSv1.1,TLSv1.2 -Djdk.tls.disabledAlgorithms= -Djdk.tls.legacyAlgorithms= -Djdk.tls.useExtendedMasterSecret=false -Dcom.sun.net.ssl.checkRevocation=false -Dsun.security.ssl.allowUnsafeRenegotiation=true -Dsun.security.ssl.allowLegacyHelloMessages=true 

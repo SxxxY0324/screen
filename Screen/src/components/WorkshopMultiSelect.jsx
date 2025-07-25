@@ -1,8 +1,10 @@
     import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useAppSelector } from '../store/hooks';
 import { selectDeviceStatusData, selectDeviceStatusLoading } from '../store/slices/monitorSlice';
+import { useTranslation } from '../hooks/useTranslation';
 
 const WorkshopMultiSelect = ({ selectedWorkshops, onChange }) => {
+  const { getCommon } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const deviceStatusData = useAppSelector(selectDeviceStatusData);
   const deviceStatusLoading = useAppSelector(selectDeviceStatusLoading);
@@ -97,7 +99,7 @@ const WorkshopMultiSelect = ({ selectedWorkshops, onChange }) => {
         className="nav-select"
         onClick={handleClick}
         onChange={() => {}}
-        value={deviceStatusLoading ? '加载中...' : getDisplayText()}
+        value={deviceStatusLoading ? getCommon('loading') : getDisplayText()}
         disabled={deviceStatusLoading}
         style={{
           height: '40px', // 确保与其他按钮一样高
@@ -121,7 +123,7 @@ const WorkshopMultiSelect = ({ selectedWorkshops, onChange }) => {
           transition: 'all 0.3s ease'
         }}
       >
-        <option>{deviceStatusLoading ? '加载中...' : getDisplayText()}</option>
+        <option>{deviceStatusLoading ? getCommon('loading') : getDisplayText()}</option>
       </select>
       
       {isOpen && (
@@ -140,7 +142,7 @@ const WorkshopMultiSelect = ({ selectedWorkshops, onChange }) => {
           marginTop: '5px'
         }}>
           {deviceStatusLoading ? (
-            <div style={{ padding: '8px', color: '#fff', textAlign: 'center' }}>加载中...</div>
+            <div style={{ padding: '8px', color: '#fff', textAlign: 'center' }}>{getCommon('loading')}</div>
           ) : workshopList.length === 0 ? (
             <div style={{ padding: '8px', color: '#fff', textAlign: 'center' }}>暂无车间数据</div>
           ) : (

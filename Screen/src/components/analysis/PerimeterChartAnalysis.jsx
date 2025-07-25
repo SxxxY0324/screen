@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
 import ReactECharts from 'echarts-for-react';
+import { useTranslation } from '../../hooks/useTranslation';
 
 /**
  * 业绩分析 - 周长(M)图表组件
@@ -9,6 +10,7 @@ import ReactECharts from 'echarts-for-react';
  * @returns {React.Component} 周长(M)图表组件
  */
 const PerimeterChartAnalysisBase = ({ categories, values }) => {
+  const { t } = useTranslation();
   // 图表配置
   const getOptions = () => {
     return {
@@ -105,7 +107,7 @@ const PerimeterChartAnalysisBase = ({ categories, values }) => {
           color: '#fff', 
           fontSize: '22px', 
           fontWeight: 'bold'
-        }}>周长(M)</div>
+        }}>{t('analysis.charts.perimeter')}</div>
       </div>
       
       {/* 图表区 */}

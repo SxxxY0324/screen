@@ -170,6 +170,30 @@
   padding: 10px;
 }
 
+/* 语言选择器特定样式 */
+.language-selector {
+  min-width: 90px;
+  max-width: 120px;
+  position: relative;
+}
+
+.language-selector option {
+  padding: 8px 12px;
+  font-size: 14px;
+  background-color: #222;
+  color: #fff;
+  border: none;
+}
+
+.language-selector:hover {
+  background-color: #444;
+  transform: translateY(-1px);
+}
+
+.language-selector:active {
+  transform: translateY(0);
+}
+
 /* 卡片布局 */
 .dashboard-grid {
   display: grid;
@@ -354,47 +378,30 @@ button:disabled {
 
 /* AI按钮样式 */
 .ai-button {
+  background-color: #333;
+  color: #fff;
+  padding: 8px 16px;
+  border: 1px solid #444;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #ED6A00 0%, #FF9F45 100%);
-  color: white;
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(237, 106, 0, 0.5);
-  margin-right: 15px;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.ai-button:before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  transition: all 0.6s ease;
-}
-
-.ai-button:hover:before {
-  left: 100%;
+  min-width: 60px;
 }
 
 .ai-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(237, 106, 0, 0.7);
+  background-color: #444;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
 }
 
 .ai-icon {
   font-weight: bold;
-  font-size: 18px;
   letter-spacing: 1px;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
 }
 
 /* 维保管理页面样式 */

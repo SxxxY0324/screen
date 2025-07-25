@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
 import ReactECharts from 'echarts-for-react';
+import { useTranslation } from '../../hooks/useTranslation';
 
 /**
  * 业绩分析 - 移动率MU图表组件
@@ -9,6 +10,7 @@ import ReactECharts from 'echarts-for-react';
  * @returns {React.Component} 移动率MU图表组件
  */
 const MuChartAnalysisBase = ({ categories, values }) => {
+  const { t } = useTranslation();
   // 图表配置
   const getOptions = () => {
     return {
@@ -132,7 +134,7 @@ const MuChartAnalysisBase = ({ categories, values }) => {
           color: '#fff', 
           fontSize: '22px', 
           fontWeight: 'bold'
-        }}>移动率MU</div>
+        }}>{t('analysis.charts.efficiency')}</div>
       </div>
       
       {/* 图表区 */}

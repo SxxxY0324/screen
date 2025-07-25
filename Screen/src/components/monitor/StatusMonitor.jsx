@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
 import { StatusIcon, StatusTable, COLORS } from '../index';
+import { useTranslation } from '../../hooks/useTranslation';
 
 /**
  * 裁床运行状态监控组件
@@ -26,6 +27,8 @@ const StatusMonitorBase = ({
   canLoadMore,
   isLoadingMore
 }) => {
+  const { t, getCommon } = useTranslation();
+
   // 样式常量
   const STYLES = {
     contentWrapper: {
@@ -187,7 +190,7 @@ const StatusMonitorBase = ({
       {/* 卡片标题 */}
       <div className="monitor-card-title">
         <div className="title-indicator"></div>
-        <span>各裁床运行状态</span>
+        <span>{t('monitor.statusPanel.title')}</span>
       </div>
       
       <div className="monitor-card-content" style={{padding: 0}}>
@@ -222,8 +225,8 @@ const StatusMonitorBase = ({
                 fontSize: '24px',
                 fontWeight: 'bold'
               }}>
-                {isLoading ? '加载中...' : 
-                  deviceData && deviceData.length === 0 ? '无符合条件的设备数据' : '加载中...'}
+                {isLoading ? getCommon('loading') : 
+                  deviceData && deviceData.length === 0 ? t('monitor.statusPanel.noDeviceData') : getCommon('loading')}
               </div>
             ) : (
               deviceData.map((device, index) => (
@@ -254,7 +257,7 @@ const StatusMonitorBase = ({
           <div style={STYLES.tableSection}>
             <div style={STYLES.sectionTitle}>
               <div style={STYLES.titleDot}></div>
-              各裁床运行情况
+              {t('monitor.statusPanel.operationTitle')}
             </div>
             
             <div className="monitor-card-content" style={{padding: '5px', height: 'calc(100% - 60px)'}}>
